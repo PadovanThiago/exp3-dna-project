@@ -3,59 +3,17 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { SectionHeading, ServiceCard } from '@/components/UIComponents';
+import { ServiceCard } from '@/components/UIComponents';
 import { 
   Search, 
   Cpu, 
   GraduationCap, 
   Shield, 
-  ArrowRight,
-  CheckCircle2
+  ArrowRight
 } from 'lucide-react';
 
 const Services: React.FC = () => {
   const { t } = useLanguage();
-
-  const packages = [
-    {
-      name: 'Starter',
-      description: 'Perfect for organizations beginning their AI journey',
-      features: [
-        'AI maturity assessment',
-        '2-week diagnostic sprint',
-        'Opportunity roadmap',
-        'Risk assessment report',
-        'Executive presentation',
-      ],
-      highlight: false,
-    },
-    {
-      name: 'Growth',
-      description: 'For organizations ready to scale their AI capabilities',
-      features: [
-        'Everything in Starter',
-        'Pilot implementation',
-        'Team training workshops',
-        'Governance framework',
-        '3-month support',
-        'Quarterly reviews',
-      ],
-      highlight: true,
-    },
-    {
-      name: 'Enterprise',
-      description: 'Comprehensive transformation for large organizations',
-      features: [
-        'Everything in Growth',
-        'Full-scale implementation',
-        'Custom training program',
-        'Dedicated support team',
-        '12-month partnership',
-        'Executive advisory',
-      ],
-      highlight: false,
-    },
-  ];
 
   return (
     <div className="min-h-screen pt-20">
@@ -117,58 +75,6 @@ const Services: React.FC = () => {
         </div>
       </section>
 
-      {/* Packages Section */}
-      <section className="section-padding">
-        <div className="container-wide mx-auto px-4 md:px-8">
-          <SectionHeading
-            title="Service Packages"
-            subtitle="Choose the engagement model that fits your organization's needs and goals"
-          />
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {packages.map((pkg, index) => (
-              <motion.div
-                key={pkg.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`glass-card p-8 relative ${
-                  pkg.highlight
-                    ? 'border-2 border-primary ring-2 ring-primary/20'
-                    : ''
-                }`}
-              >
-                {pkg.highlight && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="text-2xl font-bold text-foreground mb-2">{pkg.name}</h3>
-                <p className="text-muted-foreground mb-6">{pkg.description}</p>
-                <ul className="space-y-3 mb-8">
-                  {pkg.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-exp3-emerald flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  asChild
-                  variant={pkg.highlight ? 'default' : 'outline'}
-                  className={`w-full ${pkg.highlight ? 'glow-cyan' : ''}`}
-                >
-                  <Link to="/contact">
-                    {t('services.requestProposal')}
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </Button>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="section-padding bg-card/30">

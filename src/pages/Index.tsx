@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import DNAHelix from '@/components/DNAHelix';
 import StrandCard from '@/components/StrandCard';
-import { StatCard, ContentCard } from '@/components/UIComponents';
+
 import heroBg from '@/assets/hero-bg.jpg';
 import { 
   Search, 
@@ -242,67 +242,6 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="section-padding bg-card/30">
-        <div className="container-wide mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard value="50+" label={t('stats.projects')} delay={0} />
-            <StatCard value="2000+" label={t('stats.hours')} delay={0.1} />
-            <StatCard value="30+" label={t('stats.clients')} delay={0.2} />
-            <StatCard value="12" label={t('stats.countries')} delay={0.3} />
-          </div>
-        </div>
-      </section>
-
-      {/* Latest Content Preview */}
-      <section className="section-padding">
-        <div className="container-wide mx-auto px-4 md:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col md:flex-row items-center justify-between mb-12"
-          >
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                {t('content.latest')}
-              </h2>
-              <p className="text-muted-foreground">{t('content.subtitle')}</p>
-            </div>
-            <Button asChild variant="outline" className="mt-4 md:mt-0">
-              <Link to="/content">
-                {t('content.viewAll')}
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-            </Button>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <ContentCard
-              title="The Future of Cognitive Symbiosis in Enterprise AI"
-              excerpt="How the partnership between human creativity and machine intelligence is reshaping business operations..."
-              date="Jan 28, 2025"
-              readMoreText={t('content.readMore')}
-              delay={0.1}
-            />
-            <ContentCard
-              title="Beyond Black Boxes: Implementing Explainable AI"
-              excerpt="A practical guide to building AI systems that stakeholders can understand and trust..."
-              date="Jan 15, 2025"
-              readMoreText={t('content.readMore')}
-              delay={0.2}
-            />
-            <ContentCard
-              title="The DNA Model: Why Sequential AI Implementation Fails"
-              excerpt="Understanding why the most successful AI implementations embrace entanglement over sequence..."
-              date="Jan 5, 2025"
-              readMoreText={t('content.readMore')}
-              delay={0.3}
-            />
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="section-padding">
