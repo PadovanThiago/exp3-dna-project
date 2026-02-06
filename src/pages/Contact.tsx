@@ -43,7 +43,7 @@ const Contact: React.FC = () => {
               className="lg:col-span-1 space-y-8"
             >
               <div>
-                <h3 className="text-xl font-semibold text-foreground mb-6">Get in Touch</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-6">{t('contact.getInTouch')}</h3>
                 <div className="space-y-6">
                   <a
                     href="mailto:contact@exp3.ai"
@@ -82,9 +82,9 @@ const Contact: React.FC = () => {
                       <MapPin className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">Location</p>
+                      <p className="font-medium text-foreground">{t('contact.location')}</p>
                       <p className="text-muted-foreground">São Paulo, Brazil</p>
-                      <p className="text-muted-foreground">Global Remote Operations</p>
+                      <p className="text-muted-foreground">{t('contact.globalOperations')}</p>
                     </div>
                   </div>
 
@@ -93,9 +93,9 @@ const Contact: React.FC = () => {
                       <Clock className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">Business Hours</p>
-                      <p className="text-muted-foreground">Mon - Fri: 9:00 - 18:00 BRT</p>
-                      <p className="text-muted-foreground">Flexible for global clients</p>
+                      <p className="font-medium text-foreground">{t('contact.businessHours')}</p>
+                      <p className="text-muted-foreground">{t('contact.businessHoursValue')}</p>
+                      <p className="text-muted-foreground">{t('contact.flexibleHours')}</p>
                     </div>
                   </div>
                 </div>
@@ -103,19 +103,19 @@ const Contact: React.FC = () => {
 
               {/* Quick Info Card */}
               <div className="glass-card p-6">
-                <h4 className="font-semibold text-foreground mb-4">What to Expect</h4>
+                <h4 className="font-semibold text-foreground mb-4">{t('contact.whatToExpect')}</h4>
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-exp3-cyan mt-2 flex-shrink-0" />
-                    Response within 24 business hours
+                    {t('contact.expectations.response')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-exp3-orange mt-2 flex-shrink-0" />
-                    Initial consultation call to understand your needs
+                    {t('contact.expectations.consultation')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-exp3-emerald mt-2 flex-shrink-0" />
-                    Custom proposal based on your specific challenges
+                    {t('contact.expectations.proposal')}
                   </li>
                 </ul>
               </div>

@@ -62,24 +62,21 @@ const About: React.FC = () => {
               className="space-y-8"
             >
               <div className="glass-card p-6 border-l-4 border-exp3-cyan">
-                <h4 className="text-lg font-semibold text-exp3-cyan mb-2">Continuous Entanglement</h4>
+                <h4 className="text-lg font-semibold text-exp3-cyan mb-2">{t('about.dna.entanglement.title')}</h4>
                 <p className="text-muted-foreground">
-                  Unlike traditional sequential approaches, our three strands work simultaneously, 
-                  constantly informing and enhancing each other throughout the engagement.
+                  {t('about.dna.entanglement.desc')}
                 </p>
               </div>
               <div className="glass-card p-6 border-l-4 border-exp3-orange">
-                <h4 className="text-lg font-semibold text-exp3-orange mb-2">Dynamic Intensity</h4>
+                <h4 className="text-lg font-semibold text-exp3-orange mb-2">{t('about.dna.intensity.title')}</h4>
                 <p className="text-muted-foreground">
-                  The intensity of each strand varies based on the current needs, but all three 
-                  are always present and active—never fully dormant.
+                  {t('about.dna.intensity.desc')}
                 </p>
               </div>
               <div className="glass-card p-6 border-l-4 border-exp3-emerald">
-                <h4 className="text-lg font-semibold text-exp3-emerald mb-2">Mutual Reinforcement</h4>
+                <h4 className="text-lg font-semibold text-exp3-emerald mb-2">{t('about.dna.reinforcement.title')}</h4>
                 <p className="text-muted-foreground">
-                  Each strand strengthens the others: exploration informs exploitation, 
-                  exploitation reveals what needs explanation, and explanation guides new exploration.
+                  {t('about.dna.reinforcement.desc')}
                 </p>
               </div>
             </motion.div>
@@ -138,8 +135,8 @@ const About: React.FC = () => {
                     <Users className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">Collaborative</h4>
-                    <p className="text-sm text-muted-foreground">Your team inside the process</p>
+                    <h4 className="font-semibold text-foreground">{t('about.features.collaborative.title')}</h4>
+                    <p className="text-sm text-muted-foreground">{t('about.features.collaborative.desc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -147,8 +144,8 @@ const About: React.FC = () => {
                     <Zap className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">Real-time</h4>
-                    <p className="text-sm text-muted-foreground">Knowledge refined continuously</p>
+                    <h4 className="font-semibold text-foreground">{t('about.features.realtime.title')}</h4>
+                    <p className="text-sm text-muted-foreground">{t('about.features.realtime.desc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -156,8 +153,8 @@ const About: React.FC = () => {
                     <Target className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">Contextual</h4>
-                    <p className="text-sm text-muted-foreground">Your business, our expertise</p>
+                    <h4 className="font-semibold text-foreground">{t('about.features.contextual.title')}</h4>
+                    <p className="text-sm text-muted-foreground">{t('about.features.contextual.desc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -165,8 +162,8 @@ const About: React.FC = () => {
                     <Search className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">Exploratory</h4>
-                    <p className="text-sm text-muted-foreground">Positive intellectual friction</p>
+                    <h4 className="font-semibold text-foreground">{t('about.features.exploratory.title')}</h4>
+                    <p className="text-sm text-muted-foreground">{t('about.features.exploratory.desc')}</p>
                   </div>
                 </div>
               </div>
@@ -183,16 +180,15 @@ const About: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-exp3-cyan/5 to-exp3-emerald/5" />
                 <div className="relative z-10">
                   <blockquote className="text-xl md:text-2xl font-medium text-foreground italic mb-6">
-                    "The complexity of AI demands multiple perspectives. We create environments 
-                    where knowledge is generated, tested, and refined in real-time."
+                    {t('about.quote')}
                   </blockquote>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                       <span className="text-primary font-bold">E³</span>
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">EXP³ Philosophy</p>
-                      <p className="text-sm text-muted-foreground">Strategic Think Tank</p>
+                      <p className="font-semibold text-foreground">{t('about.philosophy')}</p>
+                      <p className="text-sm text-muted-foreground">{t('about.thinkTankLabel')}</p>
                     </div>
                   </div>
                 </div>
