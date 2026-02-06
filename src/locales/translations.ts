@@ -56,6 +56,41 @@ export const translations = {
         title: "Como trabalhamos: construção colaborativa",
         desc: "Operamos como um laboratório vivo de construção conjunta. A complexidade da IA exige múltiplas perspectivas, por isso criamos ambientes de fricção intelectual positiva. Trazemos sua equipe para dentro do processo, cruzando o contexto do seu negócio com nossa rede de especialistas. É um espaço de troca contínua onde o conhecimento é gerado, testado e refinado em tempo real.",
       },
+      dna: {
+        entanglement: {
+          title: "Entrelaçamento contínuo",
+          desc: "Diferente das abordagens sequenciais tradicionais, nossos três fios trabalham simultaneamente, informando e aprimorando uns aos outros constantemente ao longo do engajamento.",
+        },
+        intensity: {
+          title: "Intensidade dinâmica",
+          desc: "A intensidade de cada fio varia conforme as necessidades atuais, mas os três estão sempre presentes e ativos—nunca totalmente dormentes.",
+        },
+        reinforcement: {
+          title: "Reforço mútuo",
+          desc: "Cada fio fortalece os outros: exploração informa exploitação, exploitação revela o que precisa de explicação, e explicação guia novas explorações.",
+        },
+      },
+      features: {
+        collaborative: {
+          title: "Colaborativo",
+          desc: "Sua equipe dentro do processo",
+        },
+        realtime: {
+          title: "Tempo real",
+          desc: "Conhecimento refinado continuamente",
+        },
+        contextual: {
+          title: "Contextual",
+          desc: "Seu negócio, nossa expertise",
+        },
+        exploratory: {
+          title: "Exploratório",
+          desc: "Fricção intelectual positiva",
+        },
+      },
+      quote: "\"A complexidade da IA exige múltiplas perspectivas. Criamos ambientes onde o conhecimento é gerado, testado e refinado em tempo real.\"",
+      philosophy: "Filosofia EXP³",
+      thinkTankLabel: "Think Tank estratégico",
     },
     services: {
       title: "Mão na massa: do estratégico ao operacional",
@@ -81,10 +116,27 @@ export const translations = {
         deliverables: "Políticas de governança, trilhas de auditoria, documentação de compliance",
       },
       requestProposal: "Solicitar proposta",
+      cta: {
+        title: "Não sabe por onde começar?",
+        desc: "Vamos discutir seus desafios e objetivos específicos. Recomendaremos a melhor abordagem para a jornada de IA da sua organização.",
+        button: "Agende uma consulta",
+      },
     },
     contact: {
       title: "Vamos construir juntos",
       subtitle: "Pronto para transformar potencial em capacidade operacional?",
+      getInTouch: "Entre em contato",
+      location: "Localização",
+      globalOperations: "Operações remotas globais",
+      businessHours: "Horário comercial",
+      businessHoursValue: "Seg - Sex: 9:00 - 18:00 BRT",
+      flexibleHours: "Flexível para clientes globais",
+      whatToExpect: "O que esperar",
+      expectations: {
+        response: "Resposta em até 24 horas úteis",
+        consultation: "Chamada inicial para entender suas necessidades",
+        proposal: "Proposta personalizada baseada nos seus desafios específicos",
+      },
       form: {
         name: "Nome",
         email: "Email",
@@ -172,6 +224,41 @@ export const translations = {
         title: "How we work: collaborative construction",
         desc: "We operate as a living laboratory of joint construction. AI's complexity demands multiple perspectives, so we create environments of positive intellectual friction. We bring your team into the process, crossing your business context with our network of experts. It's a space of continuous exchange where knowledge is generated, tested, and refined in real-time.",
       },
+      dna: {
+        entanglement: {
+          title: "Continuous entanglement",
+          desc: "Unlike traditional sequential approaches, our three strands work simultaneously, constantly informing and enhancing each other throughout the engagement.",
+        },
+        intensity: {
+          title: "Dynamic intensity",
+          desc: "The intensity of each strand varies based on the current needs, but all three are always present and active—never fully dormant.",
+        },
+        reinforcement: {
+          title: "Mutual reinforcement",
+          desc: "Each strand strengthens the others: exploration informs exploitation, exploitation reveals what needs explanation, and explanation guides new exploration.",
+        },
+      },
+      features: {
+        collaborative: {
+          title: "Collaborative",
+          desc: "Your team inside the process",
+        },
+        realtime: {
+          title: "Real-time",
+          desc: "Knowledge refined continuously",
+        },
+        contextual: {
+          title: "Contextual",
+          desc: "Your business, our expertise",
+        },
+        exploratory: {
+          title: "Exploratory",
+          desc: "Positive intellectual friction",
+        },
+      },
+      quote: "\"The complexity of AI demands multiple perspectives. We create environments where knowledge is generated, tested, and refined in real-time.\"",
+      philosophy: "EXP³ Philosophy",
+      thinkTankLabel: "Strategic Think Tank",
     },
     services: {
       title: "Hands-on: from strategic to operational",
@@ -197,10 +284,27 @@ export const translations = {
         deliverables: "Governance policies, audit trails, compliance documentation",
       },
       requestProposal: "Request proposal",
+      cta: {
+        title: "Not sure where to start?",
+        desc: "Let's discuss your specific challenges and goals. We'll recommend the best approach for your organization's AI journey.",
+        button: "Schedule a consultation",
+      },
     },
     contact: {
       title: "Let's build together",
       subtitle: "Ready to transform potential into operational capacity?",
+      getInTouch: "Get in touch",
+      location: "Location",
+      globalOperations: "Global Remote Operations",
+      businessHours: "Business hours",
+      businessHoursValue: "Mon - Fri: 9:00 - 18:00 BRT",
+      flexibleHours: "Flexible for global clients",
+      whatToExpect: "What to expect",
+      expectations: {
+        response: "Response within 24 business hours",
+        consultation: "Initial consultation call to understand your needs",
+        proposal: "Custom proposal based on your specific challenges",
+      },
       form: {
         name: "Name",
         email: "Email",

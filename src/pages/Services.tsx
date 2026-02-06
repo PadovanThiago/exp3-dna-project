@@ -87,15 +87,14 @@ const Services: React.FC = () => {
             className="text-center max-w-3xl mx-auto"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Not Sure Where to Start?
+              {t('services.cta.title')}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Let's discuss your specific challenges and goals. We'll recommend the best 
-              approach for your organization's AI journey.
+              {t('services.cta.desc')}
             </p>
             <Button asChild size="lg" className="glow-cyan">
               <Link to="/contact">
-                Schedule a Consultation
+                {t('services.cta.button')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
