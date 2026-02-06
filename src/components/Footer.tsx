@@ -10,13 +10,7 @@ export const Footer: React.FC = () => {
     { key: 'home', path: '/' },
     { key: 'about', path: '/about' },
     { key: 'services', path: '/services' },
-    { key: 'cases', path: '/cases' },
     { key: 'contact', path: '/contact' },
-  ];
-
-  const resourceLinks = [
-    { key: 'content', path: '/content' },
-    { key: 'events', path: '/events' },
   ];
 
   return (
@@ -77,42 +71,6 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Resources Column */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-6">
-              {t('footer.resources')}
-            </h4>
-            <ul className="space-y-3">
-              {resourceLinks.map((link) => (
-                <li key={link.key}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors text-sm inline-flex items-center gap-1 group"
-                  >
-                    {t(`nav.${link.key}` as any)}
-                    <ArrowUpRight
-                      size={14}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <a
-                  href="https://substack.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors text-sm inline-flex items-center gap-1 group"
-                >
-                  Newsletter
-                  <ArrowUpRight
-                    size={14}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  />
-                </a>
-              </li>
-            </ul>
-          </div>
 
           {/* Legal Column */}
           <div>

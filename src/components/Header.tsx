@@ -23,9 +23,6 @@ export const Header: React.FC = () => {
     { key: 'home', path: '/' },
     { key: 'about', path: '/about' },
     { key: 'services', path: '/services' },
-    { key: 'cases', path: '/cases' },
-    { key: 'content', path: '/content' },
-    { key: 'events', path: '/events' },
     { key: 'contact', path: '/contact' },
   ];
 
