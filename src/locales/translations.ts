@@ -145,6 +145,7 @@ export const translations = {
         subject: "Assunto",
         message: "Mensagem",
         consent: "Concordo com o processamento dos meus dados de acordo com a política de privacidade",
+        consentError: "Por favor, aceite a política de privacidade",
         submit: "Enviar",
         subjects: {
           consulting: "Consultoria",
@@ -313,6 +314,7 @@ export const translations = {
         subject: "Subject",
         message: "Message",
         consent: "I agree to the processing of my data according to the privacy policy",
+        consentError: "Please accept the privacy policy",
         submit: "Send",
         subjects: {
           consulting: "Consulting",
