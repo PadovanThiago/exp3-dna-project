@@ -15,6 +15,9 @@ import {
 import { toast } from 'sonner';
 import { Send, Loader2 } from 'lucide-react';
 
+// TODO: Replace with your Formspree Form ID
+const FORMSPREE_FORM_ID = 'YOUR_FORM_ID';
+
 export const ContactForm: React.FC = () => {
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,26 +35,52 @@ export const ContactForm: React.FC = () => {
     e.preventDefault();
     
     if (!formData.consent) {
-      toast.error('Please accept the privacy policy');
+      toast.error(t('contact.form.consentError'));
+      return;
+    }
+
+    if (FORMSPREE_FORM_ID === 'YOUR_FORM_ID') {
+      toast.error('Formspree não configurado. Entre em contato por email.');
       return;
     }
 
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    toast.success(t('contact.success'));
-    setFormData({
-      name: '',
-      email: '',
-      company: '',
-      phone: '',
-      subject: '',
-      message: '',
-      consent: false,
-    });
-    setIsSubmitting(false);
+    try {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t('contact.success'));
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          phone: '',
+          subject: '',
+          message: '',
+          consent: false,
+        });
+      } else {
+        toast.error(t('contact.error'));
+      }
+    } catch (error) {
+      toast.error(t('contact.error'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
