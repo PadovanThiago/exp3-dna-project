@@ -2,7 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ContactForm from '@/components/ContactForm';
-import { Mail, Linkedin, MapPin, Clock } from 'lucide-react';
+import { Mail, MapPin, Clock } from 'lucide-react';
+
+const SubstackIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24l9.56-5.39L20.58 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z" />
+  </svg>
+);
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
@@ -61,19 +67,19 @@ const Contact: React.FC = () => {
                   </a>
 
                   <a
-                    href="https://linkedin.com"
+                    href="https://substack.com/@exp3"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-start gap-4 group"
                   >
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <Linkedin className="w-5 h-5 text-primary" />
+                      <SubstackIcon className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                        LinkedIn
+                        Substack
                       </p>
-                      <p className="text-muted-foreground">@exp3consulting</p>
+                      <p className="text-muted-foreground">@exp3</p>
                     </div>
                   </a>
 
