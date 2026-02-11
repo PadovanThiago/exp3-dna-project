@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { Send, Loader2 } from 'lucide-react';
 
 // TODO: Replace with your Formspree Form ID
-const FORMSPREE_FORM_ID = 'YOUR_FORM_ID';
+const FORMSPREE_FORM_ID = 'mqedeygg';
 
 export const ContactForm: React.FC = () => {
   const { t } = useLanguage();
@@ -39,7 +39,7 @@ export const ContactForm: React.FC = () => {
       return;
     }
 
-    if (FORMSPREE_FORM_ID === 'YOUR_FORM_ID') {
+    if (!FORMSPREE_FORM_ID) {
       toast.error('Formspree não configurado. Entre em contato por email.');
       return;
     }
