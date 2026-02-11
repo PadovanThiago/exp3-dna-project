@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Mail, ArrowUpRight } from 'lucide-react';
+import movementsLogo from '@/assets/movements-logo.jpg';
 
 const SubstackIcon = ({ size = 20 }: { size?: number }) => (
   <svg viewBox="0 0 24 24" fill="none" width={size} height={size}>
@@ -117,9 +118,9 @@ export const Footer: React.FC = () => {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} EXP³. {t('footer.rights')}
           </p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-exp3-emerald animate-pulse" />
-            <span>Cognitive Symbiosis Active</span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground/60">
+            <span>Parceiro de Projeto:</span>
+            <img src={movementsLogo} alt="Movements" className="h-5 opacity-60 hover:opacity-90 transition-opacity" />
           </div>
         </div>
       </div>
