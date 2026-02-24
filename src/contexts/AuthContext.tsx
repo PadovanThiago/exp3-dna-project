@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -18,7 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const adminCheckRef = useRef<((result: boolean) => void) | null>(null);
+  
 
   const checkAdmin = useCallback(async (userId: string): Promise<boolean> => {
     const { data } = await supabase.rpc('has_role', {
@@ -47,12 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          const result = await checkAdmin(session.user.id);
-          // Resolve any pending signIn promise
-          if (adminCheckRef.current) {
-            adminCheckRef.current(result);
-            adminCheckRef.current = null;
-          }
+          await checkAdmin(session.user.id);
         } else {
           setIsAdmin(false);
         }
@@ -78,23 +73,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [checkAdmin]);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       return { error, isAdmin: false };
     }
-    // Wait for onAuthStateChange to complete the admin check
-    const adminResult = await new Promise<boolean>((resolve) => {
-      adminCheckRef.current = resolve;
-      // Safety timeout in case onAuthStateChange doesn't fire
-      setTimeout(() => {
-        if (adminCheckRef.current) {
-          adminCheckRef.current(false);
-          adminCheckRef.current = null;
-        }
-      }, 5000);
-    });
+    const adminResult = data.user ? await checkAdmin(data.user.id) : false;
     return { error: null, isAdmin: adminResult };
-  }, []);
+  }, [checkAdmin]);
 
   const signOut = useCallback(async () => {
     setIsAdmin(false);
