@@ -15,9 +15,10 @@ const AdminLogin: React.FC = () => {
   const { signIn, isAdmin, loading, user } = useAuth();
   const navigate = useNavigate();
 
+  // Redirect if already logged in as admin
   useEffect(() => {
     if (!loading && user && isAdmin) {
-      navigate('/admin/blog');
+      navigate('/admin/blog', { replace: true });
     }
   }, [loading, user, isAdmin, navigate]);
 
@@ -26,13 +27,22 @@ const AdminLogin: React.FC = () => {
     setError('');
     setSubmitting(true);
 
-    const { error } = await signIn(email, password);
-    if (error) {
-      setError(error.message === 'Invalid login credentials'
+    const result = await signIn(email, password);
+    
+    if (result.error) {
+      setError(result.error.message === 'Invalid login credentials'
         ? 'Credenciais inválidas. Verifique email e senha.'
-        : error.message);
+        : result.error.message);
+      setSubmitting(false);
+      return;
     }
-    setSubmitting(false);
+
+    if (result.isAdmin) {
+      navigate('/admin/blog', { replace: true });
+    } else {
+      setError('Você não tem permissão de administrador.');
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
