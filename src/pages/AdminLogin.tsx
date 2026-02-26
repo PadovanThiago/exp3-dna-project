@@ -27,20 +27,25 @@ const AdminLogin: React.FC = () => {
     setError('');
     setSubmitting(true);
 
-    const result = await signIn(email, password);
-    
-    if (result.error) {
-      setError(result.error.message === 'Invalid login credentials'
-        ? 'Credenciais inválidas. Verifique email e senha.'
-        : result.error.message);
-      setSubmitting(false);
-      return;
-    }
+    try {
+      const result = await signIn(email, password);
+      
+      if (result.error) {
+        setError(result.error.message === 'Invalid login credentials'
+          ? 'Credenciais inválidas. Verifique email e senha.'
+          : result.error.message);
+        setSubmitting(false);
+        return;
+      }
 
-    if (result.isAdmin) {
-      navigate('/admin/blog', { replace: true });
-    } else {
-      setError('Você não tem permissão de administrador.');
+      if (result.isAdmin) {
+        navigate('/admin/blog', { replace: true });
+      } else {
+        setError('Você não tem permissão de administrador.');
+        setSubmitting(false);
+      }
+    } catch {
+      setError('Erro inesperado. Tente novamente.');
       setSubmitting(false);
     }
   };

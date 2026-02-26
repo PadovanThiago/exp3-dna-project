@@ -73,12 +73,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [checkAdmin]);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      return { error, isAdmin: false };
+    try {
+      const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        return { error, isAdmin: false };
+      }
+      const adminResult = data.user ? await checkAdmin(data.user.id) : false;
+      return { error: null, isAdmin: adminResult };
+    } catch (err) {
+      return { error: err as Error, isAdmin: false };
     }
-    const adminResult = data.user ? await checkAdmin(data.user.id) : false;
-    return { error: null, isAdmin: adminResult };
   }, [checkAdmin]);
 
   const signOut = useCallback(async () => {
