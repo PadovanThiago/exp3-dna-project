@@ -17,6 +17,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminBlog from "./pages/AdminBlog";
 import AdminBlogEditor from "./pages/AdminBlogEditor";
 import NotFound from "./pages/NotFound";
+import DeckRedirect from "./pages/DeckRedirect";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
                 <Route path="/admin/blog" element={<AdminBlog />} />
                 <Route path="/admin/blog/new" element={<AdminBlogEditor />} />
                 <Route path="/admin/blog/edit/:id" element={<AdminBlogEditor />} />
+                <Route path="/deck" element={<DeckRedirect />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
