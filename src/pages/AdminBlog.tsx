@@ -17,6 +17,7 @@ const categoryLabels: Record<PostCategory, string> = {
 };
 
 const AdminBlog: React.FC = () => {
+  console.log('[AdminBlog] componente montado');
   const { isAdmin, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
