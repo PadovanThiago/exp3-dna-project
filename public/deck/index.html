@@ -305,6 +305,119 @@
   .s9cta:hover { background:var(--cyan-glow); transform:translateY(-2px); box-shadow:0 0 40px rgba(0,217,255,.4); }
   a.s9cta { text-decoration:none; }
   .s9n { margin-top:12px; font-size:11px; font-weight:400; color:var(--border); letter-spacing:.04em; }
+
+  /* ═══════ RESPONSIVE ═══════ */
+  @media (max-width: 768px) {
+    html, body { overflow: hidden; }
+    .deck { overflow: hidden; }
+
+    .slide { padding: clamp(20px, 4vw, 36px); padding-top: 64px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Logo */
+    .logo { top: 16px; left: 20px; font-size: 15px; }
+    .ltag { display: none; }
+
+    /* Nav dots → hide on mobile */
+    .dots { display: none; }
+
+    /* Nav bottom */
+    .nav { bottom: 14px; right: 16px; gap: 10px; }
+    .nb { width: 36px; height: 36px; font-size: 14px; }
+    .sc { font-size: 10px; min-width: 36px; }
+    .kh { display: none; }
+
+    /* Waves → smaller */
+    .wv-tr { width: 70% !important; opacity: 0.06 !important; }
+    .wv-bl { width: 60% !important; opacity: 0.05 !important; }
+
+    /* S1 Hero */
+    .s1b { padding-bottom: 72px; }
+    .s1h { font-size: clamp(26px, 7vw, 38px); max-width: 100%; }
+    .s1s { font-size: 14px; max-width: 100%; }
+    .ol { font-size: 9px; letter-spacing: 0.16em; }
+
+    /* S2 Tensão */
+    .s2b { padding-bottom: 72px; }
+    .s2h { font-size: clamp(22px, 6vw, 32px); max-width: 100%; }
+    .s2t { font-size: 13px; max-width: 100%; }
+    .s2c { padding: 12px 16px; max-width: 100%; }
+    .s2c p { font-size: 13px; }
+
+    /* S3 Grid → 1 col */
+    .s3g { grid-template-columns: 1fr; margin-top: 16px; gap: 20px; padding-bottom: 72px; }
+    .s3h { font-size: clamp(20px, 5.5vw, 28px); }
+    .s3t { font-size: 13px; }
+    .s3hl { font-size: 12px; padding: 14px 16px; }
+    .s3card { padding: 14px 16px; }
+    .s3ct { font-size: 12px; }
+    .s3cx { font-size: 11px; }
+
+    /* S4 Virada */
+    .s4c { padding-bottom: 72px; max-width: 100%; }
+    .s4h { font-size: clamp(22px, 6vw, 32px); }
+    .s4t { font-size: 13px; }
+
+    /* S5 Grid → 1 col */
+    .s5l { grid-template-columns: 1fr; margin-top: 16px; gap: 24px; padding-bottom: 72px; }
+    .s5h { font-size: clamp(20px, 5.5vw, 28px); }
+    .s5t { font-size: 13px; }
+    .s5v { padding: 14px 16px; }
+    .s5vt { font-size: 12px; }
+    .s5vx { font-size: 11px; }
+    .s5vi { font-size: 18px; }
+
+    /* S6 Metodologia → 1 col */
+    .s6top { margin-top: 16px; margin-bottom: 16px; }
+    .s6h { font-size: clamp(18px, 5vw, 26px); }
+    .s6s { font-size: 12px; }
+    .s6cards { grid-template-columns: 1fr; gap: 10px; padding-bottom: 72px; }
+    .s6card { padding: 18px 16px; }
+    .s6title { font-size: 14px; }
+    .s6text { font-size: 11px; }
+
+    /* S7 Grid → 1 col */
+    .s7l { grid-template-columns: 1fr; margin-top: 16px; gap: 20px; padding-bottom: 72px; }
+    .s7h { font-size: clamp(18px, 5vw, 26px); }
+    .s7t { font-size: 13px; }
+    .s7item { padding: 14px 16px; gap: 12px; }
+    .s7it { font-size: 12px; }
+    .s7ix { font-size: 11px; }
+    .s7n { font-size: 16px; min-width: 24px; }
+
+    /* S8 Grid → 2 col */
+    .s8top { margin-top: 16px; margin-bottom: 16px; }
+    .s8h { font-size: clamp(18px, 5vw, 26px); }
+    .s8grid { grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 72px; }
+    .s8card { padding: 16px 14px; }
+    .s8ic { font-size: 18px; margin-bottom: 8px; }
+    .s8tt { font-size: 12px; }
+    .s8tx { font-size: 11px; }
+    .s8dl { font-size: 9px; }
+
+    /* S9 Cases → 1 col */
+    .s9cases-top { margin-top: 16px; margin-bottom: 14px; }
+    .s9cases-grid { grid-template-columns: 1fr; gap: 12px; padding-bottom: 72px; }
+    .case-card { padding: 20px 18px; }
+    .case-title { font-size: 14px; }
+    .case-desc { font-size: 12px; }
+    .case-obj-text { font-size: 11px; }
+
+    /* S10 CTA */
+    .s9b { padding-bottom: 72px; max-width: 100%; }
+    .s9h { font-size: clamp(24px, 6.5vw, 34px); }
+    .s9t { font-size: 13px; max-width: 100%; }
+    .s9box { padding: 18px 20px; max-width: 100%; }
+    .s9bt { font-size: 12px; }
+    .s9box li { font-size: 12px; }
+    .s9cta { font-size: 13px; padding: 12px 24px; }
+  }
+
+  /* Small phones */
+  @media (max-width: 400px) {
+    .s8grid { grid-template-columns: 1fr; }
+    .s1h { font-size: 24px; }
+    .s9h { font-size: 22px; }
+  }
 </style>
 </head>
 <body>
