@@ -29,6 +29,7 @@ const AdminLogin: React.FC = () => {
 
     try {
       const result = await signIn(email, password);
+      console.log('[AdminLogin] signIn result:', JSON.stringify(result, null, 2));
       
       if (result.error) {
         setError(result.error.message === 'Invalid login credentials'
