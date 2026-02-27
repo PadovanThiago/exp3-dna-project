@@ -40,6 +40,7 @@ const AdminLogin: React.FC = () => {
       }
 
       if (result.isAdmin) {
+        console.log('[AdminLogin] isAdmin=true, calling navigate(/admin/blog)');
         navigate('/admin/blog', { replace: true });
       } else {
         setError('Você não tem permissão de administrador.');
