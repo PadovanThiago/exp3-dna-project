@@ -67,7 +67,7 @@ const AdminBlog: React.FC = () => {
     setPosts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  if (loading) {
+  if (loading || !adminChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Carregando...</div>
