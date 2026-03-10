@@ -28,26 +28,21 @@ const AdminLogin: React.FC = () => {
     setSubmitting(true);
 
     try {
-      const result = await signIn(email, password);
-      console.log('[AdminLogin] signIn result:', JSON.stringify(result, null, 2));
-      
-      if (result.error) {
-        setError(result.error.message === 'Invalid login credentials'
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (signInError) {
+        setError(signInError.message === 'Invalid login credentials'
           ? 'Credenciais inválidas. Verifique email e senha.'
-          : result.error.message);
-        setSubmitting(false);
+          : signInError.message);
         return;
       }
 
-      if (result.isAdmin) {
-        console.log('[AdminLogin] isAdmin=true, calling navigate(/admin/blog)');
-        navigate('/admin/blog', { replace: true });
-      } else {
-        setError('Você não tem permissão de administrador.');
-        setSubmitting(false);
-      }
+      // Login OK — navega direto; AdminBlog verifica se é admin
+      console.log('[AdminLogin] signIn OK, navigating to /admin/blog');
+      navigate('/admin/blog', { replace: true });
     } catch {
       setError('Erro inesperado. Tente novamente.');
+    } finally {
       setSubmitting(false);
     }
   };
