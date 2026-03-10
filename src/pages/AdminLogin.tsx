@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,15 +12,24 @@ const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { signIn, isAdmin, loading, user } = useAuth();
+  const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
 
-  // Redirect if already logged in as admin
+  // Se já estiver logado como admin, redireciona direto
   useEffect(() => {
-    if (!loading && user && isAdmin) {
-      navigate('/admin/blog', { replace: true });
-    }
-  }, [loading, user, isAdmin, navigate]);
+    const check = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' as const });
+        if (data) {
+          navigate('/admin/blog', { replace: true });
+          return;
+        }
+      }
+      setChecking(false);
+    };
+    check();
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,12 +43,9 @@ const AdminLogin: React.FC = () => {
         setError(signInError.message === 'Invalid login credentials'
           ? 'Credenciais inválidas. Verifique email e senha.'
           : signInError.message);
-        return;
+      } else {
+        navigate('/admin/blog', { replace: true });
       }
-
-      // Login OK — navega direto; AdminBlog verifica se é admin
-      console.log('[AdminLogin] signIn OK, navigating to /admin/blog');
-      navigate('/admin/blog', { replace: true });
     } catch {
       setError('Erro inesperado. Tente novamente.');
     } finally {
@@ -48,7 +53,7 @@ const AdminLogin: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Carregando...</div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,40 +16,12 @@ const categoryLabels: Record<PostCategory, string> = {
 };
 
 const AdminBlog: React.FC = () => {
-  console.log('[AdminBlog] componente montado');
-  const { loading, signOut } = useAuth();
-  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [fetching, setFetching] = useState(true);
-  const [adminChecked, setAdminChecked] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  // Verificação de admin independente do AuthContext
-  useEffect(() => {
-    if (loading) return;
-
-    const verify = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate('/admin/login', { replace: true });
-        return;
-      }
-      const { data } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' as const });
-      if (!data) {
-        console.log('[AdminBlog] user is not admin, redirecting');
-        navigate('/admin/login', { replace: true });
-        return;
-      }
-      console.log('[AdminBlog] admin verified');
-      setIsAdmin(true);
-      setAdminChecked(true);
-    };
-    verify();
-  }, [loading, navigate]);
 
   useEffect(() => {
-    if (adminChecked && isAdmin) fetchPosts();
-  }, [adminChecked, isAdmin]);
+    fetchPosts();
+  }, []);
 
   const fetchPosts = async () => {
     const { data } = await supabase
@@ -67,22 +38,14 @@ const AdminBlog: React.FC = () => {
     setPosts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  if (loading || !adminChecked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Carregando...</div>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return null;
-  }
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/admin/login';
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-12 px-4">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
@@ -96,13 +59,12 @@ const AdminBlog: React.FC = () => {
                 <Plus className="w-4 h-4 mr-2" /> Novo Post
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" onClick={signOut} title="Sair">
+            <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sair">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
-        {/* Posts list */}
         {fetching ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
