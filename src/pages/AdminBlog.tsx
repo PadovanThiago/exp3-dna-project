@@ -18,20 +18,39 @@ const categoryLabels: Record<PostCategory, string> = {
 
 const AdminBlog: React.FC = () => {
   console.log('[AdminBlog] componente montado');
-  const { isAdmin, loading, signOut } = useAuth();
+  const { loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [fetching, setFetching] = useState(true);
+  const [adminChecked, setAdminChecked] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Verificação de admin independente do AuthContext
+  useEffect(() => {
+    if (loading) return;
+
+    const verify = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/admin/login', { replace: true });
+        return;
+      }
+      const { data } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' as const });
+      if (!data) {
+        console.log('[AdminBlog] user is not admin, redirecting');
+        navigate('/admin/login', { replace: true });
+        return;
+      }
+      console.log('[AdminBlog] admin verified');
+      setIsAdmin(true);
+      setAdminChecked(true);
+    };
+    verify();
+  }, [loading, navigate]);
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      navigate('/admin/login');
-    }
-  }, [loading, isAdmin, navigate]);
-
-  useEffect(() => {
-    if (isAdmin) fetchPosts();
-  }, [isAdmin]);
+    if (adminChecked && isAdmin) fetchPosts();
+  }, [adminChecked, isAdmin]);
 
   const fetchPosts = async () => {
     const { data } = await supabase
