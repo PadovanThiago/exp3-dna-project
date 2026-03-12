@@ -34,6 +34,9 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
     setMeta('article:published_time', post.published_at || post.created_at);
     setMeta('article:author', post.author_name);
 
+    // Canonical URL
+    setLink('canonical', `https://exp3.ai/blog/${post.slug}`);
+
     // JSON-LD structured data
     const jsonLd = {
       '@context': 'https://schema.org',
@@ -89,4 +92,14 @@ function setMeta(name: string, content: string) {
 function removeJsonLd() {
   const el = document.getElementById('blog-jsonld');
   if (el) el.remove();
+}
+
+function setLink(rel: string, href: string) {
+  let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement;
+  if (!el) {
+    el = document.createElement('link');
+    el.rel = rel;
+    document.head.appendChild(el);
+  }
+  el.href = href;
 }

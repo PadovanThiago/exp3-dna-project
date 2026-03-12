@@ -38,6 +38,11 @@ const Blog: React.FC = () => {
       .eq('status', 'published')
       .order('published_at', { ascending: false });
 
+    // Debug temporário — remover após validação em produção
+    console.log('[Blog] Posts retornados:', data?.length ?? 0);
+    console.log('[Blog] Status de cada post:', data?.map(p => ({ slug: (p as any).slug, status: (p as any).status })));
+    if (error) console.error('[Blog] Erro na query:', error);
+
     if (!error && data) {
       setPosts(data as unknown as Post[]);
     }
