@@ -1,5 +1,6 @@
 export type PostCategory = 'article' | 'case_study' | 'news';
 export type PostStatus = 'draft' | 'published';
+export type PostLanguage = 'pt' | 'en';
 
 export interface Post {
   id: string;
