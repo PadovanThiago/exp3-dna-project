@@ -85,6 +85,7 @@ const AdminBlogEditor: React.FC = () => {
         meta_title: post.meta_title || '',
         meta_description: post.meta_description || '',
         og_image_url: post.og_image_url || '',
+        language: (post as any).language || 'pt',
       });
     }
   };
