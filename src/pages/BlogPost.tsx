@@ -30,6 +30,7 @@ const BlogPost: React.FC = () => {
       .select('*')
       .eq('slug', slug)
       .eq('status', 'published')
+      .eq('language', language)
       .maybeSingle();
 
     if (!error && data) {
