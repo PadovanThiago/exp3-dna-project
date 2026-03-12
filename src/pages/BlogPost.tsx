@@ -85,7 +85,7 @@ const BlogPost: React.FC = () => {
             <ol className="flex items-center gap-2 text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
               <li>/</li>
-              <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link to={language === 'en' ? '/en/blog' : '/blog'} className="hover:text-primary transition-colors">Blog</Link></li>
               <li>/</li>
               <li className="text-foreground truncate max-w-[200px]">{post.title}</li>
             </ol>
