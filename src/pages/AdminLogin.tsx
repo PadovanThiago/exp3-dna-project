@@ -37,13 +37,16 @@ const AdminLogin: React.FC = () => {
     setSubmitting(true);
 
     try {
+      console.log('[AdminLogin] Calling signInWithPassword…', { email });
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      console.log('[AdminLogin] signInWithPassword result:', { error: signInError });
 
       if (signInError) {
         setError(signInError.message === 'Invalid login credentials'
           ? 'Credenciais inválidas. Verifique email e senha.'
           : signInError.message);
       } else {
+        console.log('[AdminLogin] Navigating to /admin/blog');
         navigate('/admin/blog', { replace: true });
       }
     } catch {

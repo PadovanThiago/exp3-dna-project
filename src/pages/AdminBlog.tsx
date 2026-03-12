@@ -20,6 +20,7 @@ const AdminBlog: React.FC = () => {
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
+    console.log('[AdminBlog] Component mounted');
     fetchPosts();
   }, []);
 
