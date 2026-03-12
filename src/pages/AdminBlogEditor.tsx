@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { Post, PostCategory, PostStatus } from '@/types/blog';
+import type { Post, PostCategory, PostStatus, PostLanguage } from '@/types/blog';
 
 function slugify(text: string): string {
   return text
