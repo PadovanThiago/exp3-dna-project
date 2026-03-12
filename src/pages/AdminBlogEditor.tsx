@@ -122,6 +122,7 @@ const AdminBlogEditor: React.FC = () => {
       meta_title: form.meta_title || null,
       meta_description: form.meta_description || null,
       og_image_url: form.og_image_url || null,
+      language: form.language,
       published_at: status === 'published'
         ? (isEditing && form.status === 'published' ? undefined : new Date().toISOString())
         : null,
