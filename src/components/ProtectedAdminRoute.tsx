@@ -9,25 +9,38 @@ interface Props {
 const ProtectedAdminRoute: React.FC<Props> = ({ children }) => {
   const [state, setState] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
 
-  console.log('[ProtectedAdminRoute] Component mounted/rendered, state:', state);
-
   useEffect(() => {
-    const check = async () => {
-      console.log('[ProtectedAdminRoute] Checking auth…');
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('[ProtectedAdminRoute] getUser result:', user?.id ?? 'NO USER');
-      if (!user) {
-        console.log('[ProtectedAdminRoute] → unauthorized (no user)');
+    const checkAuth = async () => {
+      console.log('[ProtectedAdminRoute] Checking auth via getSession…');
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        console.log('[ProtectedAdminRoute] No session found → unauthorized');
         setState('unauthorized');
         return;
       }
+
+      const user = session.user;
+      console.log('[ProtectedAdminRoute] Session found, user:', user.id);
+
       const { data } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' as const });
       console.log('[ProtectedAdminRoute] has_role result:', data);
-      const newState = data ? 'authorized' : 'unauthorized';
-      console.log('[ProtectedAdminRoute] → setting state:', newState);
-      setState(newState);
+
+      setState(data ? 'authorized' : 'unauthorized');
     };
-    check();
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('[ProtectedAdminRoute] Auth state changed:', _event);
+      if (!session) {
+        setState('unauthorized');
+      } else {
+        checkAuth();
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   if (state === 'loading') {
