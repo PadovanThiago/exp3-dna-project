@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
+const ADMIN_EMAIL = 'thiago@exp3.ai';
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -18,14 +20,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  
 
-  const checkAdmin = useCallback(async (userId: string): Promise<boolean> => {
-    const { data } = await supabase.rpc('has_role', {
-      _user_id: userId,
-      _role: 'admin'
-    });
-    const result = !!data;
+  const checkAdmin = useCallback((email: string | undefined): boolean => {
+    const result = email === ADMIN_EMAIL;
     setIsAdmin(result);
     return result;
   }, []);
@@ -42,25 +39,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const timeout = setTimeout(resolve, 5000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-
-        if (session?.user) {
-          await checkAdmin(session.user.id);
-        } else {
-          setIsAdmin(false);
-        }
+        checkAdmin(session?.user?.email ?? undefined);
         resolve();
       }
     );
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        await checkAdmin(session.user.id);
-      }
+      checkAdmin(session?.user?.email ?? undefined);
       resolve();
     }).catch(() => {
       resolve();
@@ -78,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         return { error, isAdmin: false };
       }
-      const adminResult = data.user ? await checkAdmin(data.user.id) : false;
+      const adminResult = checkAdmin(data.user?.email ?? undefined);
       return { error: null, isAdmin: adminResult };
     } catch (err) {
       return { error: err as Error, isAdmin: false };
