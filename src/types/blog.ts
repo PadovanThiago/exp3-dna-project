@@ -19,6 +19,7 @@ export interface Post {
   og_image_url: string | null;
   published_at: string | null;
   created_at: string;
+  language: PostLanguage;
   updated_at: string;
 }
 
