@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
+const ADMIN_EMAIL = 'thiago@exp3.ai';
+
 interface Props {
   children: React.ReactNode;
 }
@@ -11,32 +13,23 @@ const ProtectedAdminRoute: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      console.log('[ProtectedAdminRoute] Checking auth via getSession…');
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (sessionError || !session) {
-        console.log('[ProtectedAdminRoute] No session found → unauthorized');
+      if (!session || session.user.email !== ADMIN_EMAIL) {
         setState('unauthorized');
         return;
       }
 
-      const user = session.user;
-      console.log('[ProtectedAdminRoute] Session found, user:', user.id);
-
-      const { data } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' as const });
-      console.log('[ProtectedAdminRoute] has_role result:', data);
-
-      setState(data ? 'authorized' : 'unauthorized');
+      setState('authorized');
     };
 
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('[ProtectedAdminRoute] Auth state changed:', _event);
-      if (!session) {
+      if (!session || session.user.email !== ADMIN_EMAIL) {
         setState('unauthorized');
       } else {
-        checkAuth();
+        setState('authorized');
       }
     });
 
