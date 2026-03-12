@@ -99,12 +99,17 @@ function removeJsonLd() {
   if (el) el.remove();
 }
 
-function setLink(rel: string, href: string) {
-  let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement;
+function setLink(id: string, href: string, rel: string = 'canonical', hreflang?: string) {
+  let el = document.querySelector(`link[data-seo-id="${id}"]`) as HTMLLinkElement;
   if (!el) {
     el = document.createElement('link');
+    el.setAttribute('data-seo-id', id);
     el.rel = rel;
     document.head.appendChild(el);
   }
+  el.rel = rel;
   el.href = href;
+  if (hreflang) {
+    el.hreflang = hreflang;
+  }
 }

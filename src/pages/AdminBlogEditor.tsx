@@ -230,6 +230,20 @@ const AdminBlogEditor: React.FC = () => {
               <h3 className="font-semibold text-foreground">Configurações</h3>
 
               <div className="space-y-2">
+                <Label>Idioma</Label>
+                <Select
+                  value={form.language}
+                  onValueChange={(v) => setForm({ ...form, language: v as PostLanguage })}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pt">Português</SelectItem>
+                    <SelectItem value="en">English</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Categoria</Label>
                 <Select
                   value={form.category}
