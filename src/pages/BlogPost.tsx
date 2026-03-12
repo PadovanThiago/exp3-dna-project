@@ -22,7 +22,7 @@ const BlogPost: React.FC = () => {
 
   useEffect(() => {
     if (slug) fetchPost();
-  }, [slug]);
+  }, [slug, language]);
 
   const fetchPost = async () => {
     const { data, error } = await supabase
