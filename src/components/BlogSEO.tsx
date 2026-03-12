@@ -35,7 +35,12 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
     setMeta('article:author', post.author_name);
 
     // Canonical URL
-    setLink('canonical', `https://exp3.ai/blog/${post.slug}`);
+    const langPrefix = post.language === 'en' ? '/en' : '';
+    setLink('canonical', `https://exp3.ai${langPrefix}/blog/${post.slug}`);
+
+    // Hreflang alternate links
+    setLink('alternate-pt', `https://exp3.ai/blog/${post.slug}`, 'alternate', 'pt');
+    setLink('alternate-en', `https://exp3.ai/en/blog/${post.slug}`, 'alternate', 'en');
 
     // JSON-LD structured data
     const jsonLd = {
