@@ -29,19 +29,15 @@ const Blog: React.FC = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [language]);
 
   const fetchPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
       .select('*')
       .eq('status', 'published')
+      .eq('language', language)
       .order('published_at', { ascending: false });
-
-    // Debug temporário — remover após validação em produção
-    console.log('[Blog] Posts retornados:', data?.length ?? 0);
-    console.log('[Blog] Status de cada post:', data?.map(p => ({ slug: (p as any).slug, status: (p as any).status })));
-    if (error) console.error('[Blog] Erro na query:', error);
 
     if (!error && data) {
       setPosts(data as unknown as Post[]);
@@ -160,7 +156,7 @@ const Blog: React.FC = () => {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
                   <Link
-                    to={`/blog/${post.slug}`}
+                    to={language === 'en' ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
                     className="glass-card overflow-hidden hover-lift group block h-full"
                   >
                     {/* Cover image */}

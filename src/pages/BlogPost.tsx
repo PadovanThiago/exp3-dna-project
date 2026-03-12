@@ -22,7 +22,7 @@ const BlogPost: React.FC = () => {
 
   useEffect(() => {
     if (slug) fetchPost();
-  }, [slug]);
+  }, [slug, language]);
 
   const fetchPost = async () => {
     const { data, error } = await supabase
@@ -30,6 +30,7 @@ const BlogPost: React.FC = () => {
       .select('*')
       .eq('slug', slug)
       .eq('status', 'published')
+      .eq('language', language)
       .maybeSingle();
 
     if (!error && data) {
@@ -63,7 +64,7 @@ const BlogPost: React.FC = () => {
             {language === 'pt' ? 'Post não encontrado' : 'Post not found'}
           </h1>
           <Button asChild variant="outline">
-            <Link to="/blog">
+            <Link to={language === 'en' ? '/en/blog' : '/blog'}>
               <ArrowLeft className="mr-2 w-4 h-4" />
               {language === 'pt' ? 'Voltar ao blog' : 'Back to blog'}
             </Link>
@@ -84,7 +85,7 @@ const BlogPost: React.FC = () => {
             <ol className="flex items-center gap-2 text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
               <li>/</li>
-              <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link to={language === 'en' ? '/en/blog' : '/blog'} className="hover:text-primary transition-colors">Blog</Link></li>
               <li>/</li>
               <li className="text-foreground truncate max-w-[200px]">{post.title}</li>
             </ol>
@@ -187,7 +188,7 @@ const BlogPost: React.FC = () => {
           {/* Back */}
           <div className="mt-12">
             <Button asChild variant="outline">
-              <Link to="/blog">
+              <Link to={language === 'en' ? '/en/blog' : '/blog'}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
                 {language === 'pt' ? 'Voltar ao blog' : 'Back to blog'}
               </Link>

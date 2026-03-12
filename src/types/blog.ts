@@ -1,5 +1,6 @@
 export type PostCategory = 'article' | 'case_study' | 'news';
 export type PostStatus = 'draft' | 'published';
+export type PostLanguage = 'pt' | 'en';
 
 export interface Post {
   id: string;
@@ -18,6 +19,7 @@ export interface Post {
   og_image_url: string | null;
   published_at: string | null;
   created_at: string;
+  language: PostLanguage;
   updated_at: string;
 }
 
@@ -35,5 +37,6 @@ export interface PostInsert {
   meta_title?: string | null;
   meta_description?: string | null;
   og_image_url?: string | null;
+  language?: PostLanguage;
   published_at?: string | null;
 }

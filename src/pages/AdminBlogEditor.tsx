@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { Post, PostCategory, PostStatus } from '@/types/blog';
+import type { Post, PostCategory, PostStatus, PostLanguage } from '@/types/blog';
 
 function slugify(text: string): string {
   return text
@@ -52,6 +52,7 @@ const AdminBlogEditor: React.FC = () => {
     meta_title: '',
     meta_description: '',
     og_image_url: '',
+    language: 'pt' as PostLanguage,
   });
 
   useEffect(() => {
@@ -84,6 +85,7 @@ const AdminBlogEditor: React.FC = () => {
         meta_title: post.meta_title || '',
         meta_description: post.meta_description || '',
         og_image_url: post.og_image_url || '',
+        language: (post as any).language || 'pt',
       });
     }
   };
@@ -120,6 +122,7 @@ const AdminBlogEditor: React.FC = () => {
       meta_title: form.meta_title || null,
       meta_description: form.meta_description || null,
       og_image_url: form.og_image_url || null,
+      language: form.language,
       published_at: status === 'published'
         ? (isEditing && form.status === 'published' ? undefined : new Date().toISOString())
         : null,
@@ -225,6 +228,20 @@ const AdminBlogEditor: React.FC = () => {
           <div className="space-y-6">
             <div className="glass-card p-6 space-y-4">
               <h3 className="font-semibold text-foreground">Configurações</h3>
+
+              <div className="space-y-2">
+                <Label>Idioma</Label>
+                <Select
+                  value={form.language}
+                  onValueChange={(v) => setForm({ ...form, language: v as PostLanguage })}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pt">Português</SelectItem>
+                    <SelectItem value="en">English</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
               <div className="space-y-2">
                 <Label>Categoria</Label>
