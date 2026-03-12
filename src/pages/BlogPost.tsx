@@ -188,7 +188,7 @@ const BlogPost: React.FC = () => {
           {/* Back */}
           <div className="mt-12">
             <Button asChild variant="outline">
-              <Link to="/blog">
+              <Link to={language === 'en' ? '/en/blog' : '/blog'}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
                 {language === 'pt' ? 'Voltar ao blog' : 'Back to blog'}
               </Link>
