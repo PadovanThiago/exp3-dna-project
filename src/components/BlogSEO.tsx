@@ -93,3 +93,13 @@ function removeJsonLd() {
   const el = document.getElementById('blog-jsonld');
   if (el) el.remove();
 }
+
+function setLink(rel: string, href: string) {
+  let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement;
+  if (!el) {
+    el = document.createElement('link');
+    el.rel = rel;
+    document.head.appendChild(el);
+  }
+  el.href = href;
+}
