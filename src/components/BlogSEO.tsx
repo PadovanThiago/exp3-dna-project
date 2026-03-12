@@ -34,6 +34,9 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
     setMeta('article:published_time', post.published_at || post.created_at);
     setMeta('article:author', post.author_name);
 
+    // Canonical URL
+    setLink('canonical', `https://exp3.ai/blog/${post.slug}`);
+
     // JSON-LD structured data
     const jsonLd = {
       '@context': 'https://schema.org',
