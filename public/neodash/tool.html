@@ -1,0 +1,1987 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>NeoDash.ai — Mapa de Conhecimento v3 | EXP³</title>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ <style>
+/* ═══════════════════════════════════
+  DESIGN TOKENS — DARK (default)
+═══════════════════════════════════ */
+:root {
+ --bg:       #080c16;
+ --card:     #0b111e;
+ --card2:    #0e1626;
+ --sec:      #1d2839;
+ --border:   #232f43;
+ --text:     #f8fafc;
+ --soft:     #cbd5e1;
+ --muted:    #94a3b8;
+ --cyan:     #00e1ff;
+ --cyan-bg:  rgba(0,225,255,.07);
+ --cyan-bd:  rgba(0,225,255,.18);
+ --orange:   #ff6d33;
+ --ora-bg:   rgba(255,109,51,.07);
+ --ora-bd:   rgba(255,109,51,.18);
+ --green:    #00c78b;
+ --grn-bg:   rgba(0,199,139,.07);
+ --grn-bd:   rgba(0,199,139,.18);
+ --shadow:   0 2px 12px rgba(0,0,0,.35);
+ --edit-ring: rgba(0,225,255,.35);
+ --radius:   .75rem;
+}
+/* ═══════════════════════════════════
+  DESIGN TOKENS — LIGHT
+═══════════════════════════════════ */
+body.light {
+ --bg:       #f1f5f9;
+ --card:     #ffffff;
+ --card2:    #f8fafc;
+ --sec:      #f1f5f9;
+ --border:   #e2e8f0;
+ --text:     #0f172a;
+ --soft:     #334155;
+ --muted:    #64748b;
+ --cyan:     #0284c7;
+ --cyan-bg:  rgba(2,132,199,.07);
+ --cyan-bd:  rgba(2,132,199,.2);
+ --orange:   #c2410c;
+ --ora-bg:   rgba(194,65,12,.07);
+ --ora-bd:   rgba(194,65,12,.2);
+ --green:    #059669;
+ --grn-bg:   rgba(5,150,105,.07);
+ --grn-bd:   rgba(5,150,105,.2);
+ --shadow:   0 1px 3px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.05);
+ --edit-ring: rgba(2,132,199,.3);
+}
+ 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+ background: var(--bg);
+ color: var(--text);
+ min-height: 100vh;
+ font-size: 14px;
+ line-height: 1.6;
+ transition: background .3s, color .3s;
+}
+ 
+/* ═══════════════════════════════════
+  HEADER
+═══════════════════════════════════ */
+header {
+ background: var(--card);
+ border-bottom: 1px solid var(--border);
+ padding: 12px 24px;
+ display: flex;
+ align-items: center;
+ gap: 16px;
+ position: sticky;
+ top: 0;
+ z-index: 200;
+ backdrop-filter: blur(12px);
+}
+.logo { font-size: 18px; font-weight: 700; color: var(--text); flex-shrink: 0; }
+.logo sup { color: var(--cyan); font-size: 12px; }
+.hdr-center { flex: 1; text-align: center; }
+.hdr-center h1 { font-size: 14px; font-weight: 600; }
+.hdr-center p  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.hdr-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+ 
+.toolbar-btn {
+ display: inline-flex; align-items: center; gap: 5px;
+ background: var(--sec); border: 1px solid var(--border);
+ border-radius: 8px; padding: 6px 12px;
+ font-family: inherit; font-size: 12px; font-weight: 500;
+ color: var(--muted); cursor: pointer;
+ transition: all .15s;
+ white-space: nowrap;
+}
+.toolbar-btn:hover { color: var(--text); border-color: var(--cyan); }
+.toolbar-btn.edit-btn.on { color: var(--orange); border-color: var(--ora-bd); background: var(--ora-bg); }
+.save-dot {
+ width: 7px; height: 7px; border-radius: 50%;
+ background: var(--muted); flex-shrink: 0;
+ transition: background .3s;
+}
+.save-dot.saved { background: var(--green); }
+ 
+/* ═══════════════════════════════════
+  TABS
+═══════════════════════════════════ */
+.tabs-bar {
+ background: var(--card); border-bottom: 1px solid var(--border);
+ padding: 0 24px; position: sticky; top: 57px; z-index: 190;
+ overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.tabs-bar::-webkit-scrollbar { height: 3px; }
+.tabs-bar::-webkit-scrollbar-thumb { background: var(--border); }
+.tabs { display: flex; min-width: max-content; }
+.tab-btn {
+ background: none; border: none;
+ color: var(--muted); font-family: inherit; font-size: 13px; font-weight: 500;
+ padding: 13px 14px; cursor: pointer;
+ border-bottom: 2px solid transparent;
+ transition: color .2s, border-color .2s;
+ white-space: nowrap; display: flex; align-items: center; gap: 4px;
+}
+.tab-btn:hover { color: var(--soft); }
+.tab-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.tab-close {
+ display: none; font-size: 12px; color: var(--muted);
+ background: none; border: none; cursor: pointer;
+ padding: 2px 3px; border-radius: 3px;
+ line-height: 1;
+}
+body.editing .tab-close { display: inline; }
+.tab-close:hover { background: var(--ora-bg); color: var(--orange); }
+.add-tab-btn {
+ display: none; align-items: center; gap: 5px;
+ background: none; border: 1px dashed var(--border);
+ color: var(--muted); font-family: inherit; font-size: 12px; font-weight: 500;
+ padding: 6px 12px; margin: 8px 0 8px 8px;
+ border-radius: 8px; cursor: pointer;
+ transition: all .15s;
+}
+body.editing .add-tab-btn { display: flex; }
+.add-tab-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+ 
+/* ═══════════════════════════════════
+  MAIN / PANELS
+═══════════════════════════════════ */
+main { max-width: 1180px; margin: 0 auto; padding: 26px 24px 80px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+ 
+/* ═══════════════════════════════════
+  QUESTION HEADER
+═══════════════════════════════════ */
+.q-header {
+ background: var(--card); border: 1px solid var(--border);
+ border-radius: var(--radius); padding: 22px 24px; margin-bottom: 14px;
+ box-shadow: var(--shadow);
+}
+.q-eyebrow {
+ font-size: 11px; font-weight: 600; color: var(--cyan);
+ text-transform: uppercase; letter-spacing: .09em; margin-bottom: 7px;
+}
+.q-title {
+ font-size: 20px; font-weight: 700; line-height: 1.3;
+ margin-bottom: 10px;
+}
+.q-contexto { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.65; }
+.q-keys-row { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+.q-keys-label { font-size: 11px; color: var(--muted); }
+ 
+/* chips */
+.chip {
+ display: inline-flex; align-items: center; gap: 5px;
+ border-radius: 6px; padding: 3px 9px;
+ font-size: 12px; font-weight: 500; font-family: 'Courier New', monospace;
+}
+.chip-ok   { background: var(--cyan-bg); border: 1px solid var(--cyan-bd); color: var(--cyan); }
+.chip-warn { background: var(--ora-bg);  border: 1px solid var(--ora-bd);  color: var(--orange); }
+.chip-pend { background: rgba(148,163,184,.07); border: 1px dashed rgba(148,163,184,.25); color: var(--muted); font-style: italic; }
+.chip-metrica { background: rgba(255,109,51,.06); border: 1px solid rgba(255,109,51,.2); color: var(--orange); cursor: default; }
+.chip-remove {
+ display: none; background: none; border: none; cursor: pointer;
+ color: inherit; opacity: .6; font-size: 13px; padding: 0; line-height: 1;
+}
+body.editing .chip-remove { display: inline; }
+body.editing .chip-remove:hover { opacity: 1; }
+.add-key-btn {
+ display: none; align-items: center; gap: 4px;
+ background: none; border: 1px dashed var(--border);
+ color: var(--muted); font-family: inherit; font-size: 11px;
+ padding: 3px 9px; border-radius: 6px; cursor: pointer;
+ transition: all .15s;
+}
+body.editing .add-key-btn { display: inline-flex; }
+.add-key-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+.add-key-input {
+ background: var(--sec); border: 1px solid var(--cyan);
+ color: var(--text); font-family: 'Courier New', monospace; font-size: 12px;
+ padding: 3px 9px; border-radius: 6px; width: 160px;
+ outline: none;
+}
+ 
+/* ═══════════════════════════════════
+  IMPLEMENTATION BLOCK (per pergunta)
+═══════════════════════════════════ */
+.impl-block {
+ background: var(--card2); border: 1px solid var(--border);
+ border-radius: var(--radius); padding: 12px 18px;
+ margin-bottom: 22px;
+ display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+ transition: background .3s, border-color .3s;
+ box-shadow: var(--shadow);
+}
+.impl-block.is-done {
+ background: var(--grn-bg);
+ border-color: var(--grn-bd);
+}
+.impl-checks { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+.impl-check-btn {
+ display: inline-flex; align-items: center; gap: 6px;
+ background: none; border: 1px solid var(--border);
+ border-radius: 7px; padding: 5px 11px;
+ font-family: inherit; font-size: 12px; font-weight: 500;
+ color: var(--muted); cursor: pointer;
+ transition: all .15s;
+}
+.impl-check-btn:hover { border-color: var(--green); color: var(--green); }
+.impl-check-btn.checked {
+ background: var(--grn-bg); border-color: var(--grn-bd); color: var(--green);
+}
+.impl-check-icon { font-size: 14px; }
+.impl-divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+.impl-link-wrap { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px; }
+.impl-link-label { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.impl-link-field {
+ flex: 1; font-size: 12px; color: var(--cyan); outline: none;
+ border-radius: 4px; padding: 2px 6px;
+ font-family: 'Courier New', monospace;
+ transition: box-shadow .15s;
+ white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.impl-link-field:empty::before { content: attr(data-placeholder); color: var(--muted); font-style: italic; }
+body.editing .impl-link-field:hover { box-shadow: 0 0 0 2px var(--edit-ring); }
+body.editing .impl-link-field:focus { box-shadow: 0 0 0 2px var(--cyan); background: var(--cyan-bg); }
+ 
+/* ═══════════════════════════════════
+  INSIGHTS GRID
+═══════════════════════════════════ */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 840px) { .grid { grid-template-columns: 1fr; } }
+ 
+/* ─── INSIGHT CARD ─── */
+.icard {
+ background: var(--card); border: 1px solid var(--border);
+ border-left: 3px solid var(--cyan);
+ border-radius: var(--radius); overflow: hidden;
+ display: flex; flex-direction: column;
+ box-shadow: var(--shadow);
+ transition: background .3s, border-color .3s;
+ position: relative;
+}
+ 
+.icard-head {
+ padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+ display: flex; align-items: flex-start;
+ justify-content: space-between; gap: 10px;
+}
+.icard-type { font-size: 10px; color: var(--muted); margin-bottom: 3px; font-weight: 500; }
+.icard-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+ 
+/* remove card button */
+.remove-card-btn {
+ display: none; background: none; border: none; cursor: pointer;
+ color: var(--muted); font-size: 15px; padding: 2px 4px;
+ line-height: 1; border-radius: 4px;
+}
+body.editing .remove-card-btn { display: block; }
+.remove-card-btn:hover { color: var(--orange); background: var(--ora-bg); }
+ 
+.icard-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+ 
+/* sections */
+.sec-label {
+ font-size: 10px; font-weight: 600; text-transform: uppercase;
+ letter-spacing: .09em; color: var(--muted); margin-bottom: 5px;
+}
+.sec-text { font-size: 13px; color: var(--soft); line-height: 1.65; }
+.quote {
+ border-left: 2px solid var(--border); padding-left: 10px;
+ font-size: 12px; font-style: italic; color: var(--muted); margin-top: 6px;
+}
+ 
+/* ═══════════════════════════════════
+  MÉTRICAS & REGRAS BLOCK
+═══════════════════════════════════ */
+.mr-block {
+ background: var(--ora-bg); border: 1px solid var(--ora-bd);
+ border-left: 3px solid var(--orange);
+ border-radius: 6px; padding: 11px 13px;
+ display: flex; flex-direction: column; gap: 9px;
+}
+.mr-header {
+ font-size: 10px; font-weight: 700; text-transform: uppercase;
+ letter-spacing: .09em; color: var(--orange); margin-bottom: 2px;
+}
+.mr-row { display: flex; flex-direction: column; gap: 5px; }
+.mr-sub {
+ font-size: 10px; font-weight: 600; text-transform: uppercase;
+ letter-spacing: .08em; color: var(--muted);
+}
+.mr-chips { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.add-metrica-btn {
+ display: none; align-items: center; gap: 4px;
+ background: none; border: 1px dashed var(--ora-bd);
+ color: var(--orange); font-family: inherit; font-size: 11px;
+ padding: 2px 8px; border-radius: 6px; cursor: pointer;
+ transition: all .15s; opacity: .7;
+}
+body.editing .add-metrica-btn { display: inline-flex; }
+.add-metrica-btn:hover { opacity: 1; }
+.add-metrica-input {
+ background: var(--card); border: 1px solid var(--orange);
+ color: var(--text); font-family: 'Courier New', monospace; font-size: 12px;
+ padding: 2px 8px; border-radius: 6px; width: 150px;
+ outline: none;
+}
+.regra-text {
+ font-size: 12px; color: var(--soft); line-height: 1.6;
+ font-family: 'Courier New', monospace;
+ background: rgba(0,0,0,.15); border-radius: 4px; padding: 6px 9px;
+ min-height: 2.5em;
+}
+body.light .regra-text { background: rgba(0,0,0,.04); }
+.regra-text:empty::before { content: 'Descreva a lógica condicional…'; color: var(--muted); font-style: italic; }
+ 
+/* lists */
+ul.rules, ul.acts {
+ list-style: none; display: flex; flex-direction: column; gap: 4px;
+}
+ul.rules li, ul.acts li {
+ font-size: 13px; color: var(--soft);
+ padding-left: 16px; position: relative; line-height: 1.55;
+ display: flex; align-items: flex-start; gap: 6px;
+}
+ul.rules li::before { content: '→'; position: absolute; left: 0; color: var(--cyan); font-size: 11px; top: 2px; }
+ul.acts  li::before { content: '✦'; position: absolute; left: 0; color: var(--green); font-size: 10px; top: 3px; }
+.li-text { flex: 1; outline: none; }
+.li-del {
+ display: none; background: none; border: none; cursor: pointer;
+ color: var(--muted); font-size: 14px; padding: 0 2px; flex-shrink: 0;
+ line-height: 1; opacity: .5;
+}
+body.editing .li-del { display: block; }
+.li-del:hover { color: var(--orange); opacity: 1; }
+.add-li-btn {
+ display: none; align-items: center; gap: 4px;
+ background: none; border: 1px dashed var(--border);
+ color: var(--muted); font-family: inherit; font-size: 11px;
+ padding: 4px 10px; border-radius: 6px; cursor: pointer;
+ margin-top: 4px; transition: all .15s;
+}
+body.editing .add-li-btn { display: inline-flex; }
+.add-li-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+ 
+/* emergent & open */
+.emergent-box {
+ background: var(--cyan-bg); border: 1px solid var(--cyan-bd);
+ border-radius: 6px; padding: 10px 12px;
+}
+.emergent-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--cyan); margin-bottom: 4px; }
+.emergent-title { font-size: 12px; font-weight: 600; color: var(--soft); margin-bottom: 3px; }
+.emergent-text  { font-size: 12px; color: var(--soft); line-height: 1.55; }
+ 
+.open-box {
+ background: var(--sec); border: 1px solid var(--border);
+ border-radius: 6px; padding: 10px 12px;
+}
+.open-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+ 
+/* add card btn */
+.add-card-wrap { display: none; grid-column: 1 / -1; }
+body.editing .add-card-wrap { display: block; }
+.add-card-btn {
+ width: 100%; background: none; border: 1px dashed var(--border);
+ color: var(--muted); font-family: inherit; font-size: 13px; font-weight: 500;
+ padding: 14px; border-radius: var(--radius); cursor: pointer;
+ transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.add-card-btn:hover { color: var(--cyan); border-color: var(--cyan); background: var(--cyan-bg); }
+ 
+/* section divider */
+.sec-divider {
+ font-size: 11px; font-weight: 600; color: var(--muted);
+ text-transform: uppercase; letter-spacing: .1em;
+ margin: 24px 0 14px; display: flex; align-items: center; gap: 10px;
+}
+.sec-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+ 
+/* ═══════════════════════════════════
+  DEFINIÇÃO ANALÍTICA BLOCK
+═══════════════════════════════════ */
+.da-block {
+ background: var(--grn-bg); border: 1px solid var(--grn-bd);
+ border-left: 3px solid var(--green);
+ border-radius: 6px; padding: 11px 13px;
+ display: flex; flex-direction: column; gap: 9px;
+}
+.da-header {
+ font-size: 10px; font-weight: 700; text-transform: uppercase;
+ letter-spacing: .09em; color: var(--green); margin-bottom: 2px;
+}
+.da-row { display: flex; flex-direction: column; gap: 5px; }
+.da-sub {
+ font-size: 10px; font-weight: 600; text-transform: uppercase;
+ letter-spacing: .08em; color: var(--muted);
+}
+.da-chips { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.chip-comp {
+ background: rgba(0,199,139,.06); border: 1px solid rgba(0,199,139,.2);
+ color: var(--green); cursor: default;
+}
+.add-comp-btn {
+ display: none; align-items: center; gap: 4px;
+ background: none; border: 1px dashed var(--grn-bd);
+ color: var(--green); font-family: inherit; font-size: 11px;
+ padding: 2px 8px; border-radius: 6px; cursor: pointer;
+ transition: all .15s; opacity: .7;
+}
+body.editing .add-comp-btn { display: inline-flex; }
+.add-comp-btn:hover { opacity: 1; }
+.add-comp-input {
+ background: var(--card); border: 1px solid var(--green);
+ color: var(--text); font-family: 'Courier New', monospace; font-size: 12px;
+ padding: 2px 8px; border-radius: 6px; width: 160px;
+ outline: none;
+}
+.da-text {
+ font-size: 12px; color: var(--soft); line-height: 1.6;
+ font-family: 'Courier New', monospace;
+ background: rgba(0,0,0,.15); border-radius: 4px; padding: 6px 9px;
+ min-height: 2.5em;
+}
+body.light .da-text { background: rgba(0,0,0,.04); }
+.da-text:empty::before { content: attr(data-placeholder); color: var(--muted); font-style: italic; }
+.da-link-row { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+.da-link-field {
+ flex: 1; font-size: 12px; color: var(--cyan); outline: none;
+ border-radius: 4px; padding: 4px 8px; min-width: 0;
+ font-family: 'Courier New', monospace;
+ background: rgba(0,0,0,.1); border-radius: 4px;
+ transition: box-shadow .15s;
+ word-break: break-all;
+}
+body.light .da-link-field { background: rgba(0,0,0,.04); }
+.da-link-field:empty::before { content: 'cole o link da aba do dashboard…'; color: var(--muted); font-style: italic; }
+body.editing .da-link-field:hover { box-shadow: 0 0 0 2px var(--edit-ring); }
+body.editing .da-link-field:focus { box-shadow: 0 0 0 2px var(--cyan); background: var(--cyan-bg); }
+.da-link-open {
+ display: none; background: none; border: 1px solid var(--grn-bd);
+ color: var(--green); font-family: inherit; font-size: 11px;
+ padding: 3px 9px; border-radius: 5px; cursor: pointer;
+ white-space: nowrap; flex-shrink: 0;
+ transition: all .15s; text-decoration: none;
+ align-items: center; gap: 4px;
+}
+.da-link-open.visible { display: inline-flex; }
+.da-link-open:hover { background: var(--grn-bg); }
+ 
+/* ═══════════════════════════════════
+  CONTENTEDITABLE
+═══════════════════════════════════ */
+[contenteditable] {
+ border-radius: 3px; outline: none;
+ transition: box-shadow .15s;
+}
+body.editing [contenteditable]:hover { box-shadow: 0 0 0 2px var(--edit-ring); }
+body.editing [contenteditable]:focus { box-shadow: 0 0 0 2px var(--cyan); background: var(--cyan-bg); }
+ 
+/* ═══════════════════════════════════
+  OVERVIEW
+═══════════════════════════════════ */
+.ov-intro {
+ background: var(--card); border: 1px solid var(--border);
+ border-radius: var(--radius); padding: 24px 26px; margin-bottom: 22px;
+ box-shadow: var(--shadow);
+}
+.ov-intro h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+.ov-intro p  { font-size: 13px; color: var(--soft); line-height: 1.7; margin-bottom: 8px; }
+.method-flow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.mstep {
+ background: var(--sec); border: 1px solid var(--border);
+ border-radius: 8px; padding: 7px 14px;
+ font-size: 13px; font-weight: 600;
+}
+.mstep.cyan { border-color: var(--cyan-bd); color: var(--cyan); background: var(--cyan-bg); }
+.marrow { color: var(--cyan); font-size: 16px; }
+ 
+.stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+.stat-card {
+ background: var(--card); border: 1px solid var(--border);
+ border-radius: var(--radius); padding: 16px 20px; flex: 1; min-width: 120px;
+ box-shadow: var(--shadow);
+}
+.stat-num  { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.stat-desc { font-size: 12px; color: var(--muted); }
+.c-cyan  { color: var(--cyan); }
+.c-green { color: var(--green); }
+.c-ora   { color: var(--orange); }
+.c-muted { color: var(--muted); }
+ 
+.prog-bar-wrap { margin-top: 6px; }
+.prog-bar-track {
+ width: 100%; height: 4px; background: var(--border);
+ border-radius: 2px; overflow: hidden;
+}
+.prog-bar-fill {
+ height: 100%; border-radius: 2px;
+ transition: width .5s ease;
+}
+ 
+.meth-grid {
+ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 18px;
+}
+@media (max-width: 700px) { .meth-grid { grid-template-columns: 1fr; } }
+.meth-card {
+ background: var(--card2); border: 1px solid var(--border);
+ border-radius: var(--radius); padding: 14px 16px;
+}
+.meth-card-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 7px; }
+.meth-card-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+.meth-card-desc  { font-size: 12px; color: var(--soft); line-height: 1.6; }
+ 
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.ov-card {
+ background: var(--card); border: 1px solid var(--border);
+ border-radius: var(--radius); overflow: hidden; cursor: pointer;
+ transition: border-color .2s, box-shadow .2s;
+ box-shadow: var(--shadow);
+}
+.ov-card:hover { border-color: var(--cyan); }
+.ov-card-head {
+ padding: 13px 15px; border-bottom: 1px solid var(--border);
+ display: flex; align-items: center; gap: 10px;
+}
+.ov-pnum {
+ width: 30px; height: 30px; border-radius: 7px;
+ background: var(--cyan-bg); border: 1px solid var(--cyan-bd);
+ display: flex; align-items: center; justify-content: center;
+ font-size: 12px; font-weight: 700; color: var(--cyan); flex-shrink: 0;
+}
+.ov-qtitle { font-size: 13px; font-weight: 600; line-height: 1.3; flex: 1; }
+.ov-impl-dot {
+ width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+ transition: background .3s;
+}
+.ov-impl-dot.done   { background: var(--green); }
+.ov-impl-dot.partial { background: var(--orange); }
+.ov-impl-dot.none   { background: var(--border); }
+.ov-tipos { padding: 10px 15px; display: flex; flex-direction: column; gap: 6px; }
+.ov-tipo { display: flex; align-items: center; gap: 8px; }
+.ov-tname { font-size: 12px; color: var(--soft); flex: 1; }
+.ov-tnum { font-size: 10px; color: var(--muted); font-weight: 600; }
+.ov-card-footer {
+ padding: 8px 15px; border-top: 1px solid var(--border);
+ display: flex; gap: 12px;
+}
+.ov-footer-tag {
+ font-size: 11px; color: var(--muted);
+ display: flex; align-items: center; gap: 4px;
+}
+.ov-footer-tag.ok { color: var(--green); }
+ 
+/* ═══════════════════════════════════
+  EDIT MODE INDICATOR
+═══════════════════════════════════ */
+.edit-banner {
+ display: none; background: var(--ora-bg); border-bottom: 1px solid var(--ora-bd);
+ padding: 8px 24px; font-size: 12px; color: var(--orange); font-weight: 500;
+ align-items: center; gap: 8px;
+}
+body.editing .edit-banner { display: flex; }
+ 
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--sec); }
+ </style>
+</head>
+<body>
+ 
+<header>
+ <div class="logo">EXP<sup>³</sup></div>
+ <div class="hdr-center">
+   <h1>NeoDash.ai — Mapa de Conhecimento</h1>
+   <p>Etapa 2, Fase 1 &nbsp;·&nbsp; EXP³ × NeoPerformance &nbsp;·&nbsp; v3</p>
+ </div>
+ <div class="hdr-right">
+   <button class="toolbar-btn edit-btn" id="editToggle" onclick="toggleEdit()">✏️ Editar</button>
+   <button class="toolbar-btn" id="themeToggle" onclick="toggleTheme()">☀️ Light</button>
+   <span class="toolbar-btn" id="saveStatus" style="cursor:default">
+     <span class="save-dot" id="saveDot"></span>
+     <span id="saveLabel">Salvo</span>
+   </span>
+   <button class="toolbar-btn" onclick="exportHTML()">⬇ Exportar</button>
+   <button class="toolbar-btn" onclick="resetData()">↺ Resetar</button>
+ </div>
+</header>
+ 
+<div class="edit-banner">
+ ✏️ Modo Edição — edite qualquer texto clicando. Adicione/remova métricas e itens. Checkboxes sempre clicáveis.
+</div>
+ 
+<div class="tabs-bar">
+ <nav class="tabs" id="tabNav"></nav>
+</div>
+ 
+<main id="appRoot"></main>
+ 
+<script>
+/* ═══════════════════════════════════════════════════════
+  DATA — Mapa de Conhecimento NeoDash v3
+  (6 perguntas × 4 tipos = 24 insights)
+  (substituída no Export com estado atual)
+═══════════════════════════════════════════════════════ */
+const DATA_DEFAULT = [
+ {
+   id: 'p1', label: 'P1',
+   titulo: 'Crescemos receita com ganho ou perda de eficiência?',
+   contexto: 'Foco em ROAS como métrica central de eficiência. O crescimento só é "saudável" quando receita e ROAS caminham juntos.',
+   componentes: true, done: true,
+   linkDashboard: 'neodash.ai/dashboard/eficiencia',
+   keys: [
+     { nome: 'ROI', status: 'ok' },
+     { nome: 'custo_total', status: 'ok' },
+     { nome: 'investido_total', status: 'ok' },
+     { nome: 'valor_conversoes', status: 'ok' }
+   ],
+   tipos: [
+     {
+       num: 'T1', nome: 'Crescimento Saudável',
+       metricas: ['ROI', 'investido_total', 'valor_conversoes'],
+       regras: 'ROI(atual) > ROI(anterior) E valor_conversoes(atual) > valor_conversoes(anterior) E investido_total >= threshold_minimo_conversoes',
+       interpretacao: 'Receita e ROAS crescem juntos — o sinal mais positivo. O adjetivo "saudável" só se sustenta com o tripé mínimo: ROAS atual, comparação com período anterior e volume total investido.',
+       parametros: [
+         'Tripé mínimo: ROAS atual + ROAS anterior + volume total investido',
+         'Comparação: semana a semana ou mês a mês (definir por cliente)',
+         'Regra do dobro: mínimo 2× CPA para julgamento válido',
+         '50 conversões mínimas (requisito de aprendizado Meta)'
+       ],
+       acionaveis: [
+         'Escalar investimento no canal ou campanha que puxou a eficiência',
+         'Identificar qual campanha contribuiu para o ROAS elevado'
+       ],
+       emergentes: [{ titulo: 'Tripé do Crescimento Saudável', texto: 'ROAS + crescimento de receita + volume total = mínimo para classificar como saudável. Percentuais isolados não comunicam escala.' }],
+       quote: ''
+     },
+     {
+       num: 'T2', nome: 'Crescimento Linear / Previsível',
+       metricas: ['ROI', 'investido_total'],
+       regras: 'ROI(atual) estável em relação a ROI(anterior) (variação ≤ ±10%) E investido_total(atual) > investido_total(anterior)',
+       interpretacao: 'Investimento cresce, ROAS mantém-se estável. A tendência natural é o ROAS degradar quando se escala — mantê-lo vai contra a corrente. Avaliação positiva, não neutra.',
+       parametros: [
+         'Classificação: avaliação positiva (não meramente descritiva)',
+         'Tendência natural: ROAS degrada ao escalar → manutenção é mérito',
+         'Henrique: "ROAS não existe em estado neutro — existe positivo e negativo"'
+       ],
+       acionaveis: [
+         'Redistribuir orçamento de campanhas ineficientes para as eficientes',
+         'Monitorar se a estabilidade se mantém com novos incrementos de budget'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T3', nome: 'Perda de Eficiência',
+       metricas: ['ROI', 'investido_total', 'valor_conversoes'],
+       regras: 'ROI(atual) < ROI(anterior) E valor_conversoes(atual) > valor_conversoes(anterior). Alerta crítico: ROI < 1',
+       interpretacao: 'ROAS caiu apesar do crescimento de receita = aumento de custo por venda. Causa preferida: "presença da concorrência" ou "força da concorrência" — não "concorrência" genérico.',
+       parametros: [
+         'Causa: "presença/força da concorrência" (fator externo) → aumento de CPM',
+         'ROAS < 1: alerta crítico — cada real investido não retorna ao caixa',
+         'Layer Explain: narrativa para o cliente = calma e orientada à ação'
+       ],
+       acionaveis: [
+         'Reduzir ou pausar campanhas com ROAS abaixo do target',
+         'ROAS < 1 = pausar imediatamente (perda total de capital comprovada)'
+       ],
+       emergentes: [],
+       quote: '"Por favor, não bote mais dinheiro aqui." — Henrique, sobre ROAS < 1'
+     },
+     {
+       num: 'T4', nome: 'Ganho de Eficiência sem Crescimento',
+       metricas: ['ROI', 'investido_total'],
+       regras: 'ROI(atual) > ROI(anterior) E investido_total(atual) < investido_total(anterior). Variante: ROI↓ E investido↓ = Degradação de Eficiência',
+       interpretacao: 'Investimento caiu + ROAS subiu = ganho de eficiência. Adendo: quando o motor ainda está ligado (ROAS subindo), pode haver janela de reinvestimento não aproveitada.',
+       parametros: [
+         'Regra do dobro: mínimo 2× CPA para julgamento válido',
+         '50 conversões mínimas (Meta) para julgamento legítimo',
+         'ROAS artificialmente alto com volumes muito baixos (ex: R$10, R$20)',
+         'Se investimento ↓ e ROAS ↓ → cenário diferente: Degradação de Eficiência'
+       ],
+       acionaveis: [
+         'Avaliar se havia janela para escalar antes de retrair o investimento',
+         'Alertar Degradação se investimento e ROAS caíram juntos'
+       ],
+       emergentes: [{ titulo: 'Degradação de Eficiência (tipo emergente)', texto: 'Investimento ↓ + ROAS ↓ = cenário verdadeiramente negativo. Pablo: "Tem alguma coisa acontecendo." Henrique: "É necessária uma relocação de verba."' }],
+       quote: '"Eu talvez teria tido a oportunidade de ainda investir mais um pouco para ter esse retorno." — Henrique'
+     }
+   ],
+   emAberto: [
+     'Qual é o valor de referência para ROAS aceitável por conta/cliente? Precisa ser parametrizado.',
+     'Qual o piso mínimo de investimento para ROAS representativo?',
+     'O alerta de oportunidade (T4) deve ser automático ou apenas contextual?'
+   ]
+ },
+ {
+   id: 'p2', label: 'P2',
+   titulo: 'O crescimento veio de volume ou de ticket médio?',
+   contexto: 'Decompõe a origem do crescimento de receita. A distinção é estratégica — cada origem exige uma resposta diferente.',
+   componentes: true, done: true,
+   linkDashboard: 'neodash.ai/dashboard/ticket-volume',
+   keys: [
+     { nome: 'tck_medio_conversoes', status: 'ok' },
+     { nome: 'conversoes', status: 'ok' },
+     { nome: 'productQuantity', status: 'ok' },
+     { nome: 'tck_medio_transactions', status: 'warn', obs: 'bug identificado — a confirmar' }
+   ],
+   tipos: [
+     {
+       num: 'T1', nome: 'Eficiência de Aquisição',
+       metricas: ['tck_medio_conversoes', 'conversoes', 'investido_total'],
+       regras: 'conversoes(atual) > conversoes(anterior) E tck_medio_conversoes(atual) ≈ tck_medio_conversoes(anterior) → CPA menor = eficiência de aquisição em mídia paga',
+       interpretacao: 'No contexto de mídia paga, "crescimento por volume" é inadequado. Quando mais pessoas compram com o mesmo ticket, o fenômeno real é redução de CPA (eficiência de aquisição), não volume puro.',
+       parametros: [
+         'Mídia paga: mais conversões + mesmo ticket = CPA menor = eficiência',
+         'Orgânico/sellout: mais unidades via canal orgânico = volume real',
+         'Henrique: "Volume para mim é uma referência muito de eficiência"'
+       ],
+       acionaveis: [
+         'Identificar campanha com CPA/CPC/CPM abaixo da média e alocar mais budget',
+         'Avaliar share of voice e share of search para entender a causa estrutural'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T2', nome: 'Crescimento por Ticket Médio',
+       metricas: ['tck_medio_conversoes', 'conversoes'],
+       regras: 'tck_medio_conversoes(atual) > tck_medio_conversoes(anterior) E conversoes(atual) ≈ conversoes(anterior) → sinal no produto/oferta, não na mídia',
+       interpretacao: 'Receita cresce porque o ticket médio subiu, com conversões estáveis. O sinal está no produto/oferta, não na mídia. Causas: promoções, cross-selling, upselling, bundles, produtos premium.',
+       parametros: [
+         'Sinal: conversões estáveis + ticket crescendo → causa no produto/oferta',
+         'Verificar mix de produtos: quais categorias estão puxando o ticket',
+         'Puxar contexto maior: comparar com mesmo período do ano anterior, Black Friday passada'
+       ],
+       acionaveis: [
+         'Reforçar bundles e estratégia premium',
+         'Configurar janelas de contexto temporal automáticas'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T3', nome: 'Queda de Ticket Médio',
+       metricas: ['tck_medio_conversoes', 'conversoes', 'ROI'],
+       regras: 'tck_medio_conversoes(atual) < tck_medio_conversoes(anterior) E conversoes(atual) > conversoes(anterior). Se ROI >= target → positivo; se ROI < target → "tiro no pé"',
+       interpretacao: 'Ticket médio cai + volume de pedidos aumenta = promoção agressiva ou mix deslocado para itens mais baratos. Avaliação depende do ROAS: se acima do target = positivo; se abaixo = "tiro no pé".',
+       parametros: [
+         'Critério duplo: volume ↑ (positivo) + ticket ↓ → verificar ROAS vs. target',
+         'ROAS dentro do target = promoção positiva',
+         'ROAS abaixo do target = promoção contraproducente ("tiro no pé")'
+       ],
+       acionaveis: [
+         'Revisar mix de produtos e estratégia de desconto',
+         'Verificar se ROAS ainda está dentro do target antes de avaliar a promoção'
+       ],
+       emergentes: [],
+       quote: '"Fiz uma promoção, o preço baixou mais do que deveria. Por mais que eu tenha ganhado dinheiro, pode ter sido tiro no pé." — Henrique'
+     },
+     {
+       num: 'T4', nome: 'Ticket Alto com Menor Volume',
+       metricas: ['tck_medio_conversoes', 'conversoes'],
+       regras: 'tck_medio_conversoes(atual) > tck_medio_conversoes(anterior) E conversoes(atual) < conversoes(anterior) → sinalizar análise de mix de produtos (não inferir redução de alcance)',
+       interpretacao: 'Ticket médio aumentou + volume de conversões caiu. Não indica redução de alcance (inferência indevida). Sinaliza foco em produtos premium. Apresentar o fato e sugerir análise de produto.',
+       parametros: [
+         'Apresentar fato: ticket ↑ + volume ↓',
+         'Sugerir análise: quais produtos estão puxando ticket para cima',
+         'Não concluir sobre alcance sem dados de CTR e impressões'
+       ],
+       acionaveis: [
+         'Analisar mix de produtos para identificar quais categorias puxam o ticket',
+         'Não concluir sobre alcance sem dados adicionais'
+       ],
+       emergentes: [],
+       quote: ''
+     }
+   ],
+   emAberto: [
+     'Como tratar crescimento por volume quando a causa é orgânico vs. eficiência de mídia?',
+     'Qual o threshold de variação do ticket médio para sinal vs. ruído?',
+     'Bug em tck_medio_transactions: confirmar cálculo com NeoPerformance.'
+   ]
+ },
+ {
+   id: 'p3', label: 'P3',
+   titulo: 'Qual canal / retailer / veículo está puxando rentabilidade?',
+   contexto: 'Analisa a contribuição relativa de cada canal de mídia. A granularidade é crítica: canal → retailer parceiro → tipo de esforço (awareness vs. transacional).',
+   componentes: true, done: true,
+   linkDashboard: 'neodash.ai/dashboard/canais',
+   keys: [
+     { nome: 'pilar', status: 'ok' },
+     { nome: 'grasp_platform', status: 'warn', obs: 'A registrar — pendente NeoPerformance' }
+   ],
+   tipos: [
+     {
+       num: 'T1', nome: 'Canal Escalável',
+       metricas: ['ROI', 'valor_conversoes', 'investido_total', 'pilar'],
+       regras: 'ROI_canal > ROI_média_geral E participação_receita_canal > threshold_relevancia E investido_total_canal > threshold_volume',
+       interpretacao: 'Canal com ROAS elevado e forte contribuição de receita. Critério duplo: relevância de investimento + participação de receita. ROAS alto sem volume representativo não classifica o canal como escalável.',
+       parametros: [
+         'Critério duplo: relevância de investimento + participação de receita',
+         '"Forte contribuição" = relevância + participação real na receita',
+         'ROAS alto isolado sem volume representativo não é suficiente'
+       ],
+       acionaveis: [
+         'Redistribuir orçamento para canais com melhor ROAS relativo',
+         'Verificar headroom de budget antes de escalar'
+       ],
+       emergentes: [],
+       quote: '"Firma direto. Nem que comentar." — Henrique ao validar o insight'
+     },
+     {
+       num: 'T2', nome: 'Canal de Aquisição (NTB)',
+       metricas: ['ROI', 'NTB_potenciais', 'pilar'],
+       regras: 'NTB_potenciais_canal > threshold_ntb E ROI_canal < ROI_target → argumento compensatório: investimento em base futura de clientes',
+       interpretacao: 'New to Brand rastreável apenas em Amazon (12 meses), Mercado Livre (12 meses) e Criteo (6 meses). Meta NÃO fornece NTB. Argumento: ROAS inferior + NTB alto = justifica canal como investimento em base futura.',
+       parametros: [
+         'Amazon: NTB = usuário sem compra nos últimos 12 meses',
+         'Mercado Livre: NTB = usuário sem compra nos últimos 12 meses',
+         'Criteo: NTB = usuário sem compra nos últimos 6 meses',
+         'Métrica NeoDash: "NTB Potenciais" = conversões onde o veículo retorna NTB',
+         'Meta: NTB estruturalmente não rastreável'
+       ],
+       acionaveis: [
+         'Usar NTB como argumento compensatório quando ROAS está abaixo do target',
+         'Comunicar: "Alta relevância de aquisição de novos consumidores"'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T3', nome: 'Canal Saturado',
+       metricas: ['ROI', 'investido_total', 'valor_conversoes', 'pilar', 'grasp_platform'],
+       regras: 'investido_total_canal↑ E valor_conversoes_canal↓ (ou estável). Verificar granularidade: canal → retailer_parceiro → tipo_esforço antes de concluir saturação',
+       interpretacao: 'Investimento cresce mas receita não acompanha. Antes de concluir saturação, descer ao nível de granularidade de retailer parceiro. Em Collaborative Ads, o problema pode ser um parceiro específico.',
+       parametros: [
+         'Collaborative Ads: marca investe em mídia que leva para o retailer parceiro',
+         'Granularidade: canal → retailer parceiro → awareness vs. transacional',
+         'ROAS transacional é o mais relevante para decisão de orçamento'
+       ],
+       acionaveis: [
+         'Analisar por retailer parceiro antes de pausar o canal inteiro',
+         'Verificar se awareness vs. transacional estão separados'
+       ],
+       emergentes: [],
+       quote: '"Parece que Meta tá saturada. Na verdade, é um esforço específico dentro de Meta." — Henrique'
+     },
+     {
+       num: 'T4', nome: 'Oportunidade de Escala',
+       metricas: ['ROI', 'investido_total', 'pilar'],
+       regras: 'ROI_canal > ROI_target E investido_total_canal < threshold_baixo_relativo → headroom de budget disponível para escalar',
+       interpretacao: 'ROAS alto + baixo investimento = headroom de budget disponível. Sempre formulado como oportunidade, nunca como crítica. Headroom = espaço para aumentar investimento sem degradar ROAS.',
+       parametros: [
+         'Headroom de budget: espaço para escalar sem saturar audiência',
+         'Regra de linguagem: sempre como chamada positiva, nunca crítica retrospectiva'
+       ],
+       acionaveis: [
+         '"Você tem uma oportunidade de escalar — bota mais dinheiro aqui"',
+         'Verificar capacidade de escala antes de recomendar'
+       ],
+       emergentes: [],
+       quote: ''
+     }
+   ],
+   emAberto: [
+     'Como estruturar a granularidade canal → retailer parceiro → tipo de esforço no NeoDash?',
+     'O insight de NTB potenciais (T2) deve ser standalone ou modificador do ROAS?',
+     'grasp_platform: confirmar campo e cálculo com NeoPerformance.'
+   ]
+ },
+ {
+   id: 'p4', label: 'P4',
+   titulo: 'A atribuição (Last Click vs. Dash/Atribuída) muda a leitura estratégica?',
+   contexto: 'Dois modelos de atribuição: Last Click (certeza absoluta de qual clique gerou a conversão) e Atribuição Completa (considera toda a jornada). Cada modelo responde uma pergunta diferente — não competem entre si.',
+   componentes: true, done: true,
+   linkDashboard: 'neodash.ai/dashboard/atribuicao',
+   keys: [
+     { nome: 'ROI', status: 'ok' },
+     { nome: 'ROI2', status: 'warn', obs: 'não cobre todos os canais — a confirmar escopo' }
+   ],
+   tipos: [
+     {
+       num: 'T1', nome: 'Canal Subestimado',
+       metricas: ['ROI', 'ROI2', 'pilar'],
+       regras: 'ROI_lastclick_canal < ROI_target E ROI2_atribuido_canal > ROI_target → canal subestimado pelo Last Click (jornada longa)',
+       interpretacao: 'Meta tem ROAS baixo em Last Click porque o consumidor interage no feed mas compra dias depois via Google. Meta atribui por janela de 7 dias e cross-device. Insight: observacional, não acionável diretamente.',
+       parametros: [
+         'Last Click: certeza de qual clique gerou a conversão imediata',
+         'Atribuição Meta: janela de 7 dias, cross-device, modelo proprietário',
+         'Para Meta: Last Click estruturalmente baixo em jornadas longas'
+       ],
+       acionaveis: [
+         'Não cortar budget de Meta baseado apenas em Last Click',
+         'Calibrar avaliação com atribuição mais completa'
+       ],
+       emergentes: [],
+       quote: '"O Facebook é o mais justo consigo mesmo: ele vê você em tudo quanto lugar." — Pablo'
+     },
+     {
+       num: 'T2', nome: 'Canal de Conversão',
+       metricas: ['ROI', 'ROI2', 'pilar'],
+       regras: 'ROI_lastclick_canal > ROI_target E ROI2_atribuido_canal > ROI_target → canal de conversão (ROAS elevado nos dois modelos)',
+       interpretacao: 'Google Search mantém ROAS elevado em Last Click E Atribuição Completa. Canal de conversão: inferência de segunda ordem que o sistema deve construir — combinar dois fatos e criar um conceito nomeado.',
+       parametros: [
+         'Canal de Conversão: ROAS alto em Last Click + ROAS alto em Atribuição = conceito nomeado',
+         'Google captura demanda já formada — o usuário já quer comprar quando pesquisa',
+         'Os dois modelos coexistem — cada um responde uma pergunta diferente'
+       ],
+       acionaveis: [
+         'Confirmar e monitorar o orçamento do canal de conversão',
+         'Se ROAS cair em qualquer modelo, investigar canal de topo de funil'
+       ],
+       emergentes: [{ titulo: 'Canal de Conversão (conceito criado)', texto: 'Canal com ROAS elevado nos dois modelos. Nilton: "Esse canal tem isso e aquilo. Vou dar o nome para esse combo."' }],
+       quote: ''
+     },
+     {
+       num: 'T3', nome: 'Canal de Tomada de Decisão',
+       metricas: ['ROI', 'ROI2', 'pilar'],
+       regras: 'ROI_lastclick_canal > ROI2_atribuido_canal (diferença significativa) E ROI_lastclick > ROI_target → captura o clique final, mas não gerou a demanda',
+       interpretacao: 'Google captura o momento final de uma jornada iniciada em outros canais. Risco crítico: analistas cortam outros canais achando que só o Google funciona — destroem a demanda que alimenta o Google.',
+       parametros: [
+         'Canal de Tomada de Decisão: ROAS alto em Last Click, menor na jornada completa',
+         'Risco: cortar canais de topo de funil → degrada progressivamente a demanda',
+         'Pablo: mudança de comportamento para LLMs pode alterar esse papel do Google'
+       ],
+       acionaveis: [
+         'Não cortar canais de topo de funil com ROAS baixo em Last Click',
+         'Manter raciocínio de complementaridade na narrativa para o cliente'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T4', nome: 'Impacto da Jornada Completa',
+       metricas: ['N/A — requer data clean room'],
+       regras: 'Análise a nível de usuário individual indisponível no NeoDash. Requer Amazon Marketing Cloud ou equivalente. Fora do escopo técnico atual.',
+       interpretacao: 'Análise no nível de usuário individual não disponível no NeoDash. Exige data clean room (ex: Amazon Marketing Cloud). Fora do escopo atual.',
+       parametros: [
+         'Limitação técnica: análise a nível de usuário requer data clean room',
+         'Amazon Marketing Cloud tem essa capacidade mas os dados não são exportáveis para o NeoDash'
+       ],
+       acionaveis: [
+         'Documentar como limitação técnica do escopo atual',
+         'Avaliar integração com Amazon Marketing Cloud em etapa futura'
+       ],
+       emergentes: [],
+       quote: ''
+     }
+   ],
+   emAberto: [
+     'Qual modelo de atribuição a NeoPerformance usa como padrão por cliente? Parametrizar.',
+     'Como apresentar os dois modelos sem confundir o cliente?',
+     'ROI2: confirmar canais cobertos e cálculo exato.'
+   ]
+ },
+ {
+   id: 'p5', label: 'P5',
+   titulo: 'Qual criativo gera mais conversão / maior CTR?',
+   contexto: 'Analisa a performance de criativos por CTR e conversão. Atenção crítica: veículos por impressão (Amazon DSP) vs. por clique (Sponsored Products) não podem ser comparados diretamente.',
+   componentes: true, done: true,
+   linkDashboard: 'neodash.ai/dashboard/criativos',
+   keys: [
+     { nome: 'CTR', status: 'ok' },
+     { nome: 'taxa_conversao_clique', status: 'ok' },
+     { nome: 'tipo_atribuicao_veiculo', status: 'pend', obs: 'Campo a criar no NeoDash — confirmar com NeoPerformance' }
+   ],
+   tipos: [
+     {
+       num: 'T1', nome: 'Criativo de Alto Engajamento',
+       metricas: ['CTR', 'investido_total'],
+       regras: 'CTR_criativo > 2 × CTR_média_campanha → posicionar como topo de funil (alcance > conversão direta)',
+       interpretacao: 'CTR muito acima da média = forte apelo visual ou relevância da mensagem. Posicionamento: topo de funil (mais alcance, menos conversão direta).',
+       parametros: [
+         'CTR > 2× média da campanha como critério inicial',
+         'Critério primário para topo de funil = CTR (não ROAS)',
+         'Para fundo de funil: critério primário = ROAS; CTR é secundário'
+       ],
+       acionaveis: [
+         'Escalar criativos com melhor balanço CTR + conversão + ROAS',
+         'Usar como topo de funil para alimentar campanhas de conversão'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T2', nome: 'Criativo que Converte',
+       metricas: ['CTR', 'taxa_conversao_clique', 'tipo_atribuicao_veiculo'],
+       regras: 'CTR_criativo < CTR_média E taxa_conversao_criativo > taxa_conversao_média. Condição: tipo_atribuicao_veiculo = "clique" (não aplicável a DSP/impressão)',
+       interpretacao: 'CTR menor + taxa de conversão maior. Cenário específico: Amazon DSP (atribuição por impressão) ou mensagem deliberadamente seletiva que repele tráfego não qualificado.',
+       parametros: [
+         'Amazon DSP = impressão; Amazon SP = clique; Google Search = clique',
+         'Criar dimensão no NeoDash: "atribui ao clique" vs. "atribui à impressão"',
+         'Comparar DSP com SP em CTR = distorção garantida'
+       ],
+       acionaveis: [
+         'Parametrizar tipo de atribuição por veículo antes de comparar CTR',
+         'Sinalizar quando a comparação envolve veículos de modelos diferentes'
+       ],
+       emergentes: [{ titulo: 'Dimensão de Tipo de Atribuição por Veículo', texto: 'Campo a criar no NeoDash declarando se o veículo atribui por clique ou por impressão. Sem ele, qualquer insight baseado em CTR entre veículos distintos pode ser enganoso.' }],
+       quote: ''
+     },
+     {
+       num: 'T3', nome: 'Criativo de Awareness',
+       metricas: ['impressoes', 'CTR', 'taxa_conversao_clique'],
+       regras: 'impressoes_criativo > threshold_alto E CTR_criativo > threshold_medio E taxa_conversao_criativo < threshold_baixo → objetivo de topo de funil cumprido',
+       interpretacao: 'Alto volume de impressões e cliques, baixa conversão = topo de funil. Diagnóstico interno valioso. Para o cliente: comunicar que objetivo de topo de funil foi cumprido — não expor como falha.',
+       parametros: [
+         'Uso interno: parâmetro condicional para análises do time de mídia',
+         'Para o cliente: "objetivo de topo de funil cumprido"',
+         'Criativos de awareness alimentam campanhas de conversão downstream'
+       ],
+       acionaveis: [
+         'Contextualizar para o cliente como objetivo de campanha cumprido',
+         'Manter ativo: alimenta o funil de conversão'
+       ],
+       emergentes: [],
+       quote: ''
+     },
+     {
+       num: 'T4', nome: 'Fadiga Criativa',
+       metricas: ['CTR', 'investido_total'],
+       regras: 'CTR do criativo com maior investido_total decresce por N períodos consecutivos. Rastrear por asset (não por nome de ad)',
+       interpretacao: 'O criativo com maior orçamento alocado apresenta queda progressiva de CTR = saturação de audiência. "Criativo de maior investimento" substitui "criativo principal" (abstrato, não mapeável pelo sistema).',
+       parametros: [
+         'Critério: criativo de maior investimento = maior orçamento alocado no período',
+         'Sinal: queda progressiva de CTR (janela: a definir com NeoPerformance)',
+         'Nome de ad pode mudar mas a arte pode ser a mesma — rastrear por asset'
+       ],
+       acionaveis: [
+         'Rotacionar o criativo de maior investimento quando CTR em declínio',
+         'Gerar alerta automático de realocação'
+       ],
+       emergentes: [],
+       quote: ''
+     }
+   ],
+   emAberto: [
+     'Janela de tempo para detectar "queda progressiva" de CTR? Semanas? % de queda?',
+     'NeoDash tem identificação padronizada de criativos para rastrear ao longo do tempo?',
+     'Como declarar tipo de atribuição (clique vs. impressão) por veículo? O campo existe?'
+   ]
+ },
+ {
+   id: 'p6', label: 'P6',
+   titulo: 'Vídeo impacta taxa de compra futura?',
+   contexto: 'A análise não pode ser feita no nível de usuário exposto ao vídeo (dado inexistente — exigiria data clean room). Ângulo operacional: correlacionar % de investimento em vídeo por campanha com performance geral.',
+   componentes: true, done: true,
+   linkDashboard: 'neodash.ai/dashboard/video',
+   keys: [
+     { nome: 'pct_investimento_video', status: 'pend', obs: 'A confirmar com NeoPerformance' },
+     { nome: 'CPM', status: 'ok' },
+     { nome: 'CPI', status: 'pend', obs: 'Custo por visualização — confirmar disponibilidade' }
+   ],
+   tipos: [
+     {
+       num: 'T1', nome: 'Vídeo Impulsiona Conversão',
+       metricas: ['pct_investimento_video', 'ROI', 'valor_conversoes'],
+       regras: 'pct_investimento_video_campanha > 40% correlaciona com ROI_campanha > ROI_média. Validar com correlação semana a semana + p-valor. Testar saturação acima de 50%.',
+       interpretacao: 'Não é possível afirmar "exposição ao vídeo aumentou conversão". Hipótese válida: campanhas com % de investimento em vídeo acima de threshold apresentam performance superior. Threshold inicial: 40%.',
+       parametros: [
+         'Threshold inicial sugerido: 40% de investimento em vídeo por campanha',
+         'Validação: correlação % vídeo × ROAS/conversão semana a semana + p-valor',
+         'Saturação possível acima de 50% — testar',
+         'Enxoval perfeito Meta: vídeo + estático + carrossel'
+       ],
+       acionaveis: [
+         'Testar threshold de 40%',
+         'Correlacionar % investimento em vídeo com indicadores semana a semana',
+         'Combinar vídeo com enxoval completo'
+       ],
+       emergentes: [],
+       quote: '"Isso é ouro, você começa a trazer insights piercing dentro dos insights." — Henrique'
+     },
+     {
+       num: 'T2', nome: 'Vídeo Gera Awareness',
+       metricas: ['CPM', 'CPI', 'pct_investimento_video'],
+       regras: 'CPM_video < CPM_estatico E CPI_video < threshold → vídeo mais eficiente em alcance. Comparação obrigatória: vídeo vs. estático no mesmo canal.',
+       interpretacao: 'Vídeos com CPM/CPI eficiente geram maior alcance. O insight só tem valor com a comparação: CPM/CPI do vídeo vs. criativos estáticos. Conceito: presença de marca digital.',
+       parametros: [
+         'Métricas: CPM (custo por mil impressões) e CPI (custo por visualização)',
+         'Comparação obrigatória: vídeo vs. estático no mesmo canal',
+         'Recorrência: pessoas assistem vídeos mais de uma vez (diferencial vs. estático)'
+       ],
+       acionaveis: [
+         'Aumentar investimento em vídeo no topo de funil quando CPM/CPI competitivo',
+         'Comunicar: "Você está gerando presença de marca digital"'
+       ],
+       emergentes: [{ titulo: 'Presença de Marca Digital via Vídeo', texto: 'Conceito de Henrique: alcance acumulado + recorrência de visualização. Termo preferido para comunicar o valor do vídeo sem conversão direta.' }],
+       quote: ''
+     },
+     {
+       num: 'T3', nome: 'Vídeo Melhora Intenção de Busca',
+       metricas: ['pct_investimento_video', 'CTR_search_proxy'],
+       regras: 'correlação(pct_video_período, CTR_search_período) > threshold_correlacao. Formulação: "Períodos com mais vídeo apresentam CTR de search maior no parceiro X"',
+       interpretacao: 'Dado de volume de buscas indisponível. Proxies: (a) tráfego ao retailer parceiro; (b) CTR de campanhas de search. A correlação é inferencial, não causal.',
+       parametros: [
+         'Proxy 1: CTR de campanhas de search por período',
+         'Proxy 2: tráfego à página/retailer por período (onde disponível)',
+         'Limitação: bid nas palavras-chave relevantes necessário',
+         'Método: correlação % vídeo × CTR de search semana a semana'
+       ],
+       acionaveis: [
+         'Mapear quais parceiros têm tráfego à página disponível',
+         'Formular como: "Períodos com mais vídeo apresentam CTR de search maior no parceiro X"'
+       ],
+       emergentes: [{ titulo: 'Inferência de Caminho do Comprador', texto: 'Cruzar canal de topo de funil (vídeo) com indicadores de demanda (search, tráfego). Análise correlacional, não causal. Henrique: "Eu tô inferindo um caminho do comprador."' }],
+       quote: ''
+     },
+     {
+       num: 'T4', nome: 'Vídeo Melhora Ticket Médio',
+       metricas: ['tck_medio_conversoes', 'pct_investimento_video'],
+       regras: 'tck_medio_campanhas_video > tck_medio_geral. Condição de validade: mix_produtos_campanhas_video ≈ mix_produtos_geral. Sem controle pelo produto = correlação espúria.',
+       interpretacao: 'Campanhas de vídeo apresentam ticket médio superior — mas armadilha: campanhas de vídeo frequentemente veiculam produtos de valor mais alto. Ticket maior pode ser efeito do mix de produtos, não do formato.',
+       parametros: [
+         'Condição de validade: mix de produtos comparável ao mix geral',
+         'Sem controle pelo produto = correlação espúria',
+         'Método: analisar valor médio dos SKUs veiculados em campanhas de vídeo vs. geral'
+       ],
+       acionaveis: [
+         'Cruzar ticket médio das campanhas de vídeo com ticket médio dos SKUs veiculados',
+         'Formulação segura: "avaliar mix de produtos para confirmar se o efeito é do formato"'
+       ],
+       emergentes: [],
+       quote: ''
+     }
+   ],
+   emAberto: [
+     'Threshold exato de % vídeo? 40% é a hipótese — validar por cliente.',
+     'Existe ponto de saturação acima de 50%? Testar nas correlações.',
+     'Quais parceiros têm métrica de tráfego à página disponível hoje?'
+   ]
+ }
+];
+ 
+/* ═══════════════════════════════════════════════════════
+  STATE
+═══════════════════════════════════════════════════════ */
+const STORAGE_KEY = 'neodash_v3_state';
+const THEME_KEY   = 'neodash_v3_theme';
+ 
+let DATA = [];
+let currentTheme = 'dark';
+let editMode = false;
+let saveTimer = null;
+let activeTab = 'overview';
+ 
+function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+ 
+function loadData() {
+ const stored = localStorage.getItem(STORAGE_KEY);
+ if (stored) {
+   try { DATA = JSON.parse(stored); migrateData(); return; } catch(e) {}
+ }
+ DATA = deepClone(DATA_DEFAULT);
+ migrateData();
+}
+ 
+function migrateData() {
+ // Forward-compat: ensure new defComponentes/defMetricas/defRegras/defLink fields exist on all tipos
+ DATA.forEach(p => {
+   p.tipos.forEach(t => {
+     if (!Array.isArray(t.defComponentes)) t.defComponentes = [];
+     if (t.defMetricas === undefined) t.defMetricas = '';
+     if (t.defRegras   === undefined) t.defRegras   = '';
+     if (t.defLink     === undefined) t.defLink     = '';
+   });
+ });
+}
+ 
+function saveData() {
+ clearTimeout(saveTimer);
+ saveTimer = setTimeout(() => {
+   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+   const dot = document.getElementById('saveDot');
+   const lbl = document.getElementById('saveLabel');
+   dot.className = 'save-dot saved';
+   lbl.textContent = 'Salvo';
+   setTimeout(() => { dot.className = 'save-dot'; }, 2000);
+ }, 400);
+}
+ 
+function markUnsaved() {
+ const lbl = document.getElementById('saveLabel');
+ if (lbl) lbl.textContent = 'Salvando…';
+}
+ 
+function getPergunta(pid) { return DATA.find(p => p.id === pid); }
+function getTipo(pid, tidx) { return getPergunta(pid)?.tipos[parseInt(tidx)]; }
+ 
+/* ═══════════════════════════════════════════════════════
+  THEME
+═══════════════════════════════════════════════════════ */
+function toggleTheme() {
+ currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+ applyTheme();
+ localStorage.setItem(THEME_KEY, currentTheme);
+}
+function applyTheme() {
+ document.body.className = (editMode ? 'editing ' : '') + currentTheme;
+ const btn = document.getElementById('themeToggle');
+ btn.textContent = currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  EDIT MODE
+═══════════════════════════════════════════════════════ */
+function toggleEdit() {
+ editMode = !editMode;
+ applyTheme();
+ const btn = document.getElementById('editToggle');
+ btn.textContent = editMode ? '✅ Concluir' : '✏️ Editar';
+ btn.className = editMode ? 'toolbar-btn edit-btn on' : 'toolbar-btn edit-btn';
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  IMPLEMENTATION CHECKBOXES (no edit mode required)
+═══════════════════════════════════════════════════════ */
+function toggleCheck(pid, field) {
+ const p = getPergunta(pid);
+ if (!p) return;
+ p[field] = !p[field];
+ // Update checkbox visually
+ const btn = document.querySelector(`[data-check-pid="${pid}"][data-check-field="${field}"]`);
+ if (btn) {
+   btn.classList.toggle('checked', p[field]);
+   const icon = btn.querySelector('.impl-check-icon');
+   if (icon) icon.textContent = p[field] ? '☑' : '☐';
+ }
+ // Update impl block done state
+ const block = document.getElementById(`impl-${pid}`);
+ if (block) block.classList.toggle('is-done', p.done);
+ // Refresh overview stats
+ refreshOverviewStats();
+ markUnsaved();
+ saveData();
+}
+ 
+function refreshOverviewStats() {
+ const s = getProgressStats();
+ const els = {
+   'stat-componentes': `${s.componentes}/${s.total}`,
+   'stat-done':        `${s.done}/${s.total}`,
+   'stat-metricas':    `${s.comMetricas}/${s.totalTipos}`,
+   'stat-regras':      `${s.comRegras}/${s.totalTipos}`
+ };
+ Object.entries(els).forEach(([id, val]) => {
+   const el = document.getElementById(id);
+   if (el) el.textContent = val;
+ });
+ // Update progress bars
+ ['componentes','done','metricas','regras'].forEach(key => {
+   const bar = document.getElementById(`bar-${key}`);
+   if (!bar) return;
+   const pct = key === 'componentes' ? s.componentes/s.total*100
+             : key === 'done'        ? s.done/s.total*100
+             : key === 'metricas'    ? s.comMetricas/s.totalTipos*100
+             :                         s.comRegras/s.totalTipos*100;
+   bar.style.width = pct + '%';
+ });
+}
+ 
+function getProgressStats() {
+ return {
+   componentes:  DATA.filter(p => p.componentes).length,
+   done:         DATA.filter(p => p.done).length,
+   comMetricas:  DATA.reduce((a, p) => a + p.tipos.filter(t => t.metricas && t.metricas.length > 0).length, 0),
+   comRegras:    DATA.reduce((a, p) => a + p.tipos.filter(t => t.regras && t.regras.trim() !== '').length, 0),
+   total:        DATA.length,
+   totalTipos:   DATA.reduce((a, p) => a + p.tipos.length, 0)
+ };
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  CONTENTEDITABLE SYNC
+═══════════════════════════════════════════════════════ */
+document.addEventListener('blur', function(e) {
+ const el = e.target;
+ if (!el.hasAttribute('data-field') && !el.hasAttribute('data-list')) return;
+ const pid   = el.dataset.pid;
+ const tidx  = el.dataset.tidx !== undefined ? parseInt(el.dataset.tidx) : null;
+ const list  = el.dataset.list;
+ const lidx  = el.dataset.lidx !== undefined ? parseInt(el.dataset.lidx) : null;
+ const eidx  = el.dataset.eidx !== undefined ? parseInt(el.dataset.eidx) : null;
+ const field = el.dataset.field;
+ const val   = el.innerText.trim();
+ 
+ const p = getPergunta(pid);
+ if (!p) return;
+ 
+ if (tidx !== null) {
+   const t = p.tipos[tidx];
+   if (list && lidx !== null)        t[list][lidx] = val;
+   else if (eidx !== null && field)  t.emergentes[eidx][field] = val;
+   else if (field)                   t[field] = val;
+ 
+ } else {
+   if (list && lidx !== null)  p[list][lidx] = val;
+   else if (field)             p[field] = val;
+ }
+ markUnsaved();
+ saveData();
+}, true);
+ 
+document.addEventListener('keydown', function(e) {
+ const el = e.target;
+ if (!el.hasAttribute('data-field') && !el.hasAttribute('data-list')) return;
+ if (e.key === 'Escape') { el.blur(); }
+ if (e.key === 'Enter' && !e.shiftKey) {
+   const isSingleLine = el.tagName !== 'P' && !el.dataset.multiline;
+   if (isSingleLine) { e.preventDefault(); el.blur(); }
+ }
+}, true);
+ 
+/* ═══════════════════════════════════════════════════════
+  LIST OPERATIONS
+═══════════════════════════════════════════════════════ */
+function addListItem(pid, tidx, listName) {
+ const p = getPergunta(pid);
+ if (tidx !== null && tidx !== undefined) {
+   p.tipos[parseInt(tidx)][listName].push('');
+ } else {
+   p[listName].push('');
+ }
+ reRenderList(pid, tidx, listName);
+ saveData();
+}
+ 
+function removeListItem(pid, tidx, listName, lidx) {
+ const p = getPergunta(pid);
+ if (tidx !== null && tidx !== undefined) {
+   p.tipos[parseInt(tidx)][listName].splice(parseInt(lidx), 1);
+ } else {
+   p[listName].splice(parseInt(lidx), 1);
+ }
+ reRenderList(pid, tidx, listName);
+ saveData();
+}
+ 
+function reRenderList(pid, tidx, listName) {
+ const key = (tidx !== null && tidx !== undefined) ? `${pid}-${tidx}-${listName}` : `${pid}-${listName}`;
+ const container = document.querySelector(`[data-list-container="${key}"]`);
+ if (!container) return;
+ const p = getPergunta(pid);
+ const items = (tidx !== null && tidx !== undefined) ? p.tipos[parseInt(tidx)][listName] : p[listName];
+ const isRules = listName === 'parametros' || listName === 'emAberto';
+ container.innerHTML = renderListItems(items, pid, tidx, listName, isRules);
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  KEY OPERATIONS
+═══════════════════════════════════════════════════════ */
+function removeKey(pid, kidx) {
+ getPergunta(pid).keys.splice(parseInt(kidx), 1);
+ reRenderKeys(pid);
+ saveData();
+}
+ 
+function cycleKeyStatus(pid, kidx) {
+ if (!editMode) return;
+ const p = getPergunta(pid);
+ const cycle = ['ok', 'warn', 'pend'];
+ const k = p.keys[parseInt(kidx)];
+ k.status = cycle[(cycle.indexOf(k.status) + 1) % cycle.length];
+ reRenderKeys(pid);
+ saveData();
+}
+ 
+function reRenderKeys(pid) {
+ const c = document.querySelector(`[data-keys-pid="${pid}"]`);
+ if (c) c.innerHTML = renderKeysInner(getPergunta(pid));
+}
+ 
+function showAddKeyInput(pid) {
+ const container = document.querySelector(`[data-keys-pid="${pid}"]`);
+ if (!container) return;
+ const addBtn = container.querySelector('.add-key-btn');
+ if (addBtn) addBtn.style.display = 'none';
+ const input = document.createElement('input');
+ input.type = 'text';
+ input.className = 'add-key-input';
+ input.placeholder = 'nome_do_campo';
+ const finish = () => {
+   const val = input.value.trim();
+   if (val) { getPergunta(pid).keys.push({ nome: val, status: 'ok' }); saveData(); }
+   reRenderKeys(pid);
+ };
+ input.onkeydown = e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') reRenderKeys(pid); };
+ input.onblur = finish;
+ container.appendChild(input);
+ setTimeout(() => input.focus(), 50);
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  MÉTRICA OPERATIONS
+═══════════════════════════════════════════════════════ */
+function removeMetrica(pid, tidx, midx) {
+ getPergunta(pid).tipos[parseInt(tidx)].metricas.splice(parseInt(midx), 1);
+ reRenderMetricas(pid, tidx);
+ saveData();
+}
+ 
+function reRenderMetricas(pid, tidx) {
+ const c = document.querySelector(`[data-metricas-pid="${pid}"][data-metricas-tidx="${tidx}"]`);
+ if (c) c.innerHTML = renderMetricasInner(getPergunta(pid).tipos[parseInt(tidx)], pid, tidx);
+}
+ 
+function showAddMetricaInput(pid, tidx) {
+ const container = document.querySelector(`[data-metricas-pid="${pid}"][data-metricas-tidx="${tidx}"]`);
+ if (!container) return;
+ const addBtn = container.querySelector('.add-metrica-btn');
+ if (addBtn) addBtn.style.display = 'none';
+ const input = document.createElement('input');
+ input.type = 'text';
+ input.className = 'add-metrica-input';
+ input.placeholder = 'nome_metrica';
+ const finish = () => {
+   const val = input.value.trim();
+   if (val) { getPergunta(pid).tipos[parseInt(tidx)].metricas.push(val); saveData(); }
+   reRenderMetricas(pid, tidx);
+ };
+ input.onkeydown = e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') reRenderMetricas(pid, tidx); };
+ input.onblur = finish;
+ container.appendChild(input);
+ setTimeout(() => input.focus(), 50);
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  DEF-ANALÍTICA COMPONENTE OPERATIONS
+═══════════════════════════════════════════════════════ */
+function removeDefComp(pid, tidx, cidx) {
+ const t = getPergunta(pid).tipos[parseInt(tidx)];
+ if (!t.defComponentes) t.defComponentes = [];
+ t.defComponentes.splice(parseInt(cidx), 1);
+ reRenderDefComps(pid, tidx);
+ saveData();
+}
+ 
+function reRenderDefComps(pid, tidx) {
+ const c = document.querySelector(`[data-comp-pid="${pid}"][data-comp-tidx="${tidx}"]`);
+ if (c) c.innerHTML = renderDefComponentesInner(getPergunta(pid).tipos[parseInt(tidx)], pid, tidx);
+}
+ 
+function showAddCompInput(pid, tidx) {
+ const container = document.querySelector(`[data-comp-pid="${pid}"][data-comp-tidx="${tidx}"]`);
+ if (!container) return;
+ const addBtn = container.querySelector('.add-comp-btn');
+ if (addBtn) addBtn.style.display = 'none';
+ const input = document.createElement('input');
+ input.type = 'text';
+ input.className = 'add-comp-input';
+ input.placeholder = 'nome do componente';
+ const finish = () => {
+   const val = input.value.trim();
+   const t = getPergunta(pid).tipos[parseInt(tidx)];
+   if (!t.defComponentes) t.defComponentes = [];
+   if (val) { t.defComponentes.push(val); saveData(); }
+   reRenderDefComps(pid, tidx);
+ };
+ input.onkeydown = e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') reRenderDefComps(pid, tidx); };
+ input.onblur = finish;
+ container.appendChild(input);
+ setTimeout(() => input.focus(), 50);
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  CARD OPERATIONS
+═══════════════════════════════════════════════════════ */
+function addTipoCard(pid) {
+ const p = getPergunta(pid);
+ const newIdx = p.tipos.length;
+ p.tipos.push({
+   num: `T${newIdx + 1}`, nome: 'Novo Tipo de Insight',
+   metricas: ['METRICA_1'],
+   regras: 'Descreva a lógica condicional que dispara este insight.',
+   interpretacao: 'Descreva a interpretação deste tipo de insight.',
+   parametros: ['Parâmetro 1', 'Parâmetro 2'],
+   acionaveis: ['Acionável 1'],
+   emergentes: [],
+   quote: '',
+   defComponentes: [], defMetricas: '', defRegras: '', defLink: ''
+ });
+ reRenderPergunta(pid);
+ saveData();
+}
+ 
+function removeTipoCard(pid, tidx) {
+ if (!confirm('Remover este tipo de insight?')) return;
+ getPergunta(pid).tipos.splice(parseInt(tidx), 1);
+ reRenderPergunta(pid);
+ saveData();
+}
+ 
+function reRenderPergunta(pid) {
+ const panel = document.getElementById(pid);
+ if (!panel) return;
+ panel.innerHTML = renderPerguntaContent(getPergunta(pid));
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  PERGUNTA OPERATIONS
+═══════════════════════════════════════════════════════ */
+let perguntaCounter = 7;
+ 
+function addPergunta() {
+ const pid = `p${perguntaCounter++}`;
+ DATA.push({
+   id: pid, label: `P${DATA.length + 1}`,
+   titulo: 'Nova Pergunta Estratégica',
+   contexto: 'Descreva o contexto desta pergunta e o que ela busca responder no NeoDash.',
+   componentes: false, done: false, linkDashboard: '',
+   keys: [{ nome: 'KEY_1', status: 'pend' }],
+   tipos: [
+     { num: 'T1', nome: 'Cenário Positivo', metricas: ['METRICA_1'], regras: '', interpretacao: 'Descreva o cenário positivo.', parametros: ['Parâmetro 1'], acionaveis: ['Acionável 1'], emergentes: [], quote: '' },
+     { num: 'T2', nome: 'Variação Positiva', metricas: ['METRICA_1'], regras: '', interpretacao: 'Descreva a variação positiva.', parametros: ['Parâmetro 1'], acionaveis: ['Acionável 1'], emergentes: [], quote: '' },
+     { num: 'T3', nome: 'Cenário Negativo', metricas: ['METRICA_1'], regras: '', interpretacao: 'Descreva o cenário negativo.', parametros: ['Parâmetro 1'], acionaveis: ['Acionável 1'], emergentes: [], quote: '' },
+     { num: 'T4', nome: 'Caso Específico',  metricas: ['METRICA_1'], regras: '', interpretacao: 'Descreva o caso específico.', parametros: ['Parâmetro 1'], acionaveis: ['Acionável 1'], emergentes: [], quote: '' }
+   ],
+   emAberto: ['Pergunta em aberto 1']
+ });
+ renderAll();
+ setTimeout(() => goTab(pid), 50);
+ saveData();
+}
+ 
+function removePergunta(pid) {
+ if (!confirm(`Remover a pergunta ${pid.toUpperCase()} e todo o seu conteúdo?`)) return;
+ const idx = DATA.findIndex(p => p.id === pid);
+ if (idx === -1) return;
+ DATA.splice(idx, 1);
+ if (activeTab === pid) activeTab = 'overview';
+ renderAll();
+ saveData();
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  EXPORT / RESET
+═══════════════════════════════════════════════════════ */
+function exportHTML() {
+ const html = document.documentElement.outerHTML;
+ const exported = html.replace(
+   /const DATA_DEFAULT = \[[\s\S]*?\];\n/,
+   `const DATA_DEFAULT = ${JSON.stringify(DATA)};\n`
+ );
+ const blob = new Blob([exported], { type: 'text/html;charset=utf-8' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url; a.download = 'neodash-mapa-v3.html';
+ document.body.appendChild(a); a.click();
+ document.body.removeChild(a);
+ setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+ 
+function resetData() {
+ if (!confirm('Restaurar o conteúdo original? As suas edições serão perdidas.')) return;
+ DATA = deepClone(DATA_DEFAULT);
+ localStorage.removeItem(STORAGE_KEY);
+ activeTab = 'overview';
+ renderAll();
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  RENDER HELPERS
+═══════════════════════════════════════════════════════ */
+function renderListItems(items, pid, tidx, listName, isRules) {
+ const tidxAttr = (tidx !== null && tidx !== undefined) ? `data-tidx="${tidx}"` : '';
+ return items.map((item, i) => `
+   <li>
+     <span class="li-text" contenteditable="true"
+       data-pid="${pid}" ${tidxAttr} data-list="${listName}" data-lidx="${i}">${item}</span>
+     <button class="li-del" onclick="removeListItem('${pid}', ${tidx !== null && tidx !== undefined ? "'"+tidx+"'" : null}, '${listName}', ${i})" title="Remover">×</button>
+   </li>`).join('');
+}
+ 
+function renderList(items, pid, tidx, listName, isRules) {
+ const cls = isRules ? 'rules' : 'acts';
+ const tidxStr = (tidx !== null && tidx !== undefined) ? tidx : 'null';
+ const containerKey = (tidx !== null && tidx !== undefined) ? `${pid}-${tidx}-${listName}` : `${pid}-${listName}`;
+ return `
+   <ul class="${cls}" data-list-container="${containerKey}">
+     ${renderListItems(items, pid, tidx, listName, isRules)}
+   </ul>
+   <button class="add-li-btn" onclick="addListItem('${pid}', ${tidxStr !== 'null' ? "'"+tidxStr+"'" : null}, '${listName}')">+ Adicionar item</button>`;
+}
+ 
+function renderKeysInner(p) {
+ const chipsHtml = p.keys.map((k, i) => {
+   const cls = k.status === 'ok' ? 'chip-ok' : k.status === 'warn' ? 'chip-warn' : 'chip-pend';
+   const suffix = k.status === 'warn' ? ' ⚠' : k.status === 'pend' ? ' …' : '';
+   const obs = k.obs ? ` title="${k.obs}"` : '';
+   return `<span class="chip ${cls}"${obs} onclick="cycleKeyStatus('${p.id}', ${i})" style="cursor:default">
+     ${k.nome}${suffix}
+     <button class="chip-remove" onclick="event.stopPropagation();removeKey('${p.id}',${i})" title="Remover">×</button>
+   </span>`;
+ }).join('');
+ return `
+   <span class="q-keys-label">KEYs:</span>
+   ${chipsHtml}
+   <button class="add-key-btn" onclick="showAddKeyInput('${p.id}')">+ KEY</button>`;
+}
+ 
+function renderMetricasInner(t, pid, tidx) {
+ const chips = (t.metricas || []).map((m, i) => `
+   <span class="chip chip-metrica" style="font-family:'Courier New',monospace;font-size:11px">
+     ${m}
+     <button class="chip-remove" onclick="removeMetrica('${pid}',${tidx},${i})" title="Remover">×</button>
+   </span>`).join('');
+ return `${chips}
+   <button class="add-metrica-btn" onclick="showAddMetricaInput('${pid}',${tidx})">+ métrica</button>`;
+}
+ 
+function renderDefComponentesInner(t, pid, tidx) {
+ const chips = (t.defComponentes || []).map((c, i) => `
+   <span class="chip chip-comp" style="font-family:'Courier New',monospace;font-size:11px">
+     ${c}
+     <button class="chip-remove" onclick="removeDefComp('${pid}',${tidx},${i})" title="Remover">×</button>
+   </span>`).join('');
+ return `${chips}
+   <button class="add-comp-btn" onclick="showAddCompInput('${pid}',${tidx})">+ componente</button>`;
+}
+ 
+function renderDefAnalitica(t, p, tidx) {
+ return `
+ <div class="da-block">
+   <div class="da-header">🔬 Definição Analítica</div>
+   <div class="da-row">
+     <div class="da-sub">Componentes</div>
+     <div class="da-chips" data-comp-pid="${p.id}" data-comp-tidx="${tidx}">
+       ${renderDefComponentesInner(t, p.id, tidx)}
+     </div>
+   </div>
+   <div class="da-row">
+     <div class="da-sub">Métricas</div>
+     <div class="da-text" contenteditable="true"
+       data-pid="${p.id}" data-tidx="${tidx}" data-field="defMetricas"
+       data-multiline="1" data-placeholder="Liste as métricas envolvidas…">${t.defMetricas || ''}</div>
+   </div>
+   <div class="da-row">
+     <div class="da-sub">Regras e Fórmulas</div>
+     <div class="da-text" contenteditable="true"
+       data-pid="${p.id}" data-tidx="${tidx}" data-field="defRegras"
+       data-multiline="1" data-placeholder="Descreva as regras e fórmulas de cálculo…">${t.defRegras || ''}</div>
+   </div>
+ </div>`;
+}
+ 
+function renderCard(t, p, tidx) {
+ const emergentesHtml = t.emergentes && t.emergentes.length ? t.emergentes.map((e, eidx) => `
+   <div class="emergent-box">
+     <div class="emergent-label">💡 Conceito Emergente</div>
+     <div class="emergent-title" contenteditable="true"
+       data-pid="${p.id}" data-tidx="${tidx}" data-eidx="${eidx}" data-field="titulo">${e.titulo}</div>
+     <div class="emergent-text" contenteditable="true"
+       data-pid="${p.id}" data-tidx="${tidx}" data-eidx="${eidx}" data-field="texto"
+       data-multiline="1">${e.texto}</div>
+   </div>`).join('') : '';
+ 
+ const quoteHtml = t.quote ? `<div class="quote" contenteditable="true"
+   data-pid="${p.id}" data-tidx="${tidx}" data-field="quote">${t.quote}</div>` : '';
+ 
+ return `
+ <div class="icard" data-card-pid="${p.id}" data-card-tidx="${tidx}">
+   <div class="icard-head">
+     <div style="flex:1">
+       <div class="icard-type" contenteditable="true"
+         data-pid="${p.id}" data-tidx="${tidx}" data-field="num">${t.num}</div>
+       <div class="icard-title" contenteditable="true"
+         data-pid="${p.id}" data-tidx="${tidx}" data-field="nome">${t.nome}</div>
+     </div>
+     <div class="card-actions">
+       <button class="remove-card-btn" onclick="removeTipoCard('${p.id}', ${tidx})" title="Remover">×</button>
+     </div>
+   </div>
+   <div class="icard-body">
+ 
+     <div class="card-sec">
+       <div class="sec-label">Interpretação</div>
+       <div class="sec-text" contenteditable="true"
+         data-pid="${p.id}" data-tidx="${tidx}" data-field="interpretacao"
+         data-multiline="1">${t.interpretacao}</div>
+       ${quoteHtml}
+     </div>
+ 
+     <div class="mr-block">
+       <div class="mr-header">⚙ Métricas &amp; Regras</div>
+       <div class="mr-row">
+         <div class="mr-sub">Métricas</div>
+         <div class="mr-chips" data-metricas-pid="${p.id}" data-metricas-tidx="${tidx}">
+           ${renderMetricasInner(t, p.id, tidx)}
+         </div>
+       </div>
+       <div class="mr-row">
+         <div class="mr-sub">Regra condicional</div>
+         <div class="regra-text" contenteditable="true"
+           data-pid="${p.id}" data-tidx="${tidx}" data-field="regras"
+           data-multiline="1">${t.regras || ''}</div>
+       </div>
+     </div>
+ 
+     ${t.parametros && t.parametros.length ? `
+     <div class="card-sec">
+       <div class="sec-label">Parâmetros</div>
+       ${renderList(t.parametros, p.id, tidx, 'parametros', true)}
+     </div>` : ''}
+ 
+     ${t.acionaveis && t.acionaveis.length ? `
+     <div class="card-sec">
+       <div class="sec-label">Acionáveis</div>
+       ${renderList(t.acionaveis, p.id, tidx, 'acionaveis', false)}
+     </div>` : ''}
+ 
+     ${emergentesHtml}
+ 
+     ${renderDefAnalitica(t, p, tidx)}
+   </div>
+ </div>`;
+}
+ 
+function renderImplBlock(p) {
+ const isDone = p.done;
+ const link = p.linkDashboard || '';
+ return `
+ <div class="impl-block${isDone ? ' is-done' : ''}" id="impl-${p.id}">
+   <div class="impl-checks">
+     <button class="impl-check-btn${p.componentes ? ' checked' : ''}"
+       data-check-pid="${p.id}" data-check-field="componentes"
+       onclick="toggleCheck('${p.id}', 'componentes')">
+       <span class="impl-check-icon">${p.componentes ? '☑' : '☐'}</span>
+       Componentes criados
+     </button>
+     <button class="impl-check-btn${p.done ? ' checked' : ''}"
+       data-check-pid="${p.id}" data-check-field="done"
+       onclick="toggleCheck('${p.id}', 'done')">
+       <span class="impl-check-icon">${p.done ? '☑' : '☐'}</span>
+       Done
+     </button>
+   </div>
+   <div class="impl-divider"></div>
+   <div class="impl-link-wrap">
+     <span class="impl-link-label">🔗 Dashboard:</span>
+     <div class="impl-link-field" contenteditable="true"
+       data-pid="${p.id}" data-field="linkDashboard"
+       data-placeholder="link para aba do dashboard…">${link}</div>
+   </div>
+ </div>`;
+}
+ 
+function renderPerguntaContent(p) {
+ const cardsHtml = p.tipos.map((t, i) => renderCard(t, p, i)).join('');
+ const openHtml = p.emAberto && p.emAberto.length ? `
+   <div style="margin-top:20px">
+     <div class="sec-divider">Em Aberto</div>
+     <div class="open-box">
+       <div class="open-label">❓ Perguntas em Aberto</div>
+       ${renderList(p.emAberto, p.id, null, 'emAberto', true)}
+     </div>
+   </div>` : '';
+ 
+ return `
+ <div class="q-header">
+   <div class="q-eyebrow">${p.label}</div>
+   <div class="q-title" contenteditable="true"
+     data-pid="${p.id}" data-field="titulo">${p.titulo}</div>
+   <div class="q-contexto" contenteditable="true"
+     data-pid="${p.id}" data-field="contexto" data-multiline="1">${p.contexto}</div>
+   <div class="q-keys-row" data-keys-pid="${p.id}">
+     ${renderKeysInner(p)}
+   </div>
+ </div>
+ ${renderImplBlock(p)}
+ <div class="grid">
+   ${cardsHtml}
+   <div class="add-card-wrap">
+     <button class="add-card-btn" onclick="addTipoCard('${p.id}')">+ Adicionar Tipo de Insight</button>
+   </div>
+ </div>
+ ${openHtml}`;
+}
+ 
+/* ─── Overview ─── */
+function renderOverview() {
+ const s = getProgressStats();
+ 
+ const ovCards = DATA.map(p => {
+   const dotCls = p.done ? 'done' : p.componentes ? 'partial' : 'none';
+   const dotTitle = p.done ? 'Done' : p.componentes ? 'Componentes criados' : 'Pendente';
+   const tipos = p.tipos.map(t => `
+     <div class="ov-tipo">
+       <span class="ov-tnum">${t.num}</span>
+       <span class="ov-tname">${t.nome}</span>
+     </div>`).join('');
+ 
+   const mCount = p.tipos.filter(t => t.metricas && t.metricas.length > 0).length;
+   const rCount = p.tipos.filter(t => t.regras && t.regras.trim()).length;
+ 
+   return `
+   <div class="ov-card" onclick="goTab('${p.id}')">
+     <div class="ov-card-head">
+       <div class="ov-pnum">${p.label}</div>
+       <div class="ov-qtitle">${p.titulo}</div>
+       <div class="ov-impl-dot ${dotCls}" title="${dotTitle}"></div>
+     </div>
+     <div class="ov-tipos">${tipos}</div>
+     <div class="ov-card-footer">
+       <span class="ov-footer-tag${mCount === p.tipos.length ? ' ok' : ''}">
+         ⚙ ${mCount}/${p.tipos.length} métricas
+       </span>
+       <span class="ov-footer-tag${rCount === p.tipos.length ? ' ok' : ''}">
+         ƒ ${rCount}/${p.tipos.length} regras
+       </span>
+       <span class="ov-footer-tag${p.done ? ' ok' : ''}">
+         ${p.done ? '✓ Done' : p.componentes ? '◐ Parcial' : '○ Pendente'}
+       </span>
+     </div>
+   </div>`;
+ }).join('');
+ 
+ const pctComp = Math.round(s.componentes/s.total*100);
+ const pctDone = Math.round(s.done/s.total*100);
+ const pctMet  = Math.round(s.comMetricas/s.totalTipos*100);
+ const pctReg  = Math.round(s.comRegras/s.totalTipos*100);
+ 
+ return `
+ <div class="ov-intro">
+   <h2>Mapa de Conhecimento — NeoDash.ai</h2>
+   <p>Registro do conhecimento externalizado nas sessões de 06 e 10/03/2026. Para cada uma das 6 perguntas estratégicas foram identificados 4 tipos de insight — com interpretações, métricas, regras condicionais e acionáveis.</p>
+   <p>Use os checkboxes em cada pergunta para marcar progresso de implementação no dashboard. O link para a aba correspondente fica salvo automaticamente.</p>
+   <div class="method-flow">
+     <div class="mstep" style="color:var(--muted)">Dado Bruto</div>
+     <span class="marrow">→</span>
+     <div class="mstep">Afirmação de Domínio</div>
+     <span class="marrow">→</span>
+     <div class="mstep cyan">Acionável</div>
+   </div>
+   <div class="meth-grid">
+     <div class="meth-card">
+       <div class="meth-card-badge" style="color:var(--cyan)">Camada 1</div>
+       <div class="meth-card-title">Dado</div>
+       <div class="meth-card-desc">O dado bruto existe no NeoDash. É preciso, mas mudo — não fala por si só.</div>
+     </div>
+     <div class="meth-card">
+       <div class="meth-card-badge" style="color:var(--orange)">Camada 2</div>
+       <div class="meth-card-title">Afirmação de Domínio</div>
+       <div class="meth-card-desc">Transformação do dado em conhecimento interpretado. Requer as regras implícitas do especialista.</div>
+     </div>
+     <div class="meth-card">
+       <div class="meth-card-badge" style="color:var(--green)">Camada 3</div>
+       <div class="meth-card-title">Acionável</div>
+       <div class="meth-card-desc">O que fazer com o insight. Separação: descoberta interna (precisa) vs. narrativa para o cliente (calma).</div>
+     </div>
+   </div>
+ </div>
+ 
+ <div class="stats-row">
+   <div class="stat-card">
+     <div class="stat-num c-cyan">${s.total}</div>
+     <div class="stat-desc">Perguntas mapeadas</div>
+     <div class="prog-bar-wrap">
+       <div class="prog-bar-track"><div class="prog-bar-fill" id="bar-componentes" style="width:${pctComp}%;background:var(--cyan)"></div></div>
+     </div>
+   </div>
+   <div class="stat-card">
+     <div class="stat-num c-green" id="stat-componentes">${s.componentes}/${s.total}</div>
+     <div class="stat-desc">Componentes criados</div>
+     <div class="prog-bar-wrap">
+       <div class="prog-bar-track"><div class="prog-bar-fill" id="bar-componentes2" style="width:${pctComp}%;background:var(--green)"></div></div>
+     </div>
+   </div>
+   <div class="stat-card">
+     <div class="stat-num c-green" id="stat-done">${s.done}/${s.total}</div>
+     <div class="stat-desc">Perguntas Done</div>
+     <div class="prog-bar-wrap">
+       <div class="prog-bar-track"><div class="prog-bar-fill" id="bar-done" style="width:${pctDone}%;background:var(--green)"></div></div>
+     </div>
+   </div>
+   <div class="stat-card">
+     <div class="stat-num c-ora" id="stat-metricas">${s.comMetricas}/${s.totalTipos}</div>
+     <div class="stat-desc">Insights com métricas</div>
+     <div class="prog-bar-wrap">
+       <div class="prog-bar-track"><div class="prog-bar-fill" id="bar-metricas" style="width:${pctMet}%;background:var(--orange)"></div></div>
+     </div>
+   </div>
+   <div class="stat-card">
+     <div class="stat-num c-ora" id="stat-regras">${s.comRegras}/${s.totalTipos}</div>
+     <div class="stat-desc">Insights com regras</div>
+     <div class="prog-bar-wrap">
+       <div class="prog-bar-track"><div class="prog-bar-fill" id="bar-regras" style="width:${pctReg}%;background:var(--orange)"></div></div>
+     </div>
+   </div>
+ </div>
+ 
+ <div class="sec-divider">Mapa por Pergunta — clique para navegar</div>
+ <div class="ov-grid">${ovCards}</div>`;
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  TABS & PANELS
+═══════════════════════════════════════════════════════ */
+function renderTabs() {
+ const nav = document.getElementById('tabNav');
+ const tabsHtml = DATA.map(p => `
+   <button class="tab-btn${activeTab === p.id ? ' active' : ''}" data-tab="${p.id}">
+     ${p.label}
+     <button class="tab-close" onclick="event.stopPropagation();removePergunta('${p.id}')" title="Remover">×</button>
+   </button>`).join('');
+ nav.innerHTML = `
+   <button class="tab-btn${activeTab === 'overview' ? ' active' : ''}" data-tab="overview">Visão Geral</button>
+   ${tabsHtml}
+   <button class="add-tab-btn" onclick="addPergunta()">+ Nova Pergunta</button>`;
+ nav.querySelectorAll('[data-tab]').forEach(btn => {
+   btn.addEventListener('click', function() {
+     if (this.hasAttribute('data-tab')) goTab(this.dataset.tab);
+   });
+ });
+}
+ 
+function renderPanels() {
+ const root = document.getElementById('appRoot');
+ let html = `<div id="overview" class="tab-panel${activeTab==='overview'?' active':''}">
+   ${renderOverview()}
+ </div>`;
+ DATA.forEach(p => {
+   html += `<div id="${p.id}" class="tab-panel${activeTab===p.id?' active':''}">
+     ${renderPerguntaContent(p)}
+   </div>`;
+ });
+ root.innerHTML = html;
+}
+ 
+function renderAll() { renderTabs(); renderPanels(); }
+ 
+function goTab(id) {
+ activeTab = id;
+ document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+ document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+ const panel = document.getElementById(id);
+ const btn = document.querySelector(`[data-tab="${id}"]`);
+ if (panel) panel.classList.add('active');
+ if (btn) { btn.classList.add('active'); btn.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' }); }
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+ 
+/* ═══════════════════════════════════════════════════════
+  INIT
+═══════════════════════════════════════════════════════ */
+(function init() {
+ const savedTheme = localStorage.getItem(THEME_KEY);
+ if (savedTheme) currentTheme = savedTheme;
+ document.body.className = currentTheme;
+ document.getElementById('themeToggle').textContent = currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+ loadData();
+ if (DATA.length >= 6) perguntaCounter = DATA.length + 1;
+ renderAll();
+ document.getElementById('saveDot').className = 'save-dot saved';
+ document.getElementById('saveLabel').textContent = 'Salvo';
+})();
+</script>
+</body>
+</html>
