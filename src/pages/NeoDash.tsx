@@ -21,9 +21,13 @@ const NeoDash = () => {
     return (
       <div
         id="tool-container"
-        style={{ height: "100vh", width: "100%", overflow: "auto" }}
+        style={{ height: "100vh", width: "100%", overflow: "hidden" }}
       >
-        {/* Tool will be loaded here */}
+        <iframe
+          src="/neodash/tool.html"
+          style={{ width: "100%", height: "100%", border: "none" }}
+          title="NeoDash Tool"
+        />
       </div>
     );
   }
