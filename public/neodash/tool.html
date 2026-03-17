@@ -1647,30 +1647,6 @@ function renderDefComponentesInner(t, pid, tidx) {
    <button class="add-comp-btn" onclick="showAddCompInput('${pid}',${tidx})">+ componente</button>`;
 }
  
-function renderDefAnalitica(t, p, tidx) {
- return `
- <div class="da-block">
-   <div class="da-header">🔬 Definição Analítica</div>
-   <div class="da-row">
-     <div class="da-sub">Componentes</div>
-     <div class="da-chips" data-comp-pid="${p.id}" data-comp-tidx="${tidx}">
-       ${renderDefComponentesInner(t, p.id, tidx)}
-     </div>
-   </div>
-   <div class="da-row">
-     <div class="da-sub">Métricas</div>
-     <div class="da-text" contenteditable="true"
-       data-pid="${p.id}" data-tidx="${tidx}" data-field="defMetricas"
-       data-multiline="1" data-placeholder="Liste as métricas envolvidas…">${t.defMetricas || ''}</div>
-   </div>
-   <div class="da-row">
-     <div class="da-sub">Regras e Fórmulas</div>
-     <div class="da-text" contenteditable="true"
-       data-pid="${p.id}" data-tidx="${tidx}" data-field="defRegras"
-       data-multiline="1" data-placeholder="Descreva as regras e fórmulas de cálculo…">${t.defRegras || ''}</div>
-   </div>
- </div>`;
-}
  
 function renderCard(t, p, tidx) {
  const emergentesHtml = t.emergentes && t.emergentes.length ? t.emergentes.map((e, eidx) => `
