@@ -190,6 +190,45 @@ const NeoDashAdmin = () => {
     fetchInsightCounts();
   };
 
+  // ── Export ──
+  const [exportDialog, setExportDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const buildExportJson = () => {
+    return JSON.stringify({
+      pergunta: {
+        label: selectedPergunta?.label ?? "",
+        texto: selectedPergunta?.pergunta ?? "",
+      },
+      insights: insights.map((ins) => ({
+        descricao: ins.descricao || "",
+        interpretacao: ins.interpretacao || "",
+        acionaveis: ins.acionaveis || [],
+        metricas: ins.metricas || [],
+        regras_condicionais: ins.regras_condicionais || [],
+        parametros: ins.parametros || "",
+        emergentes: ins.emergentes || "",
+      })),
+    }, null, 2);
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(buildExportJson());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({ title: "JSON copiado" });
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([buildExportJson()], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selectedPergunta?.label?.toLowerCase() || "export"}-insights.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // ── Loading ──
   if (loading) {
     return (
