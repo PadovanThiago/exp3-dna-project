@@ -338,6 +338,30 @@ const NeoDashAdmin = () => {
           </div>
         </main>
 
+        {/* Export dialog */}
+        <Dialog open={exportDialog} onOpenChange={setExportDialog}>
+          <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Exportar JSON — {selectedPergunta.label}</DialogTitle>
+              <DialogDescription>JSON estruturado pronto para consumo por IA.</DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="flex-1 min-h-0 rounded-lg border border-border bg-secondary/30 p-4">
+              <pre className="text-xs text-foreground/80 whitespace-pre font-mono leading-relaxed">
+                {buildExportJson()}
+              </pre>
+            </ScrollArea>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={handleDownload}>
+                <Download className="h-4 w-4 mr-1" /> Baixar .json
+              </Button>
+              <Button onClick={handleCopy}>
+                {copied ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
+                {copied ? "Copiado!" : "Copiar"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Insight dialog */}
         <InsightDialog
           open={insightDialog}
