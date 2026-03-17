@@ -253,6 +253,9 @@ const NeoDashAdmin = () => {
             {selectedPergunta.label}
           </Badge>
           <h1 className="text-sm font-medium text-foreground truncate flex-1">{selectedPergunta.pergunta}</h1>
+          <Button size="sm" variant="outline" onClick={() => { setCopied(false); setExportDialog(true); }}>
+            <Download className="h-4 w-4 mr-1" /> Exportar JSON
+          </Button>
           <Button size="sm" onClick={() => openInsightDialog()}>
             <Plus className="h-4 w-4 mr-1" /> Insight
           </Button>
