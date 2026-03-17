@@ -404,50 +404,6 @@ body.editing .add-card-wrap { display: block; }
 }
 .sec-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
  
-/* ═══════════════════════════════════
-  DEFINIÇÃO ANALÍTICA BLOCK
-═══════════════════════════════════ */
-.da-block {
- background: var(--grn-bg); border: 1px solid var(--grn-bd);
- border-left: 3px solid var(--green);
- border-radius: 6px; padding: 11px 13px;
- display: flex; flex-direction: column; gap: 9px;
-}
-.da-header {
- font-size: 10px; font-weight: 700; text-transform: uppercase;
- letter-spacing: .09em; color: var(--green); margin-bottom: 2px;
-}
-.da-row { display: flex; flex-direction: column; gap: 5px; }
-.da-sub {
- font-size: 10px; font-weight: 600; text-transform: uppercase;
- letter-spacing: .08em; color: var(--muted);
-}
-.da-chips { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-.chip-comp {
- background: rgba(0,199,139,.06); border: 1px solid rgba(0,199,139,.2);
- color: var(--green); cursor: default;
-}
-.add-comp-btn {
- display: none; align-items: center; gap: 4px;
- background: none; border: 1px dashed var(--grn-bd);
- color: var(--green); font-family: inherit; font-size: 11px;
- padding: 2px 8px; border-radius: 6px; cursor: pointer;
- transition: all .15s; opacity: .7;
-}
-body.editing .add-comp-btn { display: inline-flex; }
-.add-comp-btn:hover { opacity: 1; }
-.add-comp-input {
- background: var(--card); border: 1px solid var(--green);
- color: var(--text); font-family: 'Courier New', monospace; font-size: 12px;
- padding: 2px 8px; border-radius: 6px; width: 160px;
- outline: none;
-}
-.da-text {
- font-size: 12px; color: var(--soft); line-height: 1.6;
- font-family: 'Courier New', monospace;
- background: rgba(0,0,0,.15); border-radius: 4px; padding: 6px 9px;
- min-height: 2.5em;
-}
 body.light .da-text { background: rgba(0,0,0,.04); }
 .da-text:empty::before { content: attr(data-placeholder); color: var(--muted); font-style: italic; }
 .da-link-row { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
@@ -1647,30 +1603,6 @@ function renderDefComponentesInner(t, pid, tidx) {
    <button class="add-comp-btn" onclick="showAddCompInput('${pid}',${tidx})">+ componente</button>`;
 }
  
-function renderDefAnalitica(t, p, tidx) {
- return `
- <div class="da-block">
-   <div class="da-header">🔬 Definição Analítica</div>
-   <div class="da-row">
-     <div class="da-sub">Componentes</div>
-     <div class="da-chips" data-comp-pid="${p.id}" data-comp-tidx="${tidx}">
-       ${renderDefComponentesInner(t, p.id, tidx)}
-     </div>
-   </div>
-   <div class="da-row">
-     <div class="da-sub">Métricas</div>
-     <div class="da-text" contenteditable="true"
-       data-pid="${p.id}" data-tidx="${tidx}" data-field="defMetricas"
-       data-multiline="1" data-placeholder="Liste as métricas envolvidas…">${t.defMetricas || ''}</div>
-   </div>
-   <div class="da-row">
-     <div class="da-sub">Regras e Fórmulas</div>
-     <div class="da-text" contenteditable="true"
-       data-pid="${p.id}" data-tidx="${tidx}" data-field="defRegras"
-       data-multiline="1" data-placeholder="Descreva as regras e fórmulas de cálculo…">${t.defRegras || ''}</div>
-   </div>
- </div>`;
-}
  
 function renderCard(t, p, tidx) {
  const emergentesHtml = t.emergentes && t.emergentes.length ? t.emergentes.map((e, eidx) => `
@@ -1739,9 +1671,8 @@ function renderCard(t, p, tidx) {
  
      ${emergentesHtml}
  
-     ${renderDefAnalitica(t, p, tidx)}
-   </div>
- </div>`;
+    </div>
+  </div>`;
 }
  
 function renderImplBlock(p) {
