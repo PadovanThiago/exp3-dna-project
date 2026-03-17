@@ -49,6 +49,7 @@ const AppLayout = () => {
           <Route path="/admin/blog/edit/:id" element={<ProtectedAdminRoute><AdminBlogEditor /></ProtectedAdminRoute>} />
           <Route path="/deck" element={<DeckRedirect />} />
           <Route path="/neodash" element={<NeoDash />} />
+          <Route path="/neodash/admin" element={<NeoDashAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
