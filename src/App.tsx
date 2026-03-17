@@ -20,10 +20,11 @@ import AdminBlogEditor from "./pages/AdminBlogEditor";
 import NotFound from "./pages/NotFound";
 import DeckRedirect from "./pages/DeckRedirect";
 import NeoDash from "./pages/NeoDash";
+import NeoDashAdmin from "./pages/NeoDashAdmin";
 
 const queryClient = new QueryClient();
 
-const FULLSCREEN_ROUTES = ["/neodash"];
+const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin"];
 
 const AppLayout = () => {
   const location = useLocation();
