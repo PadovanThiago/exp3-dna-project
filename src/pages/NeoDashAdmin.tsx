@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Lightbulb, LayoutGrid, X,
+  Download, Copy, Check,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
