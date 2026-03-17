@@ -14,6 +14,136 @@ export type Database = {
   }
   public: {
     Tables: {
+      neodash_insights: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          question_id: string
+          source: string | null
+          type: string | null
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          question_id: string
+          source?: string | null
+          type?: string | null
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          question_id?: string
+          source?: string | null
+          type?: string | null
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "neodash_insights_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "neodash_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      neodash_questions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          priority: string | null
+          sort_order: number | null
+          status: string | null
+          title: string
+          topic_id: string
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          priority?: string | null
+          sort_order?: number | null
+          status?: string | null
+          title: string
+          topic_id: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          priority?: string | null
+          sort_order?: number | null
+          status?: string | null
+          title?: string
+          topic_id?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "neodash_questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "neodash_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      neodash_topics: {
+        Row: {
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          sort_order: number | null
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_name: string
