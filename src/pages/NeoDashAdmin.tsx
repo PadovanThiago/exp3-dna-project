@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
   DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Lightbulb, LayoutGrid, X,
+  Download, Copy, Check,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -188,6 +190,45 @@ const NeoDashAdmin = () => {
     fetchInsightCounts();
   };
 
+  // ── Export ──
+  const [exportDialog, setExportDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const buildExportJson = () => {
+    return JSON.stringify({
+      pergunta: {
+        label: selectedPergunta?.label ?? "",
+        texto: selectedPergunta?.pergunta ?? "",
+      },
+      insights: insights.map((ins) => ({
+        descricao: ins.descricao || "",
+        interpretacao: ins.interpretacao || "",
+        acionaveis: ins.acionaveis || [],
+        metricas: ins.metricas || [],
+        regras_condicionais: ins.regras_condicionais || [],
+        parametros: ins.parametros || "",
+        emergentes: ins.emergentes || "",
+      })),
+    }, null, 2);
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(buildExportJson());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({ title: "JSON copiado" });
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([buildExportJson()], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selectedPergunta?.label?.toLowerCase() || "export"}-insights.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // ── Loading ──
   if (loading) {
     return (
@@ -212,6 +253,9 @@ const NeoDashAdmin = () => {
             {selectedPergunta.label}
           </Badge>
           <h1 className="text-sm font-medium text-foreground truncate flex-1">{selectedPergunta.pergunta}</h1>
+          <Button size="sm" variant="outline" onClick={() => { setCopied(false); setExportDialog(true); }}>
+            <Download className="h-4 w-4 mr-1" /> Exportar JSON
+          </Button>
           <Button size="sm" onClick={() => openInsightDialog()}>
             <Plus className="h-4 w-4 mr-1" /> Insight
           </Button>
@@ -293,6 +337,30 @@ const NeoDashAdmin = () => {
             ))}
           </div>
         </main>
+
+        {/* Export dialog */}
+        <Dialog open={exportDialog} onOpenChange={setExportDialog}>
+          <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Exportar JSON — {selectedPergunta.label}</DialogTitle>
+              <DialogDescription>JSON estruturado pronto para consumo por IA.</DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="flex-1 min-h-0 rounded-lg border border-border bg-secondary/30 p-4">
+              <pre className="text-xs text-foreground/80 whitespace-pre font-mono leading-relaxed">
+                {buildExportJson()}
+              </pre>
+            </ScrollArea>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={handleDownload}>
+                <Download className="h-4 w-4 mr-1" /> Baixar .json
+              </Button>
+              <Button onClick={handleCopy}>
+                {copied ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
+                {copied ? "Copiado!" : "Copiar"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Insight dialog */}
         <InsightDialog
