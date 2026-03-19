@@ -6,13 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
   DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Lightbulb, LayoutGrid, X,
-  Download, Copy, Check,
+  Download, Copy, Check, Link2, Unlink, Zap, Search,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -27,9 +28,10 @@ type Pergunta = {
 type Insight = {
   id: string;
   pergunta_id: string;
+  ident: string;
+  label: string;
   descricao: string;
   interpretacao: string;
-  acionaveis: string[];
   metricas: string[];
   regras_condicionais: string[];
   parametros: string;
@@ -37,14 +39,35 @@ type Insight = {
   criado_em: string;
 };
 
+type Acao = {
+  id: string;
+  ident: string;
+  label: string;
+  descricao: string;
+  criado_em: string;
+};
+
+type InsightAcao = {
+  id: string;
+  insight_id: string;
+  acao_id: string;
+};
+
 const EMPTY_INSIGHT = {
+  ident: "",
+  label: "",
   descricao: "",
   interpretacao: "",
-  acionaveis: [] as string[],
   metricas: [] as string[],
   regras_condicionais: [] as string[],
   parametros: "",
   emergentes: "",
+};
+
+const EMPTY_ACAO = {
+  ident: "",
+  label: "",
+  descricao: "",
 };
 
 // ── Array field helper ──
@@ -108,10 +131,25 @@ const NeoDashAdmin = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Dialog
+  // Acoes state
+  const [allAcoes, setAllAcoes] = useState<Acao[]>([]);
+  const [insightAcoes, setInsightAcoes] = useState<Record<string, string[]>>({}); // insight_id -> acao_id[]
+
+  // Dialogs
   const [insightDialog, setInsightDialog] = useState(false);
   const [editingInsight, setEditingInsight] = useState<Insight | null>(null);
   const [form, setForm] = useState(EMPTY_INSIGHT);
+
+  const [acaoDialog, setAcaoDialog] = useState(false);
+  const [editingAcao, setEditingAcao] = useState<Acao | null>(null);
+  const [acaoForm, setAcaoForm] = useState(EMPTY_ACAO);
+
+  const [linkDialog, setLinkDialog] = useState(false);
+  const [linkInsightId, setLinkInsightId] = useState<string | null>(null);
+  const [linkSearch, setLinkSearch] = useState("");
+  const [selectedAcaoIds, setSelectedAcaoIds] = useState<string[]>([]);
+
+  const [acoesManagerOpen, setAcoesManagerOpen] = useState(false);
 
   // ── Fetch ──
   const fetchPerguntas = useCallback(async () => {
@@ -140,22 +178,57 @@ const NeoDashAdmin = () => {
     if (data) setInsights(data);
   }, []);
 
-  useEffect(() => {
-    Promise.all([fetchPerguntas(), fetchInsightCounts()]).then(() => setLoading(false));
-  }, [fetchPerguntas, fetchInsightCounts]);
+  const fetchAllAcoes = useCallback(async () => {
+    const { data } = await supabase
+      .from("neodash_acoes")
+      .select("*")
+      .order("ident", { ascending: true });
+    if (data) setAllAcoes(data);
+  }, []);
+
+  const fetchInsightAcoes = useCallback(async (insightIds: string[]) => {
+    if (insightIds.length === 0) { setInsightAcoes({}); return; }
+    const { data } = await supabase
+      .from("neodash_insight_acoes")
+      .select("*")
+      .in("insight_id", insightIds);
+    if (data) {
+      const map: Record<string, string[]> = {};
+      data.forEach((r: InsightAcao) => {
+        if (!map[r.insight_id]) map[r.insight_id] = [];
+        map[r.insight_id].push(r.acao_id);
+      });
+      setInsightAcoes(map);
+    }
+  }, []);
 
   useEffect(() => {
-    if (selectedPergunta) fetchInsights(selectedPergunta.id);
+    Promise.all([fetchPerguntas(), fetchInsightCounts(), fetchAllAcoes()]).then(() => setLoading(false));
+  }, [fetchPerguntas, fetchInsightCounts, fetchAllAcoes]);
+
+  useEffect(() => {
+    if (selectedPergunta) {
+      fetchInsights(selectedPergunta.id);
+    }
   }, [selectedPergunta, fetchInsights]);
+
+  useEffect(() => {
+    if (insights.length > 0) {
+      fetchInsightAcoes(insights.map((i) => i.id));
+    } else {
+      setInsightAcoes({});
+    }
+  }, [insights, fetchInsightAcoes]);
 
   // ── Insight CRUD ──
   const openInsightDialog = (insight?: Insight) => {
     if (insight) {
       setEditingInsight(insight);
       setForm({
+        ident: insight.ident,
+        label: insight.label,
         descricao: insight.descricao,
         interpretacao: insight.interpretacao,
-        acionaveis: insight.acionaveis || [],
         metricas: insight.metricas || [],
         regras_condicionais: insight.regras_condicionais || [],
         parametros: insight.parametros,
@@ -190,6 +263,71 @@ const NeoDashAdmin = () => {
     fetchInsightCounts();
   };
 
+  // ── Acao CRUD ──
+  const openAcaoDialog = (acao?: Acao) => {
+    if (acao) {
+      setEditingAcao(acao);
+      setAcaoForm({ ident: acao.ident, label: acao.label, descricao: acao.descricao });
+    } else {
+      setEditingAcao(null);
+      setAcaoForm(EMPTY_ACAO);
+    }
+    setAcaoDialog(true);
+  };
+
+  const saveAcao = async () => {
+    if (!acaoForm.ident.trim() || !acaoForm.label.trim()) return;
+    if (editingAcao) {
+      await supabase.from("neodash_acoes").update(acaoForm).eq("id", editingAcao.id);
+      toast({ title: "Ação atualizada" });
+    } else {
+      await supabase.from("neodash_acoes").insert(acaoForm);
+      toast({ title: "Ação criada" });
+    }
+    setAcaoDialog(false);
+    fetchAllAcoes();
+  };
+
+  const deleteAcao = async (id: string) => {
+    await supabase.from("neodash_acoes").delete().eq("id", id);
+    toast({ title: "Ação removida" });
+    fetchAllAcoes();
+    // Refresh links
+    if (insights.length > 0) fetchInsightAcoes(insights.map((i) => i.id));
+  };
+
+  // ── Link/Unlink acoes ──
+  const openLinkDialog = (insightId: string) => {
+    setLinkInsightId(insightId);
+    setSelectedAcaoIds(insightAcoes[insightId] || []);
+    setLinkSearch("");
+    setLinkDialog(true);
+  };
+
+  const saveLinkAcoes = async () => {
+    if (!linkInsightId) return;
+    const current = insightAcoes[linkInsightId] || [];
+    const toAdd = selectedAcaoIds.filter((id) => !current.includes(id));
+    const toRemove = current.filter((id) => !selectedAcaoIds.includes(id));
+
+    for (const acao_id of toAdd) {
+      await supabase.from("neodash_insight_acoes").insert({ insight_id: linkInsightId, acao_id });
+    }
+    for (const acao_id of toRemove) {
+      await supabase.from("neodash_insight_acoes").delete().eq("insight_id", linkInsightId).eq("acao_id", acao_id);
+    }
+
+    toast({ title: "Ações vinculadas atualizadas" });
+    setLinkDialog(false);
+    fetchInsightAcoes(insights.map((i) => i.id));
+  };
+
+  const unlinkAcao = async (insightId: string, acaoId: string) => {
+    await supabase.from("neodash_insight_acoes").delete().eq("insight_id", insightId).eq("acao_id", acaoId);
+    toast({ title: "Ação desvinculada" });
+    fetchInsightAcoes(insights.map((i) => i.id));
+  };
+
   // ── Export ──
   const [exportDialog, setExportDialog] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -201,13 +339,18 @@ const NeoDashAdmin = () => {
         texto: selectedPergunta?.pergunta ?? "",
       },
       insights: insights.map((ins) => ({
+        ident: ins.ident || "",
+        label: ins.label || "",
         descricao: ins.descricao || "",
         interpretacao: ins.interpretacao || "",
-        acionaveis: ins.acionaveis || [],
         metricas: ins.metricas || [],
         regras_condicionais: ins.regras_condicionais || [],
         parametros: ins.parametros || "",
         emergentes: ins.emergentes || "",
+        acoes: (insightAcoes[ins.id] || []).map((acaoId) => {
+          const acao = allAcoes.find((a) => a.id === acaoId);
+          return acao ? { ident: acao.ident, label: acao.label, descricao: acao.descricao } : null;
+        }).filter(Boolean),
       })),
     }, null, 2);
   };
@@ -227,6 +370,11 @@ const NeoDashAdmin = () => {
     a.download = `${selectedPergunta?.label?.toLowerCase() || "export"}-insights.json`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const getAcoesForInsight = (insightId: string): Acao[] => {
+    const ids = insightAcoes[insightId] || [];
+    return ids.map((id) => allAcoes.find((a) => a.id === id)).filter(Boolean) as Acao[];
   };
 
   // ── Loading ──
@@ -253,6 +401,9 @@ const NeoDashAdmin = () => {
             {selectedPergunta.label}
           </Badge>
           <h1 className="text-sm font-medium text-foreground truncate flex-1">{selectedPergunta.pergunta}</h1>
+          <Button size="sm" variant="outline" onClick={() => setAcoesManagerOpen(true)}>
+            <Zap className="h-4 w-4 mr-1" /> Ações
+          </Button>
           <Button size="sm" variant="outline" onClick={() => { setCopied(false); setExportDialog(true); }}>
             <Download className="h-4 w-4 mr-1" /> Exportar JSON
           </Button>
@@ -287,54 +438,81 @@ const NeoDashAdmin = () => {
           )}
 
           <div className="space-y-4">
-            {insights.map((ins) => (
-              <Card key={ins.id} className="bg-card/60 border-border/50 group">
-                <CardContent className="p-5">
-                  {/* Header */}
-                  <div className="flex items-start justify-between gap-3 mb-4">
-                    <h3 className="text-sm font-semibold text-foreground leading-snug flex-1">Descrição</h3>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => openInsightDialog(ins)} className="p-1.5 rounded hover:bg-accent">
-                        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                      </button>
-                      <button onClick={() => deleteInsight(ins.id)} className="p-1.5 rounded hover:bg-destructive/20 text-destructive">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+            {insights.map((ins) => {
+              const linkedAcoes = getAcoesForInsight(ins.id);
+              return (
+                <Card key={ins.id} className="bg-card/60 border-border/50 group">
+                  <CardContent className="p-5">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2">
+                        {ins.ident && (
+                          <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary">{ins.ident}</Badge>
+                        )}
+                        {ins.label && (
+                          <span className="text-sm font-semibold text-foreground">{ins.label}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => openLinkDialog(ins.id)} className="p-1.5 rounded hover:bg-accent" title="Vincular ações">
+                          <Link2 className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                        <button onClick={() => openInsightDialog(ins)} className="p-1.5 rounded hover:bg-accent">
+                          <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                        <button onClick={() => deleteInsight(ins.id)} className="p-1.5 rounded hover:bg-destructive/20 text-destructive">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm text-foreground/90 leading-relaxed mb-4">{ins.descricao}</p>
 
-                  {/* Fields grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Interpretação */}
-                    {ins.interpretacao && (
-                      <FieldBlock label="Interpretação" value={ins.interpretacao} />
-                    )}
-                    {/* Parâmetros */}
-                    {ins.parametros && (
-                      <FieldBlock label="Parâmetros" value={ins.parametros} />
-                    )}
-                    {/* Emergentes */}
-                    {ins.emergentes && (
-                      <FieldBlock label="Emergentes" value={ins.emergentes} />
-                    )}
-                  </div>
+                    {/* Descrição */}
+                    <h3 className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">Descrição</h3>
+                    <p className="text-sm text-foreground/90 leading-relaxed mb-4">{ins.descricao}</p>
 
-                  {/* Array fields */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    {ins.acionaveis?.length > 0 && (
-                      <ListBlock label="Acionáveis" items={ins.acionaveis} color="text-exp3-cyan" />
+                    {/* Fields grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {ins.interpretacao && <FieldBlock label="Interpretação" value={ins.interpretacao} />}
+                      {ins.parametros && <FieldBlock label="Parâmetros" value={ins.parametros} />}
+                      {ins.emergentes && <FieldBlock label="Emergentes" value={ins.emergentes} />}
+                    </div>
+
+                    {/* Array fields */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      {ins.metricas?.length > 0 && (
+                        <ListBlock label="Métricas" items={ins.metricas} color="text-primary" />
+                      )}
+                      {ins.regras_condicionais?.length > 0 && (
+                        <ListBlock label="Regras Condicionais" items={ins.regras_condicionais} color="text-primary" />
+                      )}
+                    </div>
+
+                    {/* Linked acoes */}
+                    {linkedAcoes.length > 0 && (
+                      <div className="mt-4 bg-secondary/30 rounded-lg p-3">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground block mb-2">
+                          <Zap className="h-3 w-3 inline mr-1" />Ações vinculadas
+                        </span>
+                        <div className="space-y-2">
+                          {linkedAcoes.map((acao) => (
+                            <div key={acao.id} className="flex items-start justify-between gap-2 text-xs">
+                              <div className="flex-1">
+                                <span className="font-mono text-primary mr-1.5">{acao.ident}</span>
+                                <span className="font-medium text-foreground">{acao.label}</span>
+                                {acao.descricao && <p className="text-muted-foreground mt-0.5">{acao.descricao}</p>}
+                              </div>
+                              <button onClick={() => unlinkAcao(ins.id, acao.id)} className="p-1 rounded hover:bg-destructive/20 text-destructive flex-shrink-0" title="Desvincular">
+                                <Unlink className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
-                    {ins.metricas?.length > 0 && (
-                      <ListBlock label="Métricas" items={ins.metricas} color="text-exp3-orange" />
-                    )}
-                    {ins.regras_condicionais?.length > 0 && (
-                      <ListBlock label="Regras Condicionais" items={ins.regras_condicionais} color="text-exp3-emerald" />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </main>
 
@@ -371,6 +549,112 @@ const NeoDashAdmin = () => {
           setForm={setForm}
           onSave={saveInsight}
         />
+
+        {/* Link acoes dialog */}
+        <Dialog open={linkDialog} onOpenChange={setLinkDialog}>
+          <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Vincular ações ao insight</DialogTitle>
+              <DialogDescription>Selecione as ações que deseja vincular.</DialogDescription>
+            </DialogHeader>
+            <div className="relative mb-2">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={linkSearch}
+                onChange={(e) => setLinkSearch(e.target.value)}
+                placeholder="Buscar por ident ou label..."
+                className="pl-9 h-9 text-sm"
+              />
+            </div>
+            <ScrollArea className="flex-1 min-h-0 max-h-[50vh]">
+              <div className="space-y-1 pr-3">
+                {allAcoes
+                  .filter((a) => {
+                    const q = linkSearch.toLowerCase();
+                    return !q || a.ident.toLowerCase().includes(q) || a.label.toLowerCase().includes(q) || a.descricao.toLowerCase().includes(q);
+                  })
+                  .map((acao) => {
+                    const checked = selectedAcaoIds.includes(acao.id);
+                    return (
+                      <label key={acao.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer">
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={(v) => {
+                            if (v) setSelectedAcaoIds([...selectedAcaoIds, acao.id]);
+                            else setSelectedAcaoIds(selectedAcaoIds.filter((id) => id !== acao.id));
+                          }}
+                          className="mt-0.5"
+                        />
+                        <div className="flex-1 text-sm">
+                          <span className="font-mono text-primary mr-1.5">{acao.ident}</span>
+                          <span className="font-medium text-foreground">{acao.label}</span>
+                          {acao.descricao && <p className="text-xs text-muted-foreground mt-0.5">{acao.descricao}</p>}
+                        </div>
+                      </label>
+                    );
+                  })}
+                {allAcoes.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-6">Nenhuma ação cadastrada. Crie uma primeiro.</p>
+                )}
+              </div>
+            </ScrollArea>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => { setLinkDialog(false); openAcaoDialog(); }}>
+                <Plus className="h-4 w-4 mr-1" /> Nova ação
+              </Button>
+              <Button onClick={saveLinkAcoes}>Salvar vínculos</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Acao CRUD dialog */}
+        <AcaoDialog
+          open={acaoDialog}
+          onOpenChange={setAcaoDialog}
+          editing={!!editingAcao}
+          form={acaoForm}
+          setForm={setAcaoForm}
+          onSave={saveAcao}
+        />
+
+        {/* Acoes Manager dialog */}
+        <Dialog open={acoesManagerOpen} onOpenChange={setAcoesManagerOpen}>
+          <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Gerenciar Ações</DialogTitle>
+              <DialogDescription>Crie, edite ou remova ações disponíveis para vincular a insights.</DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="flex-1 min-h-0 max-h-[60vh]">
+              <div className="space-y-2 pr-3">
+                {allAcoes.map((acao) => (
+                  <div key={acao.id} className="flex items-start justify-between gap-2 p-3 rounded-lg bg-secondary/30 group/acao">
+                    <div className="flex-1 text-sm">
+                      <span className="font-mono text-primary mr-1.5">{acao.ident}</span>
+                      <span className="font-medium text-foreground">{acao.label}</span>
+                      {acao.descricao && <p className="text-xs text-muted-foreground mt-0.5">{acao.descricao}</p>}
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover/acao:opacity-100 transition-opacity">
+                      <button onClick={() => openAcaoDialog(acao)} className="p-1.5 rounded hover:bg-accent">
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                      </button>
+                      <button onClick={() => deleteAcao(acao.id)} className="p-1.5 rounded hover:bg-destructive/20 text-destructive">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {allAcoes.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-6">Nenhuma ação cadastrada.</p>
+                )}
+              </div>
+            </ScrollArea>
+            <DialogFooter>
+              <Button onClick={() => openAcaoDialog()}>
+                <Plus className="h-4 w-4 mr-1" /> Nova ação
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -390,11 +674,7 @@ const NeoDashAdmin = () => {
       <main className="flex-1 overflow-y-auto scrollbar-thin p-6 max-w-4xl mx-auto w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {perguntas.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setSelectedPergunta(p)}
-              className="text-left group"
-            >
+            <button key={p.id} onClick={() => setSelectedPergunta(p)} className="text-left group">
               <Card className="h-full bg-card/60 border-border/50 hover:border-primary/40 hover:bg-card/80 transition-all duration-200 cursor-pointer">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-3">
@@ -440,12 +720,7 @@ const ListBlock = ({ label, items, color }: { label: string; items: string[]; co
 );
 
 const InsightDialog = ({
-  open,
-  onOpenChange,
-  editing,
-  form,
-  setForm,
-  onSave,
+  open, onOpenChange, editing, form, setForm, onSave,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -461,6 +736,16 @@ const InsightDialog = ({
         <DialogDescription>Preencha os campos do insight estruturado.</DialogDescription>
       </DialogHeader>
       <div className="space-y-4 py-2">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Ident</label>
+            <Input value={form.ident} onChange={(e) => setForm({ ...form, ident: e.target.value })} placeholder="Ex: I1, I2..." className="h-9" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Label</label>
+            <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Nome curto do insight" className="h-9" />
+          </div>
+        </div>
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Descrição *</label>
           <Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} placeholder="Descrição do insight" rows={3} />
@@ -479,13 +764,52 @@ const InsightDialog = ({
             <Textarea value={form.emergentes} onChange={(e) => setForm({ ...form, emergentes: e.target.value })} placeholder="Padrões emergentes" rows={2} />
           </div>
         </div>
-        <ArrayField label="Acionáveis" items={form.acionaveis} onChange={(v) => setForm({ ...form, acionaveis: v })} />
         <ArrayField label="Métricas" items={form.metricas} onChange={(v) => setForm({ ...form, metricas: v })} />
         <ArrayField label="Regras Condicionais" items={form.regras_condicionais} onChange={(v) => setForm({ ...form, regras_condicionais: v })} />
       </div>
       <DialogFooter>
         <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
         <Button onClick={onSave} disabled={!form.descricao.trim()}>{editing ? "Salvar" : "Criar"}</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
+const AcaoDialog = ({
+  open, onOpenChange, editing, form, setForm, onSave,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  editing: boolean;
+  form: typeof EMPTY_ACAO;
+  setForm: (v: typeof EMPTY_ACAO) => void;
+  onSave: () => void;
+}) => (
+  <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>{editing ? "Editar Ação" : "Nova Ação"}</DialogTitle>
+        <DialogDescription>Defina os dados da ação.</DialogDescription>
+      </DialogHeader>
+      <div className="space-y-4 py-2">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Ident *</label>
+            <Input value={form.ident} onChange={(e) => setForm({ ...form, ident: e.target.value })} placeholder="Ex: A1, A2..." className="h-9" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Label *</label>
+            <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Nome da ação" className="h-9" />
+          </div>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Descrição</label>
+          <Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} placeholder="Descrição da ação" rows={3} />
+        </div>
+      </div>
+      <DialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+        <Button onClick={onSave} disabled={!form.ident.trim() || !form.label.trim()}>{editing ? "Salvar" : "Criar"}</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
