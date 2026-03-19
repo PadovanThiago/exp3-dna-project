@@ -790,6 +790,39 @@ const NeoDashAdmin = () => {
           <Badge variant="outline" className="text-xs text-muted-foreground border-border">NeoDash</Badge>
         </div>
         <div className="flex items-center gap-2">
+          {/* Project selector */}
+          <div className="relative group/proj">
+            <Button size="sm" variant="outline" className="gap-1.5">
+              <FolderOpen className="h-4 w-4" />
+              <span className="max-w-[150px] truncate">{selectedProjeto?.nome || "Selecionar projeto"}</span>
+              <ChevronDown className="h-3 w-3 text-muted-foreground" />
+            </Button>
+            <div className="absolute right-0 top-full mt-1 z-50 hidden group-hover/proj:block bg-popover border border-border rounded-lg shadow-lg min-w-[220px] p-1">
+              {projetos.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => { setSelectedProjeto(p); setSelectedPergunta(null); setInsights([]); }}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center justify-between ${selectedProjeto?.id === p.id ? 'bg-accent' : ''}`}
+                >
+                  <div>
+                    <span className="font-medium text-foreground">{p.nome}</span>
+                    {p.cliente && <span className="text-xs text-muted-foreground ml-1.5">({p.cliente})</span>}
+                  </div>
+                  {selectedProjeto?.id === p.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                </button>
+              ))}
+              <div className="border-t border-border mt-1 pt-1">
+                <button onClick={() => openProjetoDialog()} className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors text-primary flex items-center gap-1.5">
+                  <Plus className="h-3.5 w-3.5" /> Novo projeto
+                </button>
+                {selectedProjeto && (
+                  <button onClick={() => openProjetoDialog(selectedProjeto)} className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors text-muted-foreground flex items-center gap-1.5">
+                    <Pencil className="h-3.5 w-3.5" /> Editar projeto atual
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
           <Button size="sm" variant="outline" onClick={() => setPerguntasManagerOpen(true)}>
             <Settings className="h-4 w-4 mr-1" /> Gerenciar Perguntas
           </Button>
@@ -798,26 +831,85 @@ const NeoDashAdmin = () => {
       </header>
 
       <main className="flex-1 overflow-y-auto scrollbar-thin p-6 max-w-4xl mx-auto w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {perguntas.map((p) => (
-            <button key={p.id} onClick={() => setSelectedPergunta(p)} className="text-left group">
-              <Card className="h-full bg-card/60 border-border/50 hover:border-primary/40 hover:bg-card/80 transition-all duration-200 cursor-pointer">
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xl font-bold text-primary font-mono">{p.label}</span>
-                    <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                      {insightCounts[p.id] || 0} insight{(insightCounts[p.id] || 0) !== 1 ? "s" : ""}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 group-hover:text-foreground transition-colors">
-                    {p.pergunta}
-                  </p>
-                </CardContent>
-              </Card>
-            </button>
-          ))}
-        </div>
+        {!selectedProjeto ? (
+          <div className="text-center py-16">
+            <FolderOpen className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+            <p className="text-sm text-muted-foreground mb-3">Nenhum projeto selecionado</p>
+            <Button size="sm" variant="outline" onClick={() => openProjetoDialog()}>
+              <Plus className="h-4 w-4 mr-1" /> Criar projeto
+            </Button>
+          </div>
+        ) : (
+          <>
+            {/* Project info bar */}
+            <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+              <FolderOpen className="h-3.5 w-3.5" />
+              <span className="font-medium text-foreground">{selectedProjeto.nome}</span>
+              {selectedProjeto.cliente && <span>• {selectedProjeto.cliente}</span>}
+              {selectedProjeto.dashboard_origem && <span>• {selectedProjeto.dashboard_origem}</span>}
+              <Badge variant="outline" className="text-[10px]">{selectedProjeto.status}</Badge>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {perguntas.map((p) => (
+                <button key={p.id} onClick={() => setSelectedPergunta(p)} className="text-left group">
+                  <Card className="h-full bg-card/60 border-border/50 hover:border-primary/40 hover:bg-card/80 transition-all duration-200 cursor-pointer">
+                    <CardContent className="p-5">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xl font-bold text-primary font-mono">{p.label}</span>
+                        <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                          {insightCounts[p.id] || 0} insight{(insightCounts[p.id] || 0) !== 1 ? "s" : ""}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 group-hover:text-foreground transition-colors">
+                        {p.pergunta}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </button>
+              ))}
+            </div>
+            {perguntas.length === 0 && (
+              <div className="text-center py-16">
+                <Lightbulb className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+                <p className="text-sm text-muted-foreground mb-3">Nenhuma pergunta neste projeto</p>
+                <Button size="sm" variant="outline" onClick={() => openPerguntaDialog()}>
+                  <Plus className="h-4 w-4 mr-1" /> Adicionar pergunta
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </main>
+
+      {/* Projeto Create/Edit Dialog */}
+      <Dialog open={projetoDialog} onOpenChange={setProjetoDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingProjeto ? "Editar Projeto" : "Novo Projeto"}</DialogTitle>
+            <DialogDescription>Defina os dados do projeto.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Nome *</label>
+              <Input value={projetoForm.nome} onChange={(e) => setProjetoForm({ ...projetoForm, nome: e.target.value })} placeholder="Ex: Projeto Alpha, Dashboard Q1..." className="h-9" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Cliente</label>
+              <Input value={projetoForm.cliente} onChange={(e) => setProjetoForm({ ...projetoForm, cliente: e.target.value })} placeholder="Ex: Empresa XYZ" className="h-9" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Dashboard de origem</label>
+              <Input value={projetoForm.dashboard_origem} onChange={(e) => setProjetoForm({ ...projetoForm, dashboard_origem: e.target.value })} placeholder="Ex: Looker Studio, Power BI..." className="h-9" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProjetoDialog(false)}>Cancelar</Button>
+            <Button onClick={saveProjeto} disabled={!projetoForm.nome.trim()}>
+              {editingProjeto ? "Salvar" : "Criar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Perguntas Manager Dialog */}
       <Dialog open={perguntasManagerOpen} onOpenChange={setPerguntasManagerOpen}>
