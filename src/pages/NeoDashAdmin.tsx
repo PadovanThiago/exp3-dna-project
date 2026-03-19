@@ -326,17 +326,54 @@ const NeoDashAdmin = () => {
   };
 
   const savePergunta = async () => {
-    if (!perguntaForm.label.trim() || !perguntaForm.pergunta.trim()) return;
+    if (!perguntaForm.label.trim() || !perguntaForm.pergunta.trim() || !selectedProjeto) return;
     if (editingPergunta) {
       await supabase.from("neodash_perguntas").update(perguntaForm).eq("id", editingPergunta.id);
       toast({ title: "Pergunta atualizada" });
     } else {
-      await supabase.from("neodash_perguntas").insert(perguntaForm);
+      await supabase.from("neodash_perguntas").insert({ ...perguntaForm, projeto_id: selectedProjeto.id });
       toast({ title: "Pergunta criada" });
     }
     setPerguntaDialog(false);
     fetchPerguntas();
     fetchInsightCounts();
+  };
+
+  // ── Projeto CRUD ──
+  const openProjetoDialog = (p?: Projeto) => {
+    if (p) {
+      setEditingProjeto(p);
+      setProjetoForm({ nome: p.nome, cliente: p.cliente, dashboard_origem: p.dashboard_origem });
+    } else {
+      setEditingProjeto(null);
+      setProjetoForm({ nome: "", cliente: "", dashboard_origem: "" });
+    }
+    setProjetoDialog(true);
+  };
+
+  const saveProjeto = async () => {
+    if (!projetoForm.nome.trim()) return;
+    if (editingProjeto) {
+      await supabase.from("neodash_projetos").update(projetoForm).eq("id", editingProjeto.id);
+      toast({ title: "Projeto atualizado" });
+      // Update local state
+      setSelectedProjeto({ ...editingProjeto, ...projetoForm });
+    } else {
+      const { data } = await supabase.from("neodash_projetos").insert(projetoForm).select().single();
+      toast({ title: "Projeto criado" });
+      if (data) setSelectedProjeto(data);
+    }
+    setProjetoDialog(false);
+    fetchProjetos();
+  };
+
+  const deleteProjeto = async (p: Projeto) => {
+    await supabase.from("neodash_projetos").delete().eq("id", p.id);
+    toast({ title: "Projeto removido" });
+    if (selectedProjeto?.id === p.id) {
+      setSelectedProjeto(projetos.find((pr) => pr.id !== p.id) || null);
+    }
+    fetchProjetos();
   };
 
   const deletePergunta = async (p: Pergunta) => {
