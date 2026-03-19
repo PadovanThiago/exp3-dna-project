@@ -13,8 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Lightbulb, LayoutGrid, X,
-  Download, Copy, Check, Link2, Unlink, Zap, Search,
+  Download, Copy, Check, Link2, Unlink, Zap, Search, Settings,
+  AlertTriangle,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 
 // ── Types ──
@@ -151,6 +156,13 @@ const NeoDashAdmin = () => {
 
   const [acoesManagerOpen, setAcoesManagerOpen] = useState(false);
 
+  // Perguntas CRUD
+  const [perguntasManagerOpen, setPerguntasManagerOpen] = useState(false);
+  const [perguntaDialog, setPerguntaDialog] = useState(false);
+  const [editingPergunta, setEditingPergunta] = useState<Pergunta | null>(null);
+  const [perguntaForm, setPerguntaForm] = useState({ label: "", pergunta: "" });
+  const [deleteConfirm, setDeleteConfirm] = useState<Pergunta | null>(null);
+
   // ── Fetch ──
   const fetchPerguntas = useCallback(async () => {
     const { data } = await supabase
@@ -263,7 +275,41 @@ const NeoDashAdmin = () => {
     fetchInsightCounts();
   };
 
-  // ── Acao CRUD ──
+  // ── Pergunta CRUD ──
+  const openPerguntaDialog = (p?: Pergunta) => {
+    if (p) {
+      setEditingPergunta(p);
+      setPerguntaForm({ label: p.label, pergunta: p.pergunta });
+    } else {
+      setEditingPergunta(null);
+      setPerguntaForm({ label: "", pergunta: "" });
+    }
+    setPerguntaDialog(true);
+  };
+
+  const savePergunta = async () => {
+    if (!perguntaForm.label.trim() || !perguntaForm.pergunta.trim()) return;
+    if (editingPergunta) {
+      await supabase.from("neodash_perguntas").update(perguntaForm).eq("id", editingPergunta.id);
+      toast({ title: "Pergunta atualizada" });
+    } else {
+      await supabase.from("neodash_perguntas").insert(perguntaForm);
+      toast({ title: "Pergunta criada" });
+    }
+    setPerguntaDialog(false);
+    fetchPerguntas();
+    fetchInsightCounts();
+  };
+
+  const deletePergunta = async (p: Pergunta) => {
+    await supabase.from("neodash_perguntas").delete().eq("id", p.id);
+    toast({ title: "Pergunta removida" });
+    setDeleteConfirm(null);
+    fetchPerguntas();
+    fetchInsightCounts();
+  };
+
+
   const openAcaoDialog = (acao?: Acao) => {
     if (acao) {
       setEditingAcao(acao);
@@ -668,7 +714,12 @@ const NeoDashAdmin = () => {
           <h1 className="text-lg font-semibold text-foreground">Mapa do Conhecimento</h1>
           <Badge variant="outline" className="text-xs text-muted-foreground border-border">NeoDash</Badge>
         </div>
-        <span className="text-xs text-muted-foreground">{perguntas.length} perguntas estratégicas</span>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setPerguntasManagerOpen(true)}>
+            <Settings className="h-4 w-4 mr-1" /> Gerenciar Perguntas
+          </Button>
+          <span className="text-xs text-muted-foreground">{perguntas.length} perguntas</span>
+        </div>
       </header>
 
       <main className="flex-1 overflow-y-auto scrollbar-thin p-6 max-w-4xl mx-auto w-full">
@@ -692,6 +743,94 @@ const NeoDashAdmin = () => {
           ))}
         </div>
       </main>
+
+      {/* Perguntas Manager Dialog */}
+      <Dialog open={perguntasManagerOpen} onOpenChange={setPerguntasManagerOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Gerenciar Perguntas</DialogTitle>
+            <DialogDescription>Crie, edite ou remova perguntas estratégicas.</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="flex-1 min-h-0 max-h-[60vh]">
+            <div className="space-y-2 pr-3">
+              {perguntas.map((p) => (
+                <div key={p.id} className="flex items-start justify-between gap-2 p-3 rounded-lg bg-secondary/30 group/perg">
+                  <div className="flex-1 text-sm">
+                    <span className="font-mono text-primary mr-1.5 font-bold">{p.label}</span>
+                    <span className="text-foreground">{p.pergunta}</span>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {insightCounts[p.id] || 0} insight{(insightCounts[p.id] || 0) !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 opacity-0 group-hover/perg:opacity-100 transition-opacity">
+                    <button onClick={() => openPerguntaDialog(p)} className="p-1.5 rounded hover:bg-accent">
+                      <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                    <button onClick={() => setDeleteConfirm(p)} className="p-1.5 rounded hover:bg-destructive/20 text-destructive">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {perguntas.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-6">Nenhuma pergunta cadastrada.</p>
+              )}
+            </div>
+          </ScrollArea>
+          <DialogFooter>
+            <Button onClick={() => openPerguntaDialog()}>
+              <Plus className="h-4 w-4 mr-1" /> Nova pergunta
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pergunta Create/Edit Dialog */}
+      <Dialog open={perguntaDialog} onOpenChange={setPerguntaDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingPergunta ? "Editar Pergunta" : "Nova Pergunta"}</DialogTitle>
+            <DialogDescription>Defina o label e o texto da pergunta estratégica.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Label *</label>
+              <Input value={perguntaForm.label} onChange={(e) => setPerguntaForm({ ...perguntaForm, label: e.target.value })} placeholder="Ex: P1, P2..." className="h-9" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Pergunta *</label>
+              <Textarea value={perguntaForm.pergunta} onChange={(e) => setPerguntaForm({ ...perguntaForm, pergunta: e.target.value })} placeholder="Texto da pergunta estratégica" rows={3} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPerguntaDialog(false)}>Cancelar</Button>
+            <Button onClick={savePergunta} disabled={!perguntaForm.label.trim() || !perguntaForm.pergunta.trim()}>
+              {editingPergunta ? "Salvar" : "Criar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(v) => !v && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Remover pergunta {deleteConfirm?.label}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação é irreversível. Todos os insights vinculados a esta pergunta serão removidos automaticamente (cascade).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => deleteConfirm && deletePergunta(deleteConfirm)}>
+              Remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
