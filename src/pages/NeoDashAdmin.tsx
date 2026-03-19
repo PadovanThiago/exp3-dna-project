@@ -14,7 +14,7 @@ import {
 import {
   ArrowLeft, Plus, Pencil, Trash2, Lightbulb, LayoutGrid, X,
   Download, Copy, Check, Link2, Unlink, Zap, Search, Settings,
-  AlertTriangle,
+  AlertTriangle, FolderOpen, ChevronDown,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
