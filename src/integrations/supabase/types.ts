@@ -130,18 +130,56 @@ export type Database = {
           id: string
           label: string
           pergunta: string
+          projeto_id: string
         }
         Insert: {
           criado_em?: string
           id?: string
           label: string
           pergunta: string
+          projeto_id: string
         }
         Update: {
           criado_em?: string
           id?: string
           label?: string
           pergunta?: string
+          projeto_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "neodash_perguntas_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "neodash_projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      neodash_projetos: {
+        Row: {
+          cliente: string | null
+          criado_em: string
+          dashboard_origem: string | null
+          id: string
+          nome: string
+          status: string
+        }
+        Insert: {
+          cliente?: string | null
+          criado_em?: string
+          dashboard_origem?: string | null
+          id?: string
+          nome: string
+          status?: string
+        }
+        Update: {
+          cliente?: string | null
+          criado_em?: string
+          dashboard_origem?: string | null
+          id?: string
+          nome?: string
+          status?: string
         }
         Relationships: []
       }
