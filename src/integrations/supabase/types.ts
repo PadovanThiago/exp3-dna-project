@@ -14,38 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
+      neodash_acoes: {
+        Row: {
+          criado_em: string
+          descricao: string
+          id: string
+          ident: string
+          label: string
+        }
+        Insert: {
+          criado_em?: string
+          descricao?: string
+          id?: string
+          ident: string
+          label: string
+        }
+        Update: {
+          criado_em?: string
+          descricao?: string
+          id?: string
+          ident?: string
+          label?: string
+        }
+        Relationships: []
+      }
+      neodash_insight_acoes: {
+        Row: {
+          acao_id: string
+          criado_em: string
+          id: string
+          insight_id: string
+        }
+        Insert: {
+          acao_id: string
+          criado_em?: string
+          id?: string
+          insight_id: string
+        }
+        Update: {
+          acao_id?: string
+          criado_em?: string
+          id?: string
+          insight_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "neodash_insight_acoes_acao_id_fkey"
+            columns: ["acao_id"]
+            isOneToOne: false
+            referencedRelation: "neodash_acoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "neodash_insight_acoes_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "neodash_insights_v2"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       neodash_insights_v2: {
         Row: {
-          acionaveis: string[]
           criado_em: string
           descricao: string
           emergentes: string
           id: string
+          ident: string
           interpretacao: string
+          label: string
           metricas: string[]
           parametros: string
           pergunta_id: string
           regras_condicionais: string[]
         }
         Insert: {
-          acionaveis?: string[]
           criado_em?: string
           descricao: string
           emergentes?: string
           id?: string
+          ident?: string
           interpretacao?: string
+          label?: string
           metricas?: string[]
           parametros?: string
           pergunta_id: string
           regras_condicionais?: string[]
         }
         Update: {
-          acionaveis?: string[]
           criado_em?: string
           descricao?: string
           emergentes?: string
           id?: string
+          ident?: string
           interpretacao?: string
+          label?: string
           metricas?: string[]
           parametros?: string
           pergunta_id?: string
