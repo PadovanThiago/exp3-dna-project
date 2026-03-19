@@ -275,7 +275,41 @@ const NeoDashAdmin = () => {
     fetchInsightCounts();
   };
 
-  // ── Acao CRUD ──
+  // ── Pergunta CRUD ──
+  const openPerguntaDialog = (p?: Pergunta) => {
+    if (p) {
+      setEditingPergunta(p);
+      setPerguntaForm({ label: p.label, pergunta: p.pergunta });
+    } else {
+      setEditingPergunta(null);
+      setPerguntaForm({ label: "", pergunta: "" });
+    }
+    setPerguntaDialog(true);
+  };
+
+  const savePergunta = async () => {
+    if (!perguntaForm.label.trim() || !perguntaForm.pergunta.trim()) return;
+    if (editingPergunta) {
+      await supabase.from("neodash_perguntas").update(perguntaForm).eq("id", editingPergunta.id);
+      toast({ title: "Pergunta atualizada" });
+    } else {
+      await supabase.from("neodash_perguntas").insert(perguntaForm);
+      toast({ title: "Pergunta criada" });
+    }
+    setPerguntaDialog(false);
+    fetchPerguntas();
+    fetchInsightCounts();
+  };
+
+  const deletePergunta = async (p: Pergunta) => {
+    await supabase.from("neodash_perguntas").delete().eq("id", p.id);
+    toast({ title: "Pergunta removida" });
+    setDeleteConfirm(null);
+    fetchPerguntas();
+    fetchInsightCounts();
+  };
+
+
   const openAcaoDialog = (acao?: Acao) => {
     if (acao) {
       setEditingAcao(acao);
