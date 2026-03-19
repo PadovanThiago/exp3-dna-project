@@ -23,10 +23,20 @@ import {
 import { toast } from "@/hooks/use-toast";
 
 // ── Types ──
+type Projeto = {
+  id: string;
+  nome: string;
+  cliente: string;
+  dashboard_origem: string;
+  status: string;
+  criado_em: string;
+};
+
 type Pergunta = {
   id: string;
   label: string;
   pergunta: string;
+  projeto_id: string;
   criado_em: string;
 };
 
