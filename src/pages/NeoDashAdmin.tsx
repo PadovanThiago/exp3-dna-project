@@ -746,7 +746,7 @@ const NeoDashAdmin = () => {
 
       {/* Perguntas Manager Dialog */}
       <Dialog open={perguntasManagerOpen} onOpenChange={setPerguntasManagerOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
+        <DialogContent className="sm:max-w-lg max-h-[80vh] flex flex-col overflow-hidden">
           <DialogHeader>
             <DialogTitle>Gerenciar Perguntas</DialogTitle>
             <DialogDescription>Crie, edite ou remova perguntas estratégicas.</DialogDescription>
