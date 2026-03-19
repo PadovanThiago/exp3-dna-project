@@ -877,34 +877,48 @@ const InsightDialog = ({
       <div className="space-y-4 py-2">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Ident</label>
-            <Input value={form.ident} onChange={(e) => setForm({ ...form, ident: e.target.value })} placeholder="Ex: I1, I2..." className="h-9" />
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Ident</label>
+            <p className="text-xs text-muted-foreground/70 mb-1.5">Código único do insight dentro da pergunta.</p>
+            <Input value={form.ident} onChange={(e) => setForm({ ...form, ident: e.target.value })} placeholder="Ex: I1, I2, I3..." className="h-9" />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Label</label>
-            <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Nome curto do insight" className="h-9" />
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Label</label>
+            <p className="text-xs text-muted-foreground/70 mb-1.5">Nome curto e descritivo para identificar o insight.</p>
+            <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Ex: Engajamento digital, Retenção de clientes" className="h-9" />
           </div>
         </div>
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Descrição *</label>
-          <Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} placeholder="Descrição do insight" rows={3} />
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Descrição *</label>
+          <p className="text-xs text-muted-foreground/70 mb-1.5">Explique o que este insight revela sobre o cenário analisado.</p>
+          <Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} placeholder="Ex: A taxa de conversão caiu 15% no último trimestre devido à mudança no funil de vendas." rows={3} />
         </div>
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Interpretação</label>
-          <Textarea value={form.interpretacao} onChange={(e) => setForm({ ...form, interpretacao: e.target.value })} placeholder="Interpretação analítica" rows={2} />
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Interpretação</label>
+          <p className="text-xs text-muted-foreground/70 mb-1.5">Como este dado deve ser lido? Qual a análise por trás do insight?</p>
+          <Textarea value={form.interpretacao} onChange={(e) => setForm({ ...form, interpretacao: e.target.value })} placeholder="Ex: A queda indica necessidade de revisão das etapas iniciais do funil." rows={2} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Parâmetros</label>
-            <Textarea value={form.parametros} onChange={(e) => setForm({ ...form, parametros: e.target.value })} placeholder="Parâmetros relevantes" rows={2} />
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Parâmetros</label>
+            <p className="text-xs text-muted-foreground/70 mb-1.5">Variáveis ou condições que influenciam este insight.</p>
+            <Textarea value={form.parametros} onChange={(e) => setForm({ ...form, parametros: e.target.value })} placeholder="Ex: Período: Q1 2025; Segmento: B2B; Canal: orgânico" rows={2} />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Emergentes</label>
-            <Textarea value={form.emergentes} onChange={(e) => setForm({ ...form, emergentes: e.target.value })} placeholder="Padrões emergentes" rows={2} />
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Emergentes</label>
+            <p className="text-xs text-muted-foreground/70 mb-1.5">Padrões novos ou inesperados identificados nos dados.</p>
+            <Textarea value={form.emergentes} onChange={(e) => setForm({ ...form, emergentes: e.target.value })} placeholder="Ex: Crescimento atípico no segmento mobile acima de 40 anos." rows={2} />
           </div>
         </div>
-        <ArrayField label="Métricas" items={form.metricas} onChange={(v) => setForm({ ...form, metricas: v })} />
-        <ArrayField label="Regras Condicionais" items={form.regras_condicionais} onChange={(v) => setForm({ ...form, regras_condicionais: v })} />
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Métricas</label>
+          <p className="text-xs text-muted-foreground/70 mb-1.5">Indicadores quantitativos que sustentam o insight. Adicione um por vez.</p>
+          <ArrayField label="" items={form.metricas} onChange={(v) => setForm({ ...form, metricas: v })} />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Regras Condicionais</label>
+          <p className="text-xs text-muted-foreground/70 mb-1.5">Condições "se/então" que ativam ou qualificam o insight. Adicione uma por vez.</p>
+          <ArrayField label="" items={form.regras_condicionais} onChange={(v) => setForm({ ...form, regras_condicionais: v })} />
+        </div>
       </div>
       <DialogFooter>
         <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
