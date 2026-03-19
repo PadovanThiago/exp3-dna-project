@@ -751,7 +751,8 @@ const NeoDashAdmin = () => {
             <DialogTitle>Gerenciar Perguntas</DialogTitle>
             <DialogDescription>Crie, edite ou remova perguntas estratégicas.</DialogDescription>
           </DialogHeader>
-          <ScrollArea className="flex-1 min-h-0 max-h-[60vh]">
+          <div className="flex-1 min-h-0 overflow-hidden">
+          <ScrollArea className="h-full">
             <div className="space-y-2 pr-3">
               {perguntas.map((p) => (
                 <div key={p.id} className="flex items-start justify-between gap-2 p-3 rounded-lg bg-secondary/30 group/perg">
