@@ -140,6 +140,13 @@ const ArrayField = ({
 
 // ── Main ──
 const NeoDashAdmin = () => {
+  // Projetos state
+  const [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [selectedProjeto, setSelectedProjeto] = useState<Projeto | null>(null);
+  const [projetoDialog, setProjetoDialog] = useState(false);
+  const [editingProjeto, setEditingProjeto] = useState<Projeto | null>(null);
+  const [projetoForm, setProjetoForm] = useState({ nome: "", cliente: "", dashboard_origem: "" });
+
   const [perguntas, setPerguntas] = useState<Pergunta[]>([]);
   const [insightCounts, setInsightCounts] = useState<Record<string, number>>({});
   const [selectedPergunta, setSelectedPergunta] = useState<Pergunta | null>(null);
