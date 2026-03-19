@@ -156,6 +156,13 @@ const NeoDashAdmin = () => {
 
   const [acoesManagerOpen, setAcoesManagerOpen] = useState(false);
 
+  // Perguntas CRUD
+  const [perguntasManagerOpen, setPerguntasManagerOpen] = useState(false);
+  const [perguntaDialog, setPerguntaDialog] = useState(false);
+  const [editingPergunta, setEditingPergunta] = useState<Pergunta | null>(null);
+  const [perguntaForm, setPerguntaForm] = useState({ label: "", pergunta: "" });
+  const [deleteConfirm, setDeleteConfirm] = useState<Pergunta | null>(null);
+
   // ── Fetch ──
   const fetchPerguntas = useCallback(async () => {
     const { data } = await supabase
