@@ -751,9 +751,8 @@ const NeoDashAdmin = () => {
             <DialogTitle>Gerenciar Perguntas</DialogTitle>
             <DialogDescription>Crie, edite ou remova perguntas estratégicas.</DialogDescription>
           </DialogHeader>
-          <div className="flex-1 min-h-0 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div className="space-y-2 pr-3">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1">
+            <div className="space-y-2 pr-2">
               {perguntas.map((p) => (
                 <div key={p.id} className="flex items-start justify-between gap-2 p-3 rounded-lg bg-secondary/30 group/perg">
                   <div className="flex-1 text-sm">
@@ -777,7 +776,6 @@ const NeoDashAdmin = () => {
                 <p className="text-sm text-muted-foreground text-center py-6">Nenhuma pergunta cadastrada.</p>
               )}
             </div>
-          </ScrollArea>
           </div>
           <DialogFooter>
             <Button onClick={() => openPerguntaDialog()}>
