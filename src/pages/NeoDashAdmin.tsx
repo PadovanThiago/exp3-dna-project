@@ -181,13 +181,28 @@ const NeoDashAdmin = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<Pergunta | null>(null);
 
   // ── Fetch ──
+  const fetchProjetos = useCallback(async () => {
+    const { data } = await supabase
+      .from("neodash_projetos")
+      .select("*")
+      .order("criado_em", { ascending: true });
+    if (data) {
+      setProjetos(data);
+      if (!selectedProjeto && data.length > 0) {
+        setSelectedProjeto(data[0]);
+      }
+    }
+  }, [selectedProjeto]);
+
   const fetchPerguntas = useCallback(async () => {
+    if (!selectedProjeto) return;
     const { data } = await supabase
       .from("neodash_perguntas")
       .select("*")
+      .eq("projeto_id", selectedProjeto.id)
       .order("label", { ascending: true });
     if (data) setPerguntas(data);
-  }, []);
+  }, [selectedProjeto]);
 
   const fetchInsightCounts = useCallback(async () => {
     const { data } = await supabase.from("neodash_insights_v2").select("pergunta_id");
@@ -232,8 +247,14 @@ const NeoDashAdmin = () => {
   }, []);
 
   useEffect(() => {
-    Promise.all([fetchPerguntas(), fetchInsightCounts(), fetchAllAcoes()]).then(() => setLoading(false));
-  }, [fetchPerguntas, fetchInsightCounts, fetchAllAcoes]);
+    Promise.all([fetchProjetos(), fetchInsightCounts(), fetchAllAcoes()]).then(() => setLoading(false));
+  }, [fetchProjetos, fetchInsightCounts, fetchAllAcoes]);
+
+  useEffect(() => {
+    if (selectedProjeto) {
+      fetchPerguntas();
+    }
+  }, [selectedProjeto, fetchPerguntas]);
 
   useEffect(() => {
     if (selectedPergunta) {
