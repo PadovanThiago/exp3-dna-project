@@ -13,8 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Lightbulb, LayoutGrid, X,
-  Download, Copy, Check, Link2, Unlink, Zap, Search,
+  Download, Copy, Check, Link2, Unlink, Zap, Search, Settings,
+  AlertTriangle,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 
 // ── Types ──
