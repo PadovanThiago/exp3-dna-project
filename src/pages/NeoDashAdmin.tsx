@@ -918,6 +918,7 @@ const InsightDialog = ({
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Regras Condicionais</label>
           <p className="text-xs text-muted-foreground/70 mb-1.5">Condições "se/então" que ativam ou qualificam o insight. Adicione uma por vez.</p>
           <ArrayField label="" items={form.regras_condicionais} onChange={(v) => setForm({ ...form, regras_condicionais: v })} />
+        </div>
       </div>
       <DialogFooter>
         <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
