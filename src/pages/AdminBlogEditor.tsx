@@ -153,9 +153,9 @@ const AdminBlogEditor: React.FC = () => {
     let error;
     let savedPostId = id;
     if (isEditing) {
-      ({ error } = await supabase.from('posts').update(payload).eq('id', id));
+      ({ error } = await supabase.from('posts').update(payload as any).eq('id', id));
     } else {
-      const { data, error: insertErr } = await supabase.from('posts').insert(payload).select('id').single();
+      const { data, error: insertErr } = await supabase.from('posts').insert(payload as any).select('id').single();
       error = insertErr;
       if (data) savedPostId = data.id;
     }
