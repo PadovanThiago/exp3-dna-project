@@ -1,0 +1,53 @@
+# EXP³
+
+> Strategic AI consultancy at the intersection of knowledge management and AI implementation. EXP³ helps organizations build the knowledge infrastructure that makes AI investments work — not by deploying tools on top of existing processes, but by structuring what organizations actually know first. We deliver working systems, not presentations. Every engagement ends with the client team able to operate what was built independently.
+
+## What we do
+
+EXP³ works with organizations to close the gap between individual AI productivity and organizational AI capability. Most organizations have high AI tool adoption but no meaningful change at the organizational level — how decisions get made, how institutional knowledge is preserved, how AI connects to actual workflows. We address the structural layer underneath.
+
+Our methodology — the DNA Model — operates across three dimensions simultaneously:
+
+- Explore: validate hypotheses at low cost, identify where AI creates real return
+- Exploit: transform validated experiments into robust, scalable, auditable processes
+- Explain: ensure transparency and governance at every layer — no black boxes
+
+## What we are not
+
+EXP³ is not a software platform. Not a generic digital transformation consultancy. Not a training provider. We do not deliver reports that end up in a drawer.
+
+## Core concepts
+
+- Cognitive Symbiosis (Simbiose Cognitiva): human creativity and computational power elevating each other — never replacement, always augmentation
+- Living Knowledge: knowledge infrastructure that updates with use, as opposed to static archives or dead taxonomies
+- Organizational AI capability vs individual AI productivity: the critical distinction that determines whether AI investments generate organizational ROI
+- Knowledge as infrastructure: implementing AI at the organizational level is fundamentally a knowledge management problem, not a technology problem
+
+## Target organizations
+
+Marketing and media agencies, law firms, educational institutions, and enterprises that need to structure knowledge management and AI as a permanent operational layer.
+
+## Team
+
+- Thiago Padovan — Partner  Innovation / Knowledge Management
+- Nilton Lessa — Partner Software Engineering
+- Luís Eugênio Pacheco — Partner Software Engineering
+
+## Key pages
+
+- [Home](https://exp3.ai)
+- [About EXP³](https://exp3.ai/about)
+- [Methodology — DNA Model](https://exp3.ai/about#methodology)
+- [Services](https://exp3.ai/services)
+- [Blog](https://exp3.ai/blog)
+- [Contact](https://exp3.ai/contact)
+
+## Blog
+
+Articles published in English. Topics: AI strategy, organizational knowledge management, responsible AI, AI governance, work and organization in the AI era.
+
+- [When AI adoption numbers don't tell the whole story](https://exp3.ai/blog/when-ai-adoption-numbers-dont-tell-the-whole-story)
+
+## Contact
+
+contact@exp3.ai
