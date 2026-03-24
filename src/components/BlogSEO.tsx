@@ -3,10 +3,11 @@ import type { Post } from '@/types/blog';
 
 interface BlogSEOProps {
   post?: Post;
+  siblingPost?: Post | null;
   listPage?: boolean;
 }
 
-export function BlogSEO({ post, listPage }: BlogSEOProps) {
+export function BlogSEO({ post, siblingPost, listPage }: BlogSEOProps) {
   useEffect(() => {
     if (listPage) {
       document.title = 'Blog | EXP³ — Insights sobre IA e Transformação Digital';
@@ -15,6 +16,7 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
       setMeta('og:description', 'Artigos, cases e insights sobre IA e transformação digital.');
       setMeta('og:type', 'website');
       removeJsonLd();
+      clearLinks();
       return;
     }
 
@@ -22,7 +24,7 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
 
     const title = post.meta_title || post.title;
     const description = post.meta_description || post.excerpt || '';
-    
+
     document.title = `${title} | EXP³`;
     setMeta('description', description);
     setMeta('og:title', title);
@@ -38,9 +40,17 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
     const langPrefix = post.language === 'en' ? '/en' : '';
     setLink('canonical', `https://exp3.ai${langPrefix}/blog/${post.slug}`);
 
-    // Hreflang alternate links
-    setLink('alternate-pt', `https://exp3.ai/blog/${post.slug}`, 'alternate', 'pt');
-    setLink('alternate-en', `https://exp3.ai/en/blog/${post.slug}`, 'alternate', 'en');
+    // Only generate hreflang alternates if sibling exists
+    if (siblingPost) {
+      const ptSlug = post.language === 'pt' ? post.slug : siblingPost.slug;
+      const enSlug = post.language === 'en' ? post.slug : siblingPost.slug;
+      setLink('alternate-pt', `https://exp3.ai/blog/${ptSlug}`, 'alternate', 'pt');
+      setLink('alternate-en', `https://exp3.ai/en/blog/${enSlug}`, 'alternate', 'en');
+    } else {
+      // Remove alternate links if no sibling
+      removeLink('alternate-pt');
+      removeLink('alternate-en');
+    }
 
     // JSON-LD structured data
     const jsonLd = {
@@ -59,6 +69,7 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
         '@type': 'Organization',
         name: 'EXP³',
       },
+      inLanguage: post.language === 'pt' ? 'pt-BR' : 'en',
     };
 
     let script = document.getElementById('blog-jsonld') as HTMLScriptElement;
@@ -73,7 +84,7 @@ export function BlogSEO({ post, listPage }: BlogSEOProps) {
     return () => {
       document.title = 'EXP³ — Strategic AI Consulting';
     };
-  }, [post, listPage]);
+  }, [post, siblingPost, listPage]);
 
   return null;
 }
@@ -83,7 +94,7 @@ function setMeta(name: string, content: string) {
   const selector = isOg
     ? `meta[property="${name}"]`
     : `meta[name="${name}"]`;
-  
+
   let el = document.querySelector(selector) as HTMLMetaElement;
   if (!el) {
     el = document.createElement('meta');
@@ -96,6 +107,17 @@ function setMeta(name: string, content: string) {
 
 function removeJsonLd() {
   const el = document.getElementById('blog-jsonld');
+  if (el) el.remove();
+}
+
+function clearLinks() {
+  removeLink('canonical');
+  removeLink('alternate-pt');
+  removeLink('alternate-en');
+}
+
+function removeLink(id: string) {
+  const el = document.querySelector(`link[data-seo-id="${id}"]`);
   if (el) el.remove();
 }
 

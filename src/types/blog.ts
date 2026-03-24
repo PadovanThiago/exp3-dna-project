@@ -21,6 +21,7 @@ export interface Post {
   created_at: string;
   language: PostLanguage;
   updated_at: string;
+  translation_group_id: string;
 }
 
 export interface PostInsert {
@@ -39,4 +40,5 @@ export interface PostInsert {
   og_image_url?: string | null;
   language?: PostLanguage;
   published_at?: string | null;
+  translation_group_id?: string;
 }
