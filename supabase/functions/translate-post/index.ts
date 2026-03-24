@@ -40,12 +40,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if translation already exists
+    // Check if translation already exists (exclude source post)
     const { data: existing } = await supabase
       .from("posts")
       .select("id")
       .eq("translation_group_id", sourcePost.translation_group_id)
       .eq("language", targetLanguage)
+      .neq("id", postId)
       .maybeSingle();
 
     if (existing) {
