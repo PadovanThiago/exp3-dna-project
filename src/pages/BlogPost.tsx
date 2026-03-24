@@ -18,6 +18,7 @@ const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { language } = useLanguage();
   const [post, setPost] = useState<Post | null>(null);
+  const [siblingPost, setSiblingPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,7 +26,11 @@ const BlogPost: React.FC = () => {
   }, [slug, language]);
 
   const fetchPost = async () => {
-    const { data, error } = await supabase
+    setLoading(true);
+    setSiblingPost(null);
+
+    // 1. Try to find the post by slug in the current language
+    const { data: directMatch } = await supabase
       .from('posts')
       .select('*')
       .eq('slug', slug)
@@ -33,10 +38,70 @@ const BlogPost: React.FC = () => {
       .eq('language', language)
       .maybeSingle();
 
-    if (!error && data) {
-      setPost(data as unknown as Post);
+    if (directMatch) {
+      const p = directMatch as unknown as Post;
+      setPost(p);
+      // Fetch sibling for hreflang
+      await fetchSibling(p);
+      setLoading(false);
+      return;
     }
+
+    // 2. Try slug in any language, then find best version
+    const { data: anyLangMatch } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .maybeSingle();
+
+    if (anyLangMatch) {
+      const source = anyLangMatch as unknown as Post;
+      // Try to find the version in the current language by translation_group_id
+      const { data: translated } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('translation_group_id', source.translation_group_id)
+        .eq('language', language)
+        .eq('status', 'published')
+        .maybeSingle();
+
+      if (translated) {
+        const p = translated as unknown as Post;
+        setPost(p);
+        await fetchSibling(p);
+      } else {
+        // Fallback to EN or whatever exists
+        const fallback = source.language === 'en' ? source : null;
+        if (fallback) {
+          setPost(fallback);
+          await fetchSibling(fallback);
+        } else {
+          // Just show whatever we found
+          setPost(source);
+          await fetchSibling(source);
+        }
+      }
+    } else {
+      setPost(null);
+    }
+
     setLoading(false);
+  };
+
+  const fetchSibling = async (currentPost: Post) => {
+    const otherLang = currentPost.language === 'pt' ? 'en' : 'pt';
+    const { data } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('translation_group_id', currentPost.translation_group_id)
+      .eq('language', otherLang)
+      .eq('status', 'published')
+      .maybeSingle();
+
+    if (data) {
+      setSiblingPost(data as unknown as Post);
+    }
   };
 
   const formatDate = (date: string) =>
@@ -76,7 +141,7 @@ const BlogPost: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <BlogSEO post={post} />
+      <BlogSEO post={post} siblingPost={siblingPost} />
 
       <article className="section-padding pt-32 md:pt-40">
         <div className="max-w-4xl mx-auto px-4">
@@ -90,6 +155,15 @@ const BlogPost: React.FC = () => {
               <li className="text-foreground truncate max-w-[200px]">{post.title}</li>
             </ol>
           </nav>
+
+          {/* Fallback notice */}
+          {post.language !== language && (
+            <div className="mb-6 p-3 rounded-lg bg-muted/50 border border-border/50 text-sm text-muted-foreground">
+              {language === 'pt'
+                ? 'Este conteúdo ainda não está disponível em português. Exibindo versão em inglês.'
+                : 'This content is not yet available in English. Showing the Portuguese version.'}
+            </div>
+          )}
 
           {/* Header */}
           <motion.header

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -13,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, Save, Eye } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Languages, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Post, PostCategory, PostStatus, PostLanguage } from '@/types/blog';
 
@@ -39,6 +40,8 @@ const AdminBlogEditor: React.FC = () => {
   const { toast } = useToast();
 
   const [saving, setSaving] = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const [siblingPost, setSiblingPost] = useState<Post | null>(null);
   const [form, setForm] = useState({
     title: '',
     slug: '',
@@ -52,7 +55,8 @@ const AdminBlogEditor: React.FC = () => {
     meta_title: '',
     meta_description: '',
     og_image_url: '',
-    language: 'pt' as PostLanguage,
+    language: 'en' as PostLanguage,
+    translation_group_id: '',
   });
 
   useEffect(() => {
@@ -85,8 +89,21 @@ const AdminBlogEditor: React.FC = () => {
         meta_title: post.meta_title || '',
         meta_description: post.meta_description || '',
         og_image_url: post.og_image_url || '',
-        language: (post as any).language || 'pt',
+        language: post.language || 'en',
+        translation_group_id: post.translation_group_id || '',
       });
+
+      // Fetch sibling translation
+      if (post.translation_group_id) {
+        const otherLang = post.language === 'pt' ? 'en' : 'pt';
+        const { data: sibling } = await supabase
+          .from('posts')
+          .select('*')
+          .eq('translation_group_id', post.translation_group_id)
+          .eq('language', otherLang)
+          .maybeSingle();
+        if (sibling) setSiblingPost(sibling as unknown as Post);
+      }
     }
   };
 
@@ -108,7 +125,7 @@ const AdminBlogEditor: React.FC = () => {
     const status = publishNow ? 'published' : form.status;
     const tags = form.tags.split(',').map((t) => t.trim()).filter(Boolean);
 
-    const payload = {
+    const payload: Record<string, any> = {
       title: form.title,
       slug: form.slug,
       excerpt: form.excerpt || null,
@@ -128,11 +145,19 @@ const AdminBlogEditor: React.FC = () => {
         : null,
     };
 
+    // Set translation_group_id for new posts
+    if (!isEditing) {
+      payload.translation_group_id = crypto.randomUUID();
+    }
+
     let error;
+    let savedPostId = id;
     if (isEditing) {
       ({ error } = await supabase.from('posts').update(payload).eq('id', id));
     } else {
-      ({ error } = await supabase.from('posts').insert(payload));
+      const { data, error: insertErr } = await supabase.from('posts').insert(payload).select('id').single();
+      error = insertErr;
+      if (data) savedPostId = data.id;
     }
 
     if (error) {
@@ -142,6 +167,37 @@ const AdminBlogEditor: React.FC = () => {
       navigate('/admin/blog');
     }
     setSaving(false);
+  };
+
+  const handleTranslate = async () => {
+    if (!id) {
+      toast({ title: 'Erro', description: 'Salve o post antes de traduzir.', variant: 'destructive' });
+      return;
+    }
+
+    const targetLang = form.language === 'pt' ? 'en' : 'pt';
+
+    setTranslating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('translate-post', {
+        body: { postId: id, targetLanguage: targetLang },
+      });
+
+      if (error) throw error;
+
+      if (data?.error === 'Translation already exists') {
+        toast({ title: 'Tradução já existe', description: `Já existe versão em ${targetLang === 'pt' ? 'Português' : 'English'}.` });
+      } else if (data?.success) {
+        toast({ title: 'Tradução criada!', description: `Versão em ${targetLang === 'pt' ? 'Português' : 'English'} gerada com sucesso.` });
+        // Reload to show sibling
+        await loadPost();
+      } else {
+        throw new Error(data?.error || 'Unknown error');
+      }
+    } catch (err: any) {
+      toast({ title: 'Erro na tradução', description: err.message, variant: 'destructive' });
+    }
+    setTranslating(false);
   };
 
   if (authLoading) {
@@ -162,6 +218,22 @@ const AdminBlogEditor: React.FC = () => {
             </h1>
           </div>
           <div className="flex items-center gap-2">
+            {isEditing && (
+              <Button
+                variant="outline"
+                onClick={handleTranslate}
+                disabled={translating}
+              >
+                {translating ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Languages className="w-4 h-4 mr-2" />
+                )}
+                {translating
+                  ? 'Traduzindo...'
+                  : `Gerar ${form.language === 'pt' ? 'EN' : 'PT'}`}
+              </Button>
+            )}
             <Button variant="outline" onClick={() => handleSave(false)} disabled={saving}>
               <Save className="w-4 h-4 mr-2" />
               Salvar rascunho
@@ -172,6 +244,25 @@ const AdminBlogEditor: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {/* Translation sibling info */}
+        {siblingPost && (
+          <div className="mb-6 p-4 rounded-lg bg-muted/30 border border-border/50 flex items-center justify-between">
+            <div className="text-sm">
+              <span className="text-muted-foreground">Tradução vinculada: </span>
+              <Badge variant="outline" className="ml-1">
+                {siblingPost.language === 'pt' ? 'PT' : 'EN'}
+              </Badge>
+              <span className="ml-2 text-foreground font-medium">{siblingPost.title}</span>
+              <Badge variant={siblingPost.status === 'published' ? 'default' : 'secondary'} className="ml-2 text-xs">
+                {siblingPost.status === 'published' ? 'Publicado' : 'Rascunho'}
+              </Badge>
+            </div>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to={`/admin/blog/edit/${siblingPost.id}`}>Editar</Link>
+            </Button>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main content */}

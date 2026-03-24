@@ -20,6 +20,37 @@ const categoryColors: Record<PostCategory, string> = {
   news: 'bg-exp3-orange/10 text-exp3-orange border-exp3-orange/20',
 };
 
+/**
+ * Groups posts by translation_group_id and picks the best version
+ * for the current language (with EN fallback).
+ */
+function pickBestPosts(allPosts: Post[], language: string): Post[] {
+  const groups = new Map<string, Post[]>();
+
+  for (const post of allPosts) {
+    const group = groups.get(post.translation_group_id) || [];
+    group.push(post);
+    groups.set(post.translation_group_id, group);
+  }
+
+  const result: Post[] = [];
+  for (const [, group] of groups) {
+    const preferred = group.find((p) => p.language === language);
+    const fallback = group.find((p) => p.language === 'en');
+    const pick = preferred || fallback || group[0];
+    if (pick) result.push(pick);
+  }
+
+  // Sort by published_at descending
+  result.sort((a, b) => {
+    const da = new Date(a.published_at || a.created_at).getTime();
+    const db = new Date(b.published_at || b.created_at).getTime();
+    return db - da;
+  });
+
+  return result;
+}
+
 const Blog: React.FC = () => {
   const { language } = useLanguage();
   const [posts, setPosts] = useState<Post[]>([]);
@@ -32,22 +63,24 @@ const Blog: React.FC = () => {
   }, [language]);
 
   const fetchPosts = async () => {
+    setLoading(true);
+    // Fetch ALL published posts (all languages), then group client-side
     const { data, error } = await supabase
       .from('posts')
       .select('*')
       .eq('status', 'published')
-      .eq('language', language)
       .order('published_at', { ascending: false });
 
     if (!error && data) {
-      setPosts(data as unknown as Post[]);
+      const bestPosts = pickBestPosts(data as unknown as Post[], language);
+      setPosts(bestPosts);
     }
     setLoading(false);
   };
 
   const filtered = posts.filter((p) => {
     const matchCategory = filter === 'all' || p.category === filter;
-    const matchSearch = !search || 
+    const matchSearch = !search ||
       p.title.toLowerCase().includes(search.toLowerCase()) ||
       (p.excerpt?.toLowerCase().includes(search.toLowerCase()));
     return matchCategory && matchSearch;
@@ -72,9 +105,9 @@ const Blog: React.FC = () => {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
-              {language === 'pt' ? 'Blog' : 'Blog'}
+              Blog
               <span className="text-gradient-cyan block mt-2">
-                {language === 'pt' ? 'Insights & Cases' : 'Insights & Cases'}
+                Insights & Cases
               </span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -184,6 +217,12 @@ const Blog: React.FC = () => {
                         <Badge variant="outline" className={categoryColors[post.category]}>
                           {categoryLabels[language][post.category]}
                         </Badge>
+                        {/* Show fallback indicator */}
+                        {post.language !== language && (
+                          <Badge variant="secondary" className="text-xs">
+                            {post.language === 'en' ? 'EN' : 'PT'}
+                          </Badge>
+                        )}
                       </div>
 
                       <h2 className="text-lg font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
