@@ -54,7 +54,7 @@ function buildHtml(post: Record<string, unknown> | null): string {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>${escapeHtml(title)} | EXP³</title>
+  <title>${escapeHtml(title.replace(/ \| EXP³$/i, ''))} | EXP³</title>
   <meta name="description" content="${escapeAttr(description)}"/>
   <meta name="author" content="${escapeAttr(authorName)}"/>
 
