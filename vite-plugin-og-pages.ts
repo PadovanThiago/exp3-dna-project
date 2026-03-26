@@ -139,7 +139,7 @@ export default function ogPagesPlugin(): Plugin {
           return;
         }
 
-        const posts: PostRow[] = await res.json();
+        const posts = (await res.json()) as PostRow[];
         console.log(`[og-pages] Generating HTML for ${posts.length} posts…`);
 
         // Generate blog/index.html fallback
