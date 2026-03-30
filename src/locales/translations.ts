@@ -158,6 +158,16 @@ export const translations = {
       success: "Mensagem enviada com sucesso! Entraremos em contato em breve.",
       error: "Erro ao enviar mensagem. Por favor, tente novamente.",
     },
+    newsletter: {
+      title: "Newsletter",
+      description: "Receba insights sobre IA, gestão do conhecimento e inovação.",
+      namePlaceholder: "Seu nome",
+      emailPlaceholder: "Seu email",
+      subscribe: "Inscrever-se",
+      success: "Inscrito com sucesso!",
+      errorDuplicate: "Este email já está cadastrado.",
+      errorGeneric: "Erro ao inscrever. Tente novamente.",
+    },
     footer: {
       description: "Think Tank estratégico que desenha e opera o futuro dos negócios através da simbiose cognitiva entre humanos e IA.",
       navigation: "Navegação",
@@ -327,6 +337,16 @@ export const translations = {
       },
       success: "Message sent successfully! We'll be in touch soon.",
       error: "Error sending message. Please try again.",
+    },
+    newsletter: {
+      title: "Newsletter",
+      description: "Get insights on AI, knowledge management and innovation.",
+      namePlaceholder: "Your name",
+      emailPlaceholder: "Your email",
+      subscribe: "Subscribe",
+      success: "Successfully subscribed!",
+      errorDuplicate: "This email is already registered.",
+      errorGeneric: "Error subscribing. Please try again.",
     },
     footer: {
       description: "Strategic think tank that designs and operates the future of business through cognitive symbiosis between humans and AI.",

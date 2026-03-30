@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Mail, ArrowUpRight } from 'lucide-react';
 import movementsLogo from '@/assets/movements-logo.png';
+import { NewsletterSignup } from '@/components/NewsletterSignup';
 
 const SubstackIcon = ({ size = 20 }: { size?: number }) => (
   <svg viewBox="0 0 16 16" fill="currentColor" width={size} height={size}>
@@ -79,6 +80,10 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
+          {/* Newsletter Column */}
+          <div>
+            <NewsletterSignup />
+          </div>
 
           {/* Legal Column */}
           <div>
