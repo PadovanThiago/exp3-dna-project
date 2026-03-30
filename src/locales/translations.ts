@@ -338,6 +338,16 @@ export const translations = {
       success: "Message sent successfully! We'll be in touch soon.",
       error: "Error sending message. Please try again.",
     },
+    newsletter: {
+      title: "Newsletter",
+      description: "Get insights on AI, knowledge management and innovation.",
+      namePlaceholder: "Your name",
+      emailPlaceholder: "Your email",
+      subscribe: "Subscribe",
+      success: "Successfully subscribed!",
+      errorDuplicate: "This email is already registered.",
+      errorGeneric: "Error subscribing. Please try again.",
+    },
     footer: {
       description: "Strategic think tank that designs and operates the future of business through cognitive symbiosis between humans and AI.",
       navigation: "Navigation",
