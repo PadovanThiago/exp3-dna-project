@@ -80,6 +80,10 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
+          {/* Newsletter Column */}
+          <div>
+            <NewsletterSignup />
+          </div>
 
           {/* Legal Column */}
           <div>
