@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import DeckRedirect from "./pages/DeckRedirect";
 import NeoDash from "./pages/NeoDash";
 import NeoDashAdmin from "./pages/NeoDashAdmin";
+import AdminNewsletter from "./pages/AdminNewsletter";
 
 const queryClient = new QueryClient();
 
