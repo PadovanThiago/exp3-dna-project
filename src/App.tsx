@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import DeckRedirect from "./pages/DeckRedirect";
 import NeoDash from "./pages/NeoDash";
 import NeoDashAdmin from "./pages/NeoDashAdmin";
+import AdminNewsletter from "./pages/AdminNewsletter";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const AppLayout = () => {
           <Route path="/deck" element={<DeckRedirect />} />
           <Route path="/neodash" element={<NeoDash />} />
           <Route path="/neodash/admin" element={<NeoDashAdmin />} />
+          <Route path="/admin/newsletter" element={<ProtectedAdminRoute><AdminNewsletter /></ProtectedAdminRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
