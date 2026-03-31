@@ -60,6 +60,8 @@ function buildPostHtml(post: PostRow): string {
   <meta property="og:title" content="${escapeAttr(title)}"/>
   <meta property="og:description" content="${escapeAttr(description)}"/>
   <meta property="og:image" content="${escapeAttr(image)}"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
   <meta property="og:url" content="${escapeAttr(url)}"/>
   <meta property="og:site_name" content="EXP³"/>
   <meta property="article:published_time" content="${escapeAttr(publishedAt)}"/>
@@ -90,6 +92,8 @@ function buildFallbackHtml(): string {
   <meta property="og:title" content="EXP³ | Strategic AI Consulting"/>
   <meta property="og:description" content="Strategic AI consulting — cognitive symbiosis between human creativity and machine power."/>
   <meta property="og:image" content="${DEFAULT_OG_IMAGE}"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
   <meta property="og:url" content="${SITE_URL}/blog"/>
   <meta property="og:type" content="website"/>
   <meta name="twitter:card" content="summary_large_image"/>
@@ -125,7 +129,7 @@ export default function ogPagesPlugin(): Plugin {
 
       try {
         const res = await fetch(
-          `${supabaseUrl}/rest/v1/posts?status=eq.published&select=title,slug,excerpt,cover_image_url,author_name,meta_title,meta_description,og_image_url,published_at,created_at,language`,
+          `${supabaseUrl}/rest/v1/posts?status=eq.published&select=title,slug,excerpt,content,cover_image_url,author_name,meta_title,meta_description,og_image_url,published_at,created_at,language`,
           {
             headers: {
               apikey: supabaseKey,
@@ -145,7 +149,6 @@ export default function ogPagesPlugin(): Plugin {
         // Generate blog/index.html fallback
         const blogDir = path.join(outDir, "blog");
         fs.mkdirSync(blogDir, { recursive: true });
-        // Don't overwrite if SPA already created one
         const blogIndex = path.join(blogDir, "index.html");
         if (!fs.existsSync(blogIndex)) {
           fs.writeFileSync(blogIndex, buildFallbackHtml(), "utf-8");
