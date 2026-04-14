@@ -53,6 +53,7 @@ const AppLayout = () => {
           <Route path="/neodash" element={<NeoDash />} />
           <Route path="/neodash/admin" element={<NeoDashAdmin />} />
           <Route path="/admin/newsletter" element={<ProtectedAdminRoute><AdminNewsletter /></ProtectedAdminRoute>} />
+          <Route path="/demo/ibgc" element={<IbgcDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
