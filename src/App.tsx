@@ -22,10 +22,11 @@ import DeckRedirect from "./pages/DeckRedirect";
 import NeoDash from "./pages/NeoDash";
 import NeoDashAdmin from "./pages/NeoDashAdmin";
 import AdminNewsletter from "./pages/AdminNewsletter";
+import IbgcDemo from "./pages/ibgc/IbgcDemo";
 
 const queryClient = new QueryClient();
 
-const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin"];
+const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin", "/demo/ibgc"];
 
 const AppLayout = () => {
   const location = useLocation();
@@ -52,6 +53,7 @@ const AppLayout = () => {
           <Route path="/neodash" element={<NeoDash />} />
           <Route path="/neodash/admin" element={<NeoDashAdmin />} />
           <Route path="/admin/newsletter" element={<ProtectedAdminRoute><AdminNewsletter /></ProtectedAdminRoute>} />
+          <Route path="/demo/ibgc" element={<IbgcDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
