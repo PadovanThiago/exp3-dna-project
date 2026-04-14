@@ -22,10 +22,11 @@ import DeckRedirect from "./pages/DeckRedirect";
 import NeoDash from "./pages/NeoDash";
 import NeoDashAdmin from "./pages/NeoDashAdmin";
 import AdminNewsletter from "./pages/AdminNewsletter";
+import IbgcDemo from "./pages/ibgc/IbgcDemo";
 
 const queryClient = new QueryClient();
 
-const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin"];
+const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin", "/demo/ibgc"];
 
 const AppLayout = () => {
   const location = useLocation();
