@@ -50,7 +50,7 @@ export default function DeckPinheiroNeto() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-content-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="w-full max-w-sm mx-auto text-center px-6">
         <div className="text-[42px] font-light tracking-[4px] text-primary mb-2">
           EXP³
