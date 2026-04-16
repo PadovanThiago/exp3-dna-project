@@ -47,8 +47,8 @@ body{
 
 /* ── CHROME ── */
 .progress-bar{position:fixed;bottom:0;left:0;height:2px;background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.3));transition:width .4s ease;z-index:200}
-.nav-dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:200}
-.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.14);cursor:pointer;transition:background .3s,transform .3s}
+.nav-dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:200}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.14);cursor:pointer;transition:background .3s,transform .3s}
 .dot.active{background:var(--cyan);transform:scale(1.6)}
 .nav-btns{position:fixed;bottom:24px;right:36px;display:flex;gap:10px;z-index:200}
 .nav-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--fg2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
@@ -60,7 +60,19 @@ body{
 /* ── TYPOGRAPHY ── */
 .lab{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .lab::before{content:'';display:inline-block;width:24px;height:1.5px;background:var(--cyan);border-radius:2px;flex-shrink:0}
+.lab.org{color:var(--orange)}
+.lab.org::before{background:var(--orange)}
 .hdl{font-size:clamp(22px,2.7vw,34px);font-weight:700;letter-spacing:-.5px;line-height:1.25;margin-bottom:28px}
+
+/* ── DIMENSION BADGE ── */
+.dim-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border-radius:8px;padding:6px 14px;margin-bottom:16px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+}
+.dim-badge.org{background:rgba(255,107,51,.1);border:1px solid rgba(255,107,51,.25);color:var(--orange)}
+.dim-badge.tech{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.22);color:var(--cyan)}
+.dim-badge svg{width:13px;height:13px;flex-shrink:0}
 
 
 /* ══════════════════════════════════════════
@@ -128,53 +140,52 @@ body{
 
 
 /* ══════════════════════════════════════════
-   SLIDE 3 — POR QUE FALHAM / O QUE FUNCIONOU
+   SLIDE 3 — COMPRESSÃO VS TRANSFORMAÇÃO
 ══════════════════════════════════════════ */
-.s-fail-w{width:100%;max-width:960px}
-.fail-grid{display:grid;grid-template-columns:1fr 48px 1fr;gap:0;align-items:stretch;margin-bottom:18px}
-.fail-col{display:flex;flex-direction:column;gap:8px;padding:0 4px}
-.fail-col-head{
+.s-compress-w{width:100%;max-width:960px}
+.compress-grid{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin-bottom:18px}
+.compress-col{display:flex;flex-direction:column;gap:8px;padding:0 4px}
+.compress-head{
   font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
   padding:0 0 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px;
   border-bottom:1px solid;
 }
-.fail-col.bad .fail-col-head{color:var(--orange);border-color:rgba(255,107,51,.2)}
-.fail-col.good .fail-col-head{color:var(--cyan);border-color:rgba(0,217,255,.2)}
-.fail-step{
-  border-radius:10px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px;
-  border:1px solid;
+.compress-col.problem .compress-head{color:var(--orange);border-color:rgba(255,107,51,.2)}
+.compress-col.insight .compress-head{color:var(--emerald);border-color:rgba(0,199,123,.2)}
+.compress-item{
+  border-radius:10px;padding:13px 16px;border:1px solid;
 }
-.fail-col.bad .fail-step{background:rgba(255,107,51,.04);border-color:rgba(255,107,51,.14)}
-.fail-col.good .fail-step{background:rgba(0,217,255,.04);border-color:rgba(0,217,255,.14)}
-.fail-step-n{
-  width:24px;height:24px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;
+.compress-col.problem .compress-item{background:rgba(255,107,51,.04);border-color:rgba(255,107,51,.14)}
+.compress-col.insight .compress-item{background:rgba(0,199,123,.05);border-color:rgba(0,199,123,.18)}
+.compress-item-title{font-size:clamp(13px,1.3vw,15px);font-weight:700;margin-bottom:5px}
+.compress-col.problem .compress-item-title{color:var(--fg)}
+.compress-col.insight .compress-item-title{color:var(--fg)}
+.compress-item-text{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.6}
+.compress-mid{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  padding-top:38px;
 }
-.fail-col.bad .fail-step-n{background:rgba(255,107,51,.1);color:var(--orange)}
-.fail-col.good .fail-step-n{background:rgba(0,217,255,.1);color:var(--cyan)}
-.fail-step-txt{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.5}
-.fail-step-txt strong{color:var(--fg);font-weight:600}
-
-.fail-mid{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  padding-top:42px;
-}
-.fail-mid-line{width:1.5px;flex:1;max-height:90px;border-radius:2px;background:rgba(255,255,255,.06)}
-.fail-mid-arrow{
-  width:32px;height:32px;border-radius:50%;
+.compress-mid-line{width:1.5px;flex:1;max-height:80px;border-radius:2px;background:rgba(255,255,255,.06)}
+.compress-mid-ico{
+  width:30px;height:30px;border-radius:50%;
   background:var(--bg2);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
-  font-size:12px;color:var(--fg3);
+  font-size:13px;color:var(--fg3);
 }
-
-.fail-quote{
+.compress-distinction{
   background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
-  border-radius:10px;padding:13px 20px;text-align:center;
-  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;font-style:italic;
+  border-radius:10px;padding:14px 20px;
+  display:grid;grid-template-columns:1fr 1px 1fr;gap:0;
 }
-.fail-quote strong{color:var(--fg);font-weight:600;font-style:normal}
-.fail-quote cite{font-size:11px;color:var(--fg3);display:block;margin-top:6px;font-style:normal;letter-spacing:.04em}
+.compress-def{padding:6px 18px;text-align:center}
+.compress-def:first-child{padding-left:6px}
+.compress-def:last-child{padding-right:6px}
+.compress-divider{background:rgba(255,255,255,.07);width:1px}
+.compress-def-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.compress-col.problem+.compress-mid~.compress-col.insight .compress-def-label{color:var(--emerald)}
+.compress-def-label.p{color:var(--orange)}
+.compress-def-label.t{color:var(--emerald)}
+.compress-def-text{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55}
 
 
 /* ══════════════════════════════════════════
@@ -221,149 +232,242 @@ body{
 
 
 /* ══════════════════════════════════════════
-   SLIDE 5 — FUSÃO TECNOLÓGICO + SOCIAL
+   SLIDE 5 — DUAS DIMENSÕES (BIFURCAÇÃO)
 ══════════════════════════════════════════ */
-.fusion-w{width:100%;max-width:960px}
-.fusion-grid{
-  display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;
-  margin-bottom:18px;
+.bifurc-w{width:100%;max-width:900px}
+.bifurc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.bifurc-card{
+  border-radius:var(--rad);padding:26px 24px 22px;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
 }
-.fusion-card{
-  border-radius:var(--rad);padding:24px 22px 20px;
-  display:flex;flex-direction:column;
-  box-shadow:var(--sh-sm);
+.bifurc-card.org{
+  background:linear-gradient(150deg,rgba(255,107,51,.1),var(--bg3) 60%);
+  border:1px solid rgba(255,107,51,.22);
 }
-.fusion-card.tech{
+.bifurc-card.tech{
   background:linear-gradient(150deg,rgba(0,217,255,.09),var(--bg3) 60%);
   border:1px solid rgba(0,217,255,.22);
 }
-.fusion-card.soc{
-  background:linear-gradient(150deg,rgba(255,107,51,.08),var(--bg3) 60%);
-  border:1px solid rgba(255,107,51,.2);
+.bifurc-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+  border-radius:2px 2px 0 0;
 }
-.fusion-icon{
-  width:38px;height:38px;border-radius:10px;
+.bifurc-card.org::after{background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.2))}
+.bifurc-card.tech::after{background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.2))}
+.bifurc-ico{
+  width:40px;height:40px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;margin-bottom:14px;
 }
-.fusion-card.tech .fusion-icon{background:rgba(0,217,255,.1);border:1px solid rgba(0,217,255,.2)}
-.fusion-card.soc .fusion-icon{background:rgba(255,107,51,.1);border:1px solid rgba(255,107,51,.2)}
-.fusion-card.tech .fusion-icon svg{color:var(--cyan)}
-.fusion-card.soc .fusion-icon svg{color:var(--orange)}
-.fusion-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:9px}
-.fusion-card.tech .fusion-label{color:var(--cyan)}
-.fusion-card.soc .fusion-label{color:var(--orange)}
-.fusion-tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
-.fusion-ul{list-style:none;display:flex;flex-direction:column;gap:9px}
-.fusion-ul li{font-size:clamp(13px,1.3vw,15px);line-height:1.55;padding-left:16px;position:relative;color:var(--fg2)}
-.fusion-card.tech .fusion-ul li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--cyan);opacity:.7}
-.fusion-card.soc .fusion-ul li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--orange);opacity:.7}
-.fusion-mid{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:0 18px;gap:8px;
+.bifurc-card.org .bifurc-ico{background:rgba(255,107,51,.1);border:1px solid rgba(255,107,51,.22)}
+.bifurc-card.tech .bifurc-ico{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2)}
+.bifurc-card.org .bifurc-ico svg{color:var(--orange)}
+.bifurc-card.tech .bifurc-ico svg{color:var(--cyan)}
+.bifurc-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px}
+.bifurc-card.org .bifurc-label{color:var(--orange)}
+.bifurc-card.tech .bifurc-label{color:var(--cyan)}
+.bifurc-tt{font-size:clamp(16px,1.6vw,20px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
+.bifurc-ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.bifurc-ul li{font-size:clamp(13px,1.3vw,15px);line-height:1.6;padding-left:16px;position:relative;color:var(--fg2)}
+.bifurc-card.org .bifurc-ul li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--orange);opacity:.7}
+.bifurc-card.tech .bifurc-ul li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--cyan);opacity:.7}
+.bifurc-note{
+  text-align:center;padding:12px 20px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.6;font-style:italic;
 }
-.fusion-mid-line{width:2px;flex:1;max-height:100px;border-radius:2px}
-.fusion-mid-line.top{background:linear-gradient(180deg,rgba(0,217,255,.4),rgba(255,107,51,.4))}
-.fusion-mid-line.bot{background:linear-gradient(180deg,rgba(255,107,51,.4),transparent)}
-.fusion-mid-node{
-  width:38px;height:38px;border-radius:50%;
-  background:var(--bg2);border:1px solid rgba(255,255,255,.1);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:700;color:var(--fg3);
-}
-.fusion-bottom{
-  padding:13px 20px;
-  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
-  border-radius:10px;text-align:center;
-  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;
-}
-.fusion-bottom strong{color:var(--fg);font-weight:600}
+.bifurc-note strong{color:var(--fg);font-weight:600;font-style:normal}
 
 
 /* ══════════════════════════════════════════
-   SLIDE 6 — TRÊS DESAFIOS
+   SLIDES 6, 7, 8 — DIMENSÃO ORGANIZACIONAL
 ══════════════════════════════════════════ */
-.prob-grid-w{width:100%;max-width:980px}
-.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.prob-card{
-  background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);
-  padding:26px 22px 22px;display:flex;flex-direction:column;
+.dim-w{width:100%;max-width:980px}
+.dim-w.narrow{max-width:900px}
+
+/* Manifestações organizacionais — 3 cards */
+.manifest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.manifest-card{
+  background:var(--bg3);border:1px solid rgba(255,107,51,.14);border-radius:var(--rad);
+  padding:22px 18px 18px;display:flex;flex-direction:column;
   box-shadow:var(--sh-sm);position:relative;overflow:hidden;
 }
-.prob-card::after{
-  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
-  background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.2));
+.manifest-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,rgba(255,107,51,.6),rgba(255,107,51,.1));
   border-radius:2px 2px 0 0;
 }
-.prob-n{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);opacity:.7;margin-bottom:16px}
-.prob-ico{
-  width:40px;height:40px;border-radius:10px;
-  background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.18);
-  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+.manifest-n{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);opacity:.7;margin-bottom:10px}
+.manifest-ico{
+  width:34px;height:34px;border-radius:9px;
+  background:rgba(255,107,51,.09);border:1px solid rgba(255,107,51,.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
 }
-.prob-ico svg{width:20px;height:20px;color:var(--orange)}
-.prob-tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:12px}
-.prob-d{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.7;flex:1;margin-bottom:16px}
-.prob-tag{
-  display:inline-flex;align-items:center;gap:7px;
+.manifest-ico svg{width:17px;height:17px;color:var(--orange)}
+.manifest-tt{font-size:clamp(14px,1.4vw,17px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:9px}
+.manifest-d{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.65;flex:1;margin-bottom:12px}
+.manifest-tag{
+  display:inline-flex;align-items:center;gap:6px;
   background:rgba(255,107,51,.07);border:1px solid rgba(255,107,51,.18);
-  border-radius:7px;padding:6px 11px;
-  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   color:var(--orange);align-self:flex-start;
 }
 
+/* Por que é difícil — dois momentos */
+.reveal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.reveal-card{
+  border-radius:var(--rad);padding:22px 20px 18px;
+  box-shadow:var(--sh-sm);
+}
+.reveal-card.what{
+  background:rgba(255,107,51,.04);border:1px solid rgba(255,107,51,.14);
+}
+.reveal-card.why{
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+}
+.reveal-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.reveal-card.what .reveal-label{color:var(--orange)}
+.reveal-card.why .reveal-label{color:var(--fg3)}
+.reveal-tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
+.reveal-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.7}
+.reveal-body strong{color:var(--fg);font-weight:600}
+
+.dim-quote{
+  background:rgba(255,107,51,.04);border:1px solid rgba(255,107,51,.16);
+  border-radius:10px;padding:13px 20px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;font-style:italic;
+  margin-bottom:14px;
+}
+.dim-quote strong{color:var(--fg);font-weight:600;font-style:normal}
+
+/* Resposta organizacional */
+.org-resp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.org-resp-step{
+  background:var(--bg3);border:1px solid rgba(255,107,51,.14);border-radius:12px;
+  padding:18px 16px 14px;display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.org-resp-step::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,rgba(255,107,51,.5),transparent);
+}
+.org-step-n{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);opacity:.65;margin-bottom:10px}
+.org-step-tt{font-size:clamp(13px,1.3vw,15px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:8px}
+.org-step-d{font-size:clamp(12px,1.2vw,14px);color:var(--fg2);line-height:1.6;flex:1}
+
+.org-resp-note{
+  padding:12px 18px;
+  background:linear-gradient(90deg,rgba(255,107,51,.06),rgba(0,217,255,.04));
+  border:1px solid rgba(255,255,255,.07);border-radius:10px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55;
+}
+.org-resp-note strong{color:var(--fg);font-weight:700}
+.org-resp-note em{color:var(--orange);font-style:normal;font-weight:600}
+
 
 /* ══════════════════════════════════════════
-   SLIDE 7 — COMO A EXP³ RESPONDE
+   SLIDES 9, 10, 11 — DIMENSÃO TECNOLÓGICA
 ══════════════════════════════════════════ */
-.s3-w{width:100%;max-width:960px}
-.bridge-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch}
-.bridge-col{display:flex;flex-direction:column;gap:9px}
-.bridge-title{
-  font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  margin-bottom:4px;display:flex;align-items:center;gap:8px;
+/* Desafios tecnológicos — 3 cards com cyan */
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.tech-card{
+  background:var(--bg3);border:1px solid rgba(0,217,255,.14);border-radius:var(--rad);
+  padding:22px 18px 18px;display:flex;flex-direction:column;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
 }
-.bridge-title.prob{color:var(--orange)}
-.bridge-title.sol{color:var(--cyan)}
-.bridge-title svg{width:13px;height:13px;flex-shrink:0}
-.bitem{
-  display:flex;align-items:flex-start;gap:12px;
-  padding:12px 14px;border-radius:10px;border:1px solid;flex:1;
+.tech-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,rgba(0,217,255,.6),rgba(0,217,255,.1));
+  border-radius:2px 2px 0 0;
 }
-.bitem.p{background:rgba(255,107,51,.04);border-color:rgba(255,107,51,.18)}
-.bitem.s{background:rgba(0,217,255,.04);border-color:rgba(0,217,255,.18)}
-.bitem-ico{width:26px;height:26px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.bitem.p .bitem-ico{background:rgba(255,107,51,.1)}
-.bitem.s .bitem-ico{background:rgba(0,217,255,.1)}
-.bitem-ico svg{width:13px;height:13px}
-.bitem.p .bitem-ico svg{color:var(--orange)}
-.bitem.s .bitem-ico svg{color:var(--cyan)}
-.bitem-text{display:flex;flex-direction:column;gap:3px}
-.bitem-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.65}
-.bitem.p .bitem-label{color:var(--orange)}
-.bitem.s .bitem-label{color:var(--cyan)}
-.bitem-desc{font-size:clamp(13px,1.3vw,15px);font-weight:500;color:var(--fg);line-height:1.5}
-.bridge-arrow{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:0 18px;gap:5px;
+.tech-n{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);opacity:.7;margin-bottom:10px}
+.tech-ico{
+  width:34px;height:34px;border-radius:9px;
+  background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
 }
-.bridge-arrow-line{width:2px;flex:1;max-height:160px;background:linear-gradient(180deg,rgba(255,107,51,.25),rgba(0,217,255,.45));border-radius:2px}
-.bridge-arrow-head{
-  width:26px;height:26px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(0,217,255,.15),rgba(0,217,255,.05));
-  border:1px solid rgba(0,217,255,.3);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--cyan);font-size:13px;
+.tech-ico svg{width:17px;height:17px;color:var(--cyan)}
+.tech-tt{font-size:clamp(14px,1.4vw,17px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:9px}
+.tech-d{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.65;flex:1;margin-bottom:12px}
+.tech-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,217,255,.07);border:1px solid rgba(0,217,255,.2);
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cyan);align-self:flex-start;
 }
-.bridge-note{
-  margin-top:16px;padding:11px 18px;
-  background:rgba(0,217,255,.04);border:1px solid rgba(0,217,255,.14);border-radius:9px;
-  font-size:clamp(12px,1.2vw,14px);color:var(--fg3);line-height:1.55;text-align:center;
+
+/* Por que é difícil — tech */
+.tech-reveal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.tech-reveal-card{
+  border-radius:var(--rad);padding:22px 20px 18px;
+  box-shadow:var(--sh-sm);
 }
-.bridge-note strong{color:var(--fg2);font-weight:600}
+.tech-reveal-card.what{background:rgba(0,217,255,.04);border:1px solid rgba(0,217,255,.16)}
+.tech-reveal-card.why{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)}
+.tech-reveal-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.tech-reveal-card.what .tech-reveal-label{color:var(--cyan)}
+.tech-reveal-card.why .tech-reveal-label{color:var(--fg3)}
+.tech-reveal-tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
+.tech-reveal-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.7}
+.tech-reveal-body strong{color:var(--fg);font-weight:600}
+
+.tech-quote{
+  background:rgba(0,217,255,.04);border:1px solid rgba(0,217,255,.14);
+  border-radius:10px;padding:13px 20px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;font-style:italic;
+  margin-bottom:14px;
+}
+.tech-quote strong{color:var(--fg);font-weight:600;font-style:normal}
+
+/* Arquitetura de resposta — 3 motores */
+.motors-arch{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.motor-card{
+  border-radius:var(--rad);padding:22px 18px 18px;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.motor-card.llm{background:linear-gradient(150deg,rgba(0,217,255,.09),var(--bg3) 60%);border:1px solid rgba(0,217,255,.22)}
+.motor-card.det{background:linear-gradient(150deg,rgba(0,199,123,.08),var(--bg3) 60%);border:1px solid rgba(0,199,123,.2)}
+.motor-card.sym{background:linear-gradient(150deg,rgba(255,107,51,.07),var(--bg3) 60%);border:1px solid rgba(255,107,51,.2)}
+.motor-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.motor-card.llm .motor-label{color:var(--cyan)}
+.motor-card.det .motor-label{color:var(--emerald)}
+.motor-card.sym .motor-label{color:var(--orange)}
+.motor-ico{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.motor-card.llm .motor-ico{background:rgba(0,217,255,.1);border:1px solid rgba(0,217,255,.22)}
+.motor-card.det .motor-ico{background:rgba(0,199,123,.1);border:1px solid rgba(0,199,123,.22)}
+.motor-card.sym .motor-ico{background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.2)}
+.motor-ico svg{width:18px;height:18px}
+.motor-card.llm .motor-ico svg{color:var(--cyan)}
+.motor-card.det .motor-ico svg{color:var(--emerald)}
+.motor-card.sym .motor-ico svg{color:var(--orange)}
+.motor-tt{font-size:clamp(14px,1.4vw,17px);font-weight:700;color:var(--fg);margin-bottom:9px;line-height:1.3}
+.motor-d{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;flex:1;margin-bottom:10px}
+.motor-card{display:flex;flex-direction:column}
+.motor-prop{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  align-self:flex-start;
+}
+.motor-card.llm .motor-prop{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2);color:var(--cyan)}
+.motor-card.det .motor-prop{background:rgba(0,199,123,.08);border:1px solid rgba(0,199,123,.2);color:var(--emerald)}
+.motor-card.sym .motor-prop{background:rgba(255,107,51,.07);border:1px solid rgba(255,107,51,.18);color:var(--orange)}
+
+.tech-resp-note{
+  padding:12px 18px;
+  background:rgba(0,217,255,.04);
+  border:1px solid rgba(0,217,255,.14);border-radius:10px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55;
+}
+.tech-resp-note strong{color:var(--fg);font-weight:700}
 
 
 /* ══════════════════════════════════════════
-   SLIDE 8 — EXPERIÊNCIA
+   SLIDE 12 — EXPERIÊNCIA / CASES
 ══════════════════════════════════════════ */
 .s-exp-w{width:100%;max-width:980px}
 .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -387,8 +491,8 @@ body{
 .exp-card:nth-child(1) .exp-sector{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2);color:var(--cyan)}
 .exp-card:nth-child(2) .exp-sector{background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.2);color:var(--orange)}
 .exp-card:nth-child(3) .exp-sector{background:rgba(0,199,123,.08);border:1px solid rgba(0,199,123,.2);color:var(--emerald)}
-.exp-title{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:12px}
-.exp-desc{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.7;flex:1}
+.exp-title{font-size:clamp(14px,1.45vw,17px);font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:12px}
+.exp-desc{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.75;flex:1}
 .exp-note{
   margin-top:20px;text-align:center;
   font-size:clamp(12px,1.2vw,14px);color:var(--fg3);font-style:italic;
@@ -398,7 +502,49 @@ body{
 
 
 /* ══════════════════════════════════════════
-   SLIDE 9 — ENCERRAMENTO
+   SLIDE 13 — TIME
+══════════════════════════════════════════ */
+.team-w{width:100%;max-width:980px}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+.team-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);
+  padding:28px 22px 24px;display:flex;flex-direction:column;align-items:flex-start;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.team-card:first-child{
+  border-color:rgba(0,217,255,.2);
+  background:linear-gradient(150deg,rgba(0,217,255,.06),var(--bg3) 55%);
+}
+.team-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  border-radius:2px 2px 0 0;
+  background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.15));
+}
+.team-avatar{
+  width:48px;height:48px;border-radius:14px;
+  background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.18);
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+}
+.team-card:nth-child(2) .team-avatar{background:rgba(255,107,51,.07);border-color:rgba(255,107,51,.18)}
+.team-card:nth-child(3) .team-avatar{background:rgba(0,199,123,.07);border-color:rgba(0,199,123,.18)}
+.team-avatar svg{width:22px;height:22px;color:var(--cyan)}
+.team-card:nth-child(2) .team-avatar svg{color:var(--orange)}
+.team-card:nth-child(3) .team-avatar svg{color:var(--emerald)}
+.team-name{font-size:clamp(16px,1.6vw,19px);font-weight:700;color:var(--fg);margin-bottom:4px;line-height:1.2}
+.team-role{font-size:clamp(12px,1.2vw,14px);font-weight:500;color:var(--cyan);letter-spacing:.04em;margin-bottom:16px}
+.team-card:nth-child(2) .team-role{color:var(--orange)}
+.team-card:nth-child(3) .team-role{color:var(--emerald)}
+.team-bio{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.7;flex:1}
+.team-note{
+  padding:13px 20px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  text-align:center;font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;
+}
+.team-note strong{color:var(--fg);font-weight:600}
+
+
+/* ══════════════════════════════════════════
+   SLIDE 14 — ENCERRAMENTO
 ══════════════════════════════════════════ */
 .s-close{
   background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(0,35,70,.5),var(--bg) 72%);
@@ -434,7 +580,7 @@ body{
 
 
 /* ══════════════════════════════════════════
-   SLIDE 10 — CONTATO
+   SLIDE 15 — CONTATO
 ══════════════════════════════════════════ */
 .s-contact{
   background:radial-gradient(ellipse 60% 55% at 50% 48%,rgba(0,25,55,.5),var(--bg) 72%);
@@ -553,6 +699,8 @@ body{
     <p class="lab">O que a pesquisa mais recente mostra</p>
     <h2 class="hdl">51 implementações reais analisadas.<br>Os padrões são consistentes.</h2>
 
+    <p style="font-size:clamp(14px,1.35vw,16px);color:var(--fg2);line-height:1.7;margin-bottom:20px;max-width:860px">Pesquisa conduzida pela Stanford Digital Economy Lab que analisou 51 implementações reais de IA em 41 organizações de 7 países e 9 setores diferentes. Ao contrário de estudos baseados em intenção ou expectativa, este trabalho acompanhou projetos que saíram do piloto e entraram em operação — mapeando o que funcionou, o que falhou e por quê. Os dados abaixo refletem os padrões consistentes encontrados nessa amostra.</p>
+
     <div class="stat-grid">
       <div class="stat-box s1-box">
         <div class="stat-num">95%</div>
@@ -584,66 +732,70 @@ body{
 
 
 <!-- ════════════════════════════════
-     SLIDE 3 — POR QUE FALHAM
+     SLIDE 3 — COMPRESSÃO VS TRANSFORMAÇÃO
 ════════════════════════════════ -->
 <div class="slide" data-index="2">
   <div class="slogo">EXP<sup>³</sup></div>
-  <div class="s-fail-w">
-    <p class="lab">O que a pesquisa revela</p>
-    <h2 class="hdl">O padrão de falha é documentado.<br>O padrão de sucesso também.</h2>
+  <div class="s-compress-w">
+    <p class="lab">Por que a maioria falha</p>
+    <h2 class="hdl">IA amplifica o que encontra.<br>Se o processo está quebrado, ela quebra mais rápido.</h2>
 
-    <div class="fail-grid">
-      <!-- coluna: caminho que falha -->
-      <div class="fail-col bad">
-        <div class="fail-col-head">
+    <div class="compress-grid">
+      <div class="compress-col problem">
+        <div class="compress-head">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="3" y1="3" x2="10" y2="10"/><line x1="10" y1="3" x2="3" y2="10"/></svg>
-          Caminho que falha
+          O que a maioria das organizações faz
         </div>
-        <div class="fail-step">
-          <div class="fail-step-n">1</div>
-          <div class="fail-step-txt">Identifica oportunidade e <strong>escolhe uma ferramenta de IA</strong></div>
+        <div class="compress-item">
+          <div class="compress-item-title">Escolhe uma ferramenta de IA</div>
+          <div class="compress-item-text">A decisão começa pela tecnologia, não pelo problema. A pergunta é "qual IA usar?" em vez de "o que queremos mudar?"</div>
         </div>
-        <div class="fail-step">
-          <div class="fail-step-n">2</div>
-          <div class="fail-step-txt"><strong>Aplica ao processo existente</strong>, sem questioná-lo</div>
+        <div class="compress-item">
+          <div class="compress-item-title">Aplica ao processo existente</div>
+          <div class="compress-item-text">O processo já existia, com suas inconsistências e julgamentos implícitos. A IA é encaixada sem questionar a lógica por trás.</div>
         </div>
-        <div class="fail-step">
-          <div class="fail-step-n">3</div>
-          <div class="fail-step-txt">Espera o resultado.<br><strong>Resultado: frustração.</strong> A IA amplificou o problema, não resolveu.</div>
+        <div class="compress-item">
+          <div class="compress-item-title">Espera o resultado</div>
+          <div class="compress-item-text">O output chega mais rápido. Mas o que era impreciso ficou mais impreciso. O que era inconsistente ficou mais inconsistente.</div>
         </div>
       </div>
 
-      <!-- coluna central -->
-      <div class="fail-mid">
-        <div class="fail-mid-line"></div>
-        <div class="fail-mid-arrow">vs</div>
-        <div class="fail-mid-line"></div>
+      <div class="compress-mid">
+        <div class="compress-mid-line"></div>
+        <div class="compress-mid-ico">⟷</div>
+        <div class="compress-mid-line"></div>
       </div>
 
-      <!-- coluna: caminho que funciona -->
-      <div class="fail-col good">
-        <div class="fail-col-head">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 6.5l3 3 5-5"/></svg>
-          Caminho que funciona
+      <div class="compress-col insight">
+        <div class="compress-head">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="2,7 5,10 11,3"/></svg>
+          O que a pesquisa identifica como diferença
         </div>
-        <div class="fail-step">
-          <div class="fail-step-n">1</div>
-          <div class="fail-step-txt"><strong>Mapeia organização, dados e conhecimento</strong> antes de qualquer tecnologia</div>
+        <div class="compress-item">
+          <div class="compress-item-title">A pergunta certa não é "como automatizar"</div>
+          <div class="compress-item-text">É "o que se torna possível quando inteligência fica barata?" Essa pergunta muda o ponto de partida — e o resultado.</div>
         </div>
-        <div class="fail-step">
-          <div class="fail-step-n">2</div>
-          <div class="fail-step-txt"><strong>Redesenha processos</strong> e redefine papéis a partir do que a IA pode fazer</div>
+        <div class="compress-item">
+          <div class="compress-item-title">Processo precisa ser redesenhado antes</div>
+          <div class="compress-item-text">Organizações bem-sucedidas mapearam o que realmente acontecia, formalizaram os julgamentos implícitos, e só então conectaram a tecnologia.</div>
         </div>
-        <div class="fail-step">
-          <div class="fail-step-n">3</div>
-          <div class="fail-step-txt">Aí sim <strong>conecta a tecnologia</strong>. Com a base certa, o resultado escala.</div>
+        <div class="compress-item">
+          <div class="compress-item-title">A distinção que define o resultado</div>
+          <div class="compress-item-text">Compressão é fazer o mesmo mais rápido. Transformação é criar capacidades que antes não existiam economicamente. Nenhum volume de IA converte a primeira na segunda.</div>
         </div>
       </div>
     </div>
 
-    <div class="fail-quote">
-      "AI amplifies whatever process it is applied to. If the process is broken, AI makes it worse faster."
-      <cite>Stanford Enterprise AI Playbook, 2026 &nbsp;·&nbsp; O mesmo caso de uso levou semanas numa empresa e anos em outra. A diferença nunca foi o modelo. Foi o contexto organizacional.</cite>
+    <div class="compress-distinction">
+      <div class="compress-def">
+        <div class="compress-def-label p">Compressão</div>
+        <div class="compress-def-text">Mesmo processo, mais rápido. O modelo de negócio não muda. A proposta de valor não muda. Só o atrito diminuiu.</div>
+      </div>
+      <div class="compress-divider"></div>
+      <div class="compress-def">
+        <div class="compress-def-label t">Transformação</div>
+        <div class="compress-def-text">Novas capacidades que antes não existiam economicamente. Muda o que é possível fazer — não só o custo do que já era possível.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -657,17 +809,14 @@ body{
   <div class="s2-w">
     <p class="lab">Onde atuamos</p>
     <h2 class="hdl">Dois contextos com desafios<br>fundamentalmente diferentes.</h2>
-    <div class="two-col">
-      <div class="vs">vs</div>
 
+    <div class="two-col">
       <div class="ccard">
-        <p class="tp">Uso individual</p>
+        <div class="tp">Uso Individual</div>
         <div class="ico-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-            <circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
-        <p class="tt">IA como ferramenta pessoal</p>
+        <div class="tt">IA como ferramenta pessoal</div>
         <ul>
           <li>Uma pessoa, uma tarefa</li>
           <li>Contexto único e conhecido</li>
@@ -675,17 +824,13 @@ body{
           <li>Adoção simples, escala limitada</li>
         </ul>
       </div>
-
+      <div class="vs">vs</div>
       <div class="ccard gl">
-        <p class="tp">Implementação organizacional</p>
+        <div class="tp">Implementação Organizacional</div>
         <div class="ico-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            <line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
         </div>
-        <p class="tt">IA com o conhecimento da organização</p>
+        <div class="tt">IA com o conhecimento da organização</div>
         <ul>
           <li>Múltiplas equipes, múltiplos contextos</li>
           <li>Conhecimento distribuído e implícito</li>
@@ -694,304 +839,453 @@ body{
         </ul>
       </div>
     </div>
-    <p class="dois-note">A EXP³ atua na implementação organizacional.</p>
+
+    <div class="dois-note">A EXP³ atua na implementação organizacional.</div>
   </div>
 </div>
 
 
 <!-- ════════════════════════════════
-     SLIDE 5 — FUSÃO TECNOLÓGICO + SOCIAL
+     SLIDE 5 — DUAS DIMENSÕES (BIFURCAÇÃO)
 ════════════════════════════════ -->
 <div class="slide" data-index="4">
   <div class="slogo">EXP<sup>³</sup></div>
-  <div class="fusion-w">
-    <p class="lab">Por que é mais difícil do que parece</p>
-    <h2 class="hdl" style="margin-bottom:18px">Implementação organizacional tem duas dimensões<br>que não funcionam separadas.</h2>
+  <div class="bifurc-w">
+    <p class="lab">A complexidade da implementação</p>
+    <h2 class="hdl">Implementação organizacional tem dois lados.<br>Falhar em qualquer um é suficiente para comprometer o projeto.</h2>
 
-    <div class="fusion-grid">
-      <div class="fusion-card tech">
-        <div class="fusion-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
+    <div class="bifurc-grid">
+      <div class="bifurc-card org">
+        <div class="bifurc-label">Dimensão Organizacional</div>
+        <div class="bifurc-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-        <p class="fusion-label">Dimensão Tecnológica</p>
-        <p class="fusion-tt">Sistemas, dados e arquitetura</p>
-        <ul class="fusion-ul">
-          <li>Qualidade e estrutura dos dados</li>
-          <li>Arquitetura que separa responsabilidades</li>
-          <li>Modelos e motores de processamento</li>
-          <li>Integração com sistemas existentes</li>
+        <div class="bifurc-tt">Pessoas, conhecimento e processos</div>
+        <ul class="bifurc-ul">
+          <li>Como o conhecimento circula na organização</li>
+          <li>Quem decide o quê, com que critérios</li>
+          <li>O que está documentado vs. o que realmente acontece</li>
+          <li>Como as pessoas adotam e confiam em novos sistemas</li>
         </ul>
       </div>
-
-      <div class="fusion-mid">
-        <div class="fusion-mid-line top"></div>
-        <div class="fusion-mid-node">+</div>
-        <div class="fusion-mid-line bot"></div>
-      </div>
-
-      <div class="fusion-card soc">
-        <div class="fusion-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="7" r="4"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/>
-            <line x1="12" y1="11" x2="12" y2="15"/><line x1="12" y1="15" x2="5" y2="18"/><line x1="12" y1="15" x2="19" y2="18"/>
-          </svg>
+      <div class="bifurc-card tech">
+        <div class="bifurc-label">Dimensão Tecnológica</div>
+        <div class="bifurc-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
-        <p class="fusion-label">Dimensão Organizacional</p>
-        <p class="fusion-tt">Pessoas, conhecimento e cultura</p>
-        <ul class="fusion-ul">
-          <li>Como o conhecimento trafega na organização</li>
-          <li>Vocabulário e processos de cada equipe</li>
-          <li>Quem valida e quem adota</li>
-          <li>Engajamento e mudança de prática</li>
+        <div class="bifurc-tt">Sistemas, dados e arquitetura</div>
+        <ul class="bifurc-ul">
+          <li>Onde os dados existem e como estão conectados</li>
+          <li>Como o modelo processa e gera as respostas</li>
+          <li>Como o raciocínio é documentado e auditável</li>
+          <li>Como a precisão é garantida em contextos críticos</li>
         </ul>
       </div>
     </div>
 
-    <div class="fusion-bottom">
-      Resolver só o lado técnico sem o lado organizacional não resolve. <strong>As duas dimensões são interdependentes e precisam ser trabalhadas ao mesmo tempo.</strong> McKinsey: organizações de alta performance são 3x mais propensas a redesenhar completamente seus processos ao implementar IA.
+    <div class="bifurc-note">
+      A seguir, exploramos cada dimensão em profundidade — o que é, por que é difícil, e como a EXP³ responde.
     </div>
   </div>
 </div>
 
 
 <!-- ════════════════════════════════
-     SLIDE 6 — TRÊS DESAFIOS
+     SLIDE 6 — ORG: O QUE É
 ════════════════════════════════ -->
 <div class="slide" data-index="5">
   <div class="slogo">EXP<sup>³</sup></div>
-  <div class="prob-grid-w">
-    <p class="lab">O que a gente encontra</p>
-    <h2 class="hdl">Três desafios que aparecem<br>em toda implementação organizacional.</h2>
-    <div class="prob-grid">
+  <div class="dim-w">
+    <div class="dim-badge org">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Dimensão Organizacional
+    </div>
+    <p class="lab org">O desafio real</p>
+    <h2 class="hdl">O conhecimento que nunca precisou ser explicado<br>é o primeiro obstáculo da implementação.</h2>
 
-      <div class="prob-card">
-        <p class="prob-n">01</p>
-        <div class="prob-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="4"/>
-            <path d="M6 20v-1a6 6 0 0 1 12 0v1"/>
-            <line x1="18" y1="8" x2="22" y2="8"/><line x1="20" y1="6" x2="20" y2="10"/>
-          </svg>
+    <div class="manifest-grid">
+      <div class="manifest-card">
+        <div class="manifest-n">01</div>
+        <div class="manifest-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
-        <p class="prob-tt">Conhecimento que vive nas pessoas</p>
-        <p class="prob-d">O raciocínio acumulado pelos especialistas ao longo dos anos é o maior ativo de qualquer organização. Enquanto não está formalizado, ele não pode ser operado, distribuído nem amplificado pela IA. Stanford identificou isso como causa de falha em 27% dos projetos analisados.</p>
-        <div class="prob-tag">Saber implícito, não estruturado</div>
+        <div class="manifest-tt">Processo oficial vs. processo real</div>
+        <div class="manifest-d">A maioria das organizações tem dois processos: o documentado e o que as pessoas realmente fazem. IA executa o documentado. O resultado frequentemente parece errado — porque o processo real nunca foi registrado.</div>
+        <div class="manifest-tag">Saber implícito, não estruturado</div>
       </div>
 
-      <div class="prob-card">
-        <p class="prob-n">02</p>
-        <div class="prob-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/>
-            <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/>
-            <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/>
-          </svg>
+      <div class="manifest-card">
+        <div class="manifest-n">02</div>
+        <div class="manifest-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         </div>
-        <p class="prob-tt">Dados distribuídos que a IA não acessa</p>
-        <p class="prob-d">Em 59% das implementações analisadas pelo Stanford, os dados estavam espalhados por múltiplos sistemas de equipes diferentes. Organizações com décadas de documentos, contratos e pareceres têm um acervo vasto, mas raramente conectado de forma que um sistema de IA consiga usar.</p>
-        <div class="prob-tag">Dado existe, acesso não</div>
+        <div class="manifest-tt">Julgamento implícito sem dono</div>
+        <div class="manifest-d">Decisões que pareciam simples têm lógica humana não escrita por trás. Quando IA tenta executar, o julgamento ausente fica visível — e frequentemente revela que pertencia a ninguém de forma explícita. Cada um entendia diferente.</div>
+        <div class="manifest-tag">Responsabilidade não reclamada</div>
       </div>
 
-      <div class="prob-card">
-        <p class="prob-n">03</p>
-        <div class="prob-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/>
-          </svg>
+      <div class="manifest-card">
+        <div class="manifest-n">03</div>
+        <div class="manifest-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><line x1="18" y1="14" x2="22" y2="14"/><line x1="20" y1="12" x2="20" y2="16"/></svg>
         </div>
-        <p class="prob-tt">A resposta precisa ser verificável</p>
-        <p class="prob-d">Em contextos de alta exigência técnica e responsabilidade, como o jurídico, uma resposta certa gerada por um modelo que não mostra seu raciocínio não é suficiente. O raciocínio precisa ser auditável, defensável e rastreável passo a passo.</p>
-        <div class="prob-tag">Inferência não rastreável</div>
+        <div class="manifest-tt">Conhecimento que vivia nas pessoas</div>
+        <div class="manifest-d">Parte do que funcionava era pessoal, local e reversível — ligado a alguém que podia adaptar em tempo real. Automatizar esse conhecimento sem formalizá-lo primeiro produz inconsistência em escala.</div>
+        <div class="manifest-tag">Dado existe, acesso não</div>
       </div>
+    </div>
 
+    <div class="dim-quote">
+      A IA não cria esses problemas. Ela os revela. Como luz de neon num escritório que parecia limpo — tudo que estava lá o tempo todo fica visível de uma vez.
     </div>
   </div>
 </div>
 
 
 <!-- ════════════════════════════════
-     SLIDE 7 — COMO A EXP³ RESPONDE
+     SLIDE 7 — ORG: POR QUE É DIFÍCIL
 ════════════════════════════════ -->
 <div class="slide" data-index="6">
   <div class="slogo">EXP<sup>³</sup></div>
-  <div class="s3-w">
-    <p class="lab">Como a EXP³ responde</p>
-    <h2 class="hdl" style="margin-bottom:18px">Cada desafio tem uma resposta técnica direta.</h2>
+  <div class="dim-w narrow">
+    <div class="dim-badge org">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Dimensão Organizacional
+    </div>
+    <p class="lab org">Por que é difícil</p>
+    <h2 class="hdl">Revelar os problemas é a parte mais desconfortável.<br>Mas é também o ponto onde a mudança começa.</h2>
 
-    <div class="bridge-grid">
-      <div class="bridge-col">
-        <p class="bridge-title prob">
-          <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5.5"/><line x1="6.5" y1="4" x2="6.5" y2="6.5"/><line x1="6.5" y1="8.5" x2="6.5" y2="9"/></svg>
-          O desafio
-        </p>
-        <div class="bitem p">
-          <div class="bitem-ico">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6.5" cy="4.5" r="2.5"/><path d="M2 11v-.5A4.5 4.5 0 0 1 11 10.5V11"/></svg>
-          </div>
-          <div class="bitem-text">
-            <span class="bitem-label">Conhecimento nas pessoas</span>
-            <span class="bitem-desc">Saber que vive em especialistas, não na organização</span>
-          </div>
-        </div>
-        <div class="bitem p">
-          <div class="bitem-ico">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><ellipse cx="6.5" cy="3" rx="4.5" ry="1.5"/><path d="M2 3v7c0 .83 2.01 1.5 4.5 1.5S11 10.83 11 10V3"/></svg>
-          </div>
-          <div class="bitem-text">
-            <span class="bitem-label">Dados distribuídos</span>
-            <span class="bitem-desc">Acervo valioso espalhado em sistemas desconectados</span>
-          </div>
-        </div>
-        <div class="bitem p">
-          <div class="bitem-ico">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1.5" y="1.5" width="10" height="10" rx="2"/><line x1="4" y1="6.5" x2="9" y2="6.5"/><line x1="6.5" y1="4" x2="6.5" y2="9" opacity=".4"/></svg>
-          </div>
-          <div class="bitem-text">
-            <span class="bitem-label">Resultado sem raciocínio</span>
-            <span class="bitem-desc">Conclusão sem o caminho, impossível de auditar ou defender</span>
-          </div>
+    <div class="reveal-grid">
+      <div class="reveal-card what">
+        <div class="reveal-label">O que acontece quando a IA chega</div>
+        <div class="reveal-tt">A organização se vê no espelho</div>
+        <div class="reveal-body">
+          Iniciativas que "estavam funcionando bem" revelam processos documentados que contradizem as práticas reais. Políticas que contradizem incentivos. Responsabilidades que todo mundo achava que eram de outra pessoa.<br><br>
+          A IA não inventa esse cenário. Ela simplesmente executa o que encontra, sem o filtro humano que absorvia as inconsistências ao longo dos anos.
         </div>
       </div>
-
-      <div class="bridge-arrow">
-        <div class="bridge-arrow-line"></div>
-        <div class="bridge-arrow-head">→</div>
-        <div class="bridge-arrow-line"></div>
-      </div>
-
-      <div class="bridge-col">
-        <p class="bridge-title sol">
-          <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M4 6.5l2 2 3-3"/></svg>
-          A resposta EXP³
-        </p>
-        <div class="bitem s">
-          <div class="bitem-ico">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="3.5" cy="6.5" r="1.8"/><circle cx="9.5" cy="3.5" r="1.5"/><circle cx="9.5" cy="9.5" r="1.5"/><line x1="5.3" y1="5.9" x2="8" y2="4.5"/><line x1="5.3" y1="7.1" x2="8" y2="8.5"/></svg>
-          </div>
-          <div class="bitem-text">
-            <span class="bitem-label">Tecnologia Social + Taxonomia Controlada</span>
-            <span class="bitem-desc">Mapeamos e formalizamos o vocabulário real e os fluxos de conhecimento da organização. O que estava implícito passa a ser operável pela IA.</span>
-          </div>
-        </div>
-        <div class="bitem s">
-          <div class="bitem-ico">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 10l2.5-3 2 2 2-3L11 8"/></svg>
-          </div>
-          <div class="bitem-text">
-            <span class="bitem-label">Entrada pelos processos</span>
-            <span class="bitem-desc">Antes de conectar qualquer modelo, a gente entende como o trabalho realmente acontece e onde os dados que importam estão.</span>
-          </div>
-        </div>
-        <div class="bitem s">
-          <div class="bitem-ico">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1.5" y="4" width="4.5" height="6" rx="1.5"/><rect x="7" y="3" width="4.5" height="7" rx="1.5"/><line x1="3.75" y1="2" x2="3.75" y2="4"/><line x1="9.25" y1="1.5" x2="9.25" y2="3"/></svg>
-          </div>
-          <div class="bitem-text">
-            <span class="bitem-label">Arquitetura Neuro-Simbólica</span>
-            <span class="bitem-desc">O modelo de linguagem narra e interpreta. A lógica formal verifica. O raciocínio é rastreável passo a passo, não uma caixa preta.</span>
-          </div>
+      <div class="reveal-card why">
+        <div class="reveal-label">Por que organizações travam</div>
+        <div class="reveal-tt">O momentum que não é momentum</div>
+        <div class="reveal-body">
+          Projetos de IA costumam acumular defensores internos antes de terem sido realmente provados. Parar parece fracasso. Continuar parece prudência. A organização fica no meio — com um sistema bom o suficiente para ter apoio político, mas não o suficiente para merecer confiança operacional.<br><br>
+          <strong>O que parece momentum é frequentemente drift</strong>: comprometimentos que ninguém escolheu explicitamente, mas que ficam cada vez mais difíceis de reverter.
         </div>
       </div>
     </div>
 
-    <p class="bridge-note">O <strong>Motor Determinístico</strong> garante que cálculos e aplicações de regras sejam sempre idênticos: mesma entrada, mesma saída, sem variação por sessão ou usuário. Essencial em qualquer contexto onde precisão não é opcional.</p>
+    <div class="dim-quote" style="margin-bottom:0">
+      "IA não remove julgamento. Ela expõe se ele foi algum dia claramente atribuído." Quando a resposta é não, a implementação encontra resistência que não é resistência à tecnologia — é a organização se deparando com sua própria ambiguidade.
+    </div>
   </div>
 </div>
 
 
 <!-- ════════════════════════════════
-     SLIDE 8 — EXPERIÊNCIA
+     SLIDE 8 — ORG: COMO RESPONDEMOS
 ════════════════════════════════ -->
 <div class="slide" data-index="7">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge org">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Dimensão Organizacional
+    </div>
+    <p class="lab org">Como respondemos</p>
+    <h2 class="hdl">Nossa resposta começa antes de qualquer tecnologia:<br>formalizamos o que está implícito.</h2>
+
+    <div class="org-resp-grid">
+      <div class="org-resp-step">
+        <div class="org-step-n">Passo 01</div>
+        <div class="org-step-tt">Mapeamos o processo real</div>
+        <div class="org-step-d">Conversamos com quem faz o trabalho, não apenas com quem o documenta. O mapa resultante mostra onde o processo documentado e o processo real divergem — e onde a IA vai falhar se conectada sem esse diagnóstico.</div>
+      </div>
+      <div class="org-resp-step">
+        <div class="org-step-n">Passo 02</div>
+        <div class="org-step-tt">Tornamos julgamentos explícitos</div>
+        <div class="org-step-d">Para cada ponto de decisão no processo, identificamos quem decide, com que critérios, e o que acontece em cada variação. O que era implícito vira instrução estruturada. O que era de ninguém ganha um dono.</div>
+      </div>
+      <div class="org-resp-step">
+        <div class="org-step-n">Passo 03</div>
+        <div class="org-step-tt">Construímos taxonomia controlada</div>
+        <div class="org-step-d">Criamos um vocabulário controlado — termos com significado preciso e compartilhado em toda a organização. Sem isso, equipes diferentes descrevem a mesma coisa com palavras diferentes, e a IA não consegue conectar os pontos.</div>
+      </div>
+      <div class="org-resp-step">
+        <div class="org-step-n">Passo 04</div>
+        <div class="org-step-tt">Só então conectamos a tecnologia</div>
+        <div class="org-step-d">Com o processo mapeado, o julgamento explícito e o vocabulário estruturado, a implementação técnica tem uma base sólida. O sistema executa com precisão porque o que ele executa foi pensado com precisão.</div>
+      </div>
+    </div>
+
+    <div class="org-resp-note">
+      Chamamos isso de <em>Tecnologia Social</em> com <em>Taxonomia Controlada</em>. <strong>É a infraestrutura organizacional que torna a IA confiável.</strong>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     SLIDE 9 — TECH: O QUE É
+════════════════════════════════ -->
+<div class="slide" data-index="8">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge tech">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Dimensão Tecnológica
+    </div>
+    <p class="lab">O desafio real</p>
+    <h2 class="hdl">Ter os dados não é suficiente.<br>Conectar, estruturar e rastrear o raciocínio é o trabalho.</h2>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-n">01</div>
+        <div class="tech-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <div class="tech-tt">Dado existe, acesso não</div>
+        <div class="tech-d">Organizações como escritórios de advocacia acumulam décadas de conhecimento em documentos, contratos, pareceres e precedentes. Esse conhecimento está distribuído por múltiplos sistemas que raramente se falam. A IA não consegue usar o que não consegue alcançar.</div>
+        <div class="tech-tag">Dado distribuído, não conectado</div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-n">02</div>
+        <div class="tech-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="tech-tt">Modelos produzem respostas convincentes mesmo quando erram</div>
+        <div class="tech-d">Modelos de linguagem geram texto fluente e aparentemente bem-fundamentado. Em contextos casuais, esse comportamento é útil. Em contextos jurídicos ou financeiros, uma resposta errada apresentada com confiança é mais perigosa que um erro óbvio.</div>
+        <div class="tech-tag">Precisão não garantida</div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-n">03</div>
+        <div class="tech-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="tech-tt">A resposta precisa ser defensável</div>
+        <div class="tech-d">Clientes, tribunais e reguladores esperam raciocínio, não apenas conclusão. "A IA chegou a essa resposta" não é justificativa aceitável. Cada conclusão precisa mostrar o caminho percorrido, passo a passo, de forma que possa ser questionada e defendida.</div>
+        <div class="tech-tag">Inferência não rastreável</div>
+      </div>
+    </div>
+
+    <div class="tech-quote" style="margin-bottom:0">
+      Em 59% das implementações analisadas pelo Stanford, os dados estavam espalhados por múltiplos sistemas de equipes diferentes. Organizações com décadas de documentos têm acervo vasto — mas raramente conectado de forma que um sistema de IA consiga usar.
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     SLIDE 10 — TECH: POR QUE É DIFÍCIL
+════════════════════════════════ -->
+<div class="slide" data-index="9">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w narrow">
+    <div class="dim-badge tech">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Dimensão Tecnológica
+    </div>
+    <p class="lab">Por que é difícil</p>
+    <h2 class="hdl">O problema não é que modelos de linguagem sejam ruins.<br>É que não foram projetados para precisão jurídica.</h2>
+
+    <div class="tech-reveal-grid">
+      <div class="tech-reveal-card what">
+        <div class="tech-reveal-label">O que modelos de linguagem fazem bem</div>
+        <div class="tech-reveal-tt">Narrar, sintetizar, interpretar</div>
+        <div class="tech-reveal-body">
+          Modelos de linguagem são projetados para completar padrões. Isso os torna extraordinários em narração, síntese de documentos e análise contextual. São ferramentas poderosas para entender o que está sendo perguntado e construir respostas em linguagem natural.<br><br>
+          O problema aparece quando o contexto exige mais do que linguagem. Quando precisa de <strong>cálculo matemático exato</strong>, de <strong>aplicação formal de regras</strong> ou de <strong>raciocínio documentado passo a passo</strong> — áreas para as quais não foram projetados.
+        </div>
+      </div>
+      <div class="tech-reveal-card why">
+        <div class="tech-reveal-label">Por que o risco é maior no contexto jurídico</div>
+        <div class="tech-reveal-tt">Consistência e auditabilidade não são opcionais</div>
+        <div class="tech-reveal-body">
+          Em contextos de alta exigência técnica e responsabilidade, uma resposta que muda dependendo de como a pergunta foi feita é inaceitável. O raciocínio precisa ser o mesmo sempre — mesma entrada, mesma saída, sem variação por sessão ou usuário.<br><br>
+          Além disso, sistemas de IA têm um teto organizacional: eles param de escalar não quando a tecnologia falha, mas quando a organização não tem estrutura de governança para sustentar as consequências das decisões que o sistema toma. <strong>O teto é organizacional e tecnológico ao mesmo tempo.</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-quote" style="margin-bottom:0">
+      A pesquisa Stanford identificou o setor jurídico como o mais resistente à adoção de IA — não por falta de interesse, mas por ausência de garantias de precisão e rastreabilidade que o contexto exige.
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     SLIDE 11 — TECH: COMO RESPONDEMOS
+════════════════════════════════ -->
+<div class="slide" data-index="10">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge tech">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Dimensão Tecnológica
+    </div>
+    <p class="lab">Como respondemos</p>
+    <h2 class="hdl">Nossa arquitetura separa o que cada tipo<br>de raciocínio faz — e garante precisão em cada um.</h2>
+
+    <div class="motors-arch">
+      <div class="motor-card llm">
+        <div class="motor-label">Motor de Linguagem</div>
+        <div class="motor-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="motor-tt">Narra, interpreta e sintetiza</div>
+        <div class="motor-d">O modelo de linguagem faz o que foi projetado para fazer: entende o contexto, lê documentos, interpreta perguntas e constrói respostas em linguagem natural. Não é substituído — é especializado dentro de seu escopo correto.</div>
+        <div class="motor-prop">Linguagem e contexto</div>
+      </div>
+
+      <div class="motor-card det">
+        <div class="motor-label">Motor Determinístico</div>
+        <div class="motor-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6"/><path d="M9 12h6"/><path d="M9 15h4"/></svg>
+        </div>
+        <div class="motor-tt">Calcula com exatidão absoluta</div>
+        <div class="motor-d">Mesma entrada, sempre mesma saída, sem variação por sessão ou usuário. Substitui o modelo de linguagem em todos os pontos onde cálculo ou aplicação de regra precisa ser exato. Auditável por design: cada operação é registrada.</div>
+        <div class="motor-prop">Sem variação por sessão</div>
+      </div>
+
+      <div class="motor-card sym">
+        <div class="motor-label">Motor Analítico-Simbólico</div>
+        <div class="motor-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="motor-tt">Encadeia regras formais com raciocínio visível</div>
+        <div class="motor-d">Aplica regras jurídicas, processuais ou de negócio em sequência lógica documentada. Cada passo do raciocínio é visível — a conclusão não emerge de uma caixa preta, mas de uma cadeia de passos que pode ser questionada e defendida.</div>
+        <div class="motor-prop">Raciocínio rastreável</div>
+      </div>
+    </div>
+
+    <div class="tech-resp-note">
+      Os três motores operam em conjunto. O resultado é um sistema <strong>inteligente na linguagem, exato no cálculo e auditável no raciocínio</strong> — simultaneamente.
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     SLIDE 12 — EXPERIÊNCIA / CASES
+════════════════════════════════ -->
+<div class="slide" data-index="11">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="s-exp-w">
     <p class="lab">Projetos em desenvolvimento</p>
     <h2 class="hdl">Três organizações construindo<br>inteligência como infraestrutura.</h2>
 
     <div class="exp-grid">
-
       <div class="exp-card">
         <div class="exp-sector">Fintech · Pagamentos</div>
-        <p class="exp-title">Uma empresa que pensa com dados próprios</p>
-        <p class="exp-desc">Uma startup de recuperação de vendas em crescimento acelerado que, quando o projeto estiver em produção, competirá não só por produto, mas pela qualidade da sua própria inteligência. A área de Customer Success não apenas gerenciará clientes: antecipará comportamentos. A vantagem competitiva passará a ser sistêmica e proprietária, impossível de replicar comprando ferramenta.</p>
+        <div class="exp-title">Arquitetura de decisão para recuperação de vendas em escala</div>
+        <div class="exp-desc">Mapeamos os processos de decisão por trás de cada intervalo de recuperação — identificando onde o julgamento era implícito e inconsistente. Formalizamos esse conhecimento em taxonomia operável e construímos a arquitetura de IA que aplica essas regras com precisão a cada cliente. O resultado é um sistema que aprende com cada interação e opera com o nível de consistência que nenhuma equipe humana consegue sustentar em escala.</div>
       </div>
 
       <div class="exp-card">
         <div class="exp-sector">Marketing Digital · Agência</div>
-        <p class="exp-title">A inteligência da agência, acessível a qualquer hora</p>
-        <p class="exp-desc">Uma das maiores agências de marketing do Brasil onde clientes poderão acessar inteligência sobre suas campanhas a qualquer momento, em linguagem natural, sem esperar relatório ou analista. Internamente, anos de aprendizado acumulado passarão de apresentações esquecidas para ativos operacionais. O diferencial competitivo migrará do talento individual para a arquitetura de conhecimento que a agência construiu.</p>
+        <div class="exp-title">Gestão do conhecimento distribuído de uma das maiores agências do Brasil</div>
+        <div class="exp-desc">Conduzimos o mapeamento completo do conhecimento organizacional — campanhas, aprendizados de clientes, estratégias testadas em múltiplos setores. Construímos a estrutura de taxonomia controlada que torna esse acervo acessível e utilizável pela IA. Hoje, cada analista da agência tem acesso operacional a décadas de experiência que antes ficavam presas em pessoas e arquivos desconectados.</div>
       </div>
 
       <div class="exp-card">
         <div class="exp-sector">Entretenimento · Conglomerado</div>
-        <p class="exp-title">O capital criativo do elenco como ativo estratégico</p>
-        <p class="exp-desc">Uma plataforma onde anos de fragmentos, observações e ideias de cada criador param de se perder quando uma temporada termina ou um talento muda de projeto. Cada voz é preservada e amplificada pela IA sem ser homogeneizada. O conglomerado transforma seu acervo criativo coletivo em ativo proprietário, impossível de replicar por competidores que dependem de ferramentas genéricas.</p>
+        <div class="exp-title">Plataforma de identidade criativa para um conglomerado de entretenimento</div>
+        <div class="exp-desc">Desenvolvemos a metodologia de captura da identidade criativa de cada criador como conhecimento estruturado — estilo, vocabulário, padrões de conteúdo, posicionamento. A partir dessa base, construímos a arquitetura que permite ao conglomerado escalar operações, explorar novos formatos e gerar conteúdo de forma consistente com cada voz, sem depender da presença constante de cada criador em cada decisão.</div>
+      </div>
+    </div>
+
+    <div class="exp-note">Projetos em andamento, identificações preservadas em confidencialidade</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     SLIDE 13 — TIME
+════════════════════════════════ -->
+<div class="slide" data-index="12">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="team-w">
+    <p class="lab">Quem faz</p>
+    <h2 class="hdl">Consultores seniores com trajetórias complementares,<br>atuando em estrutura de think tank.</h2>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="team-name">Thiago Padovan</div>
+        <div class="team-role">Founder · Consultor Sênior</div>
+        <div class="team-bio">Desde 2011 trabalha com projetos de inovação organizacional, com foco em processos de inovação, redes e complexidade em empresas de diferentes setores. Atua na interseção entre gestão do conhecimento, design organizacional e implementação de IA.</div>
       </div>
 
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="team-name">Nilton Lessa</div>
+        <div class="team-role">Consultor Sênior</div>
+        <div class="team-bio">Engenheiro de software e consultor de inovação com mais de 20 anos em projetos tecnológicos complexos. Especializado em arquitetura de sistemas e implementação em contextos de alta exigência, onde precisão e confiabilidade não são opcionais. Sua experiência técnica ancora a camada de construção dos projetos da EXP³.</div>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="team-name">Luis Eugênio Pacheco</div>
+        <div class="team-role">Consultor Sênior</div>
+        <div class="team-bio">Engenheiro e consultor com mais de 20 anos em inovação e tecnologia aplicadas em organizações de diferentes portes e setores. Traz experiência prática em levar projetos complexos da concepção ao resultado, navegando tanto as dimensões técnicas quanto as organizacionais de cada implementação.</div>
+      </div>
     </div>
 
-    <p class="exp-note">Projetos em andamento, identificações preservadas por confidencialidade</p>
+    <div class="team-note" style="font-size:clamp(13px,1.3vw,15px);line-height:1.75;padding:16px 24px">
+      A EXP³ opera em <strong>estrutura de think tank</strong> — um modelo de trabalho que vai além da consultoria tradicional. Além dos três, a EXP³ funciona em interação e colaboração contínua com especialistas que estão na fronteira das aplicações de IA em campos como <strong>deep tech, ética, organizações e IA responsável</strong>. Essa rede amplia as perspectivas disponíveis para cada projeto e mantém a EXP³ conectada ao que está sendo pensado e desenvolvido agora.
+    </div>
   </div>
 </div>
 
 
 <!-- ════════════════════════════════
-     SLIDE 9 — ENCERRAMENTO
+     SLIDE 14 — ENCERRAMENTO
 ════════════════════════════════ -->
-<div class="slide s-close" data-index="8">
+<div class="slide s-close" data-index="13">
   <div class="ring r1" style="opacity:.6"></div>
-  <div class="ring r2"></div>
-  <svg class="arc" style="top:-80px;right:-80px;width:420px;opacity:.035" viewBox="0 0 400 400" fill="none">
-    <circle cx="200" cy="200" r="178" stroke="var(--cyan)" stroke-width="1"/>
-    <circle cx="200" cy="200" r="118" stroke="var(--cyan)" stroke-width=".6"/>
-  </svg>
-  <div class="slogo">EXP<sup>³</sup></div>
   <div class="close-wrap">
-    <p class="lab" style="justify-content:center">EXP³</p>
-    <h2 class="close-hdl">Gostamos de trabalhar em<br><span>terrenos não mapeados</span></h2>
-    <p class="close-body">
+    <div class="close-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="close-hdl">Gostamos de trabalhar em<br><span>terrenos não mapeados</span></div>
+    <div class="close-body">
       Esse mundo de IA em organizações ainda está sendo construído. Não existem receitas prontas, e a maioria das implementações que a gente vê ainda está tentando descobrir o que funciona de verdade.<br><br>
       A EXP³ prefere os desafios que ainda <strong>não têm resposta pronta</strong>. Quanto mais específico o problema, mais interessante fica para a gente.
-    </p>
+    </div>
     <div class="close-line"></div>
     <div class="close-tag">
-      Se a conversa fez sentido, queremos ouvir e explorar juntos. <strong>Qual é o desafio do Pinheiro Neto Advogados quando o assunto é implementação de IA em nível organizacional?</strong>
+      <strong>Qual é o desafio do Pinheiro Neto Advogados</strong> quando o assunto é implementação de IA em nível organizacional?
     </div>
   </div>
 </div>
 
 
 <!-- ════════════════════════════════
-     SLIDE 10 — CONTATO
+     SLIDE 15 — CONTATO
 ════════════════════════════════ -->
-<div class="slide s-contact" data-index="9">
-  <div class="ring r1" style="opacity:.4"></div>
-  <div class="ring r2" style="opacity:.5"></div>
-  <svg class="arc" style="bottom:-100px;left:-100px;width:450px;opacity:.03" viewBox="0 0 400 400" fill="none">
-    <circle cx="200" cy="200" r="178" stroke="var(--cyan)" stroke-width="1"/>
-    <circle cx="200" cy="200" r="118" stroke="var(--cyan)" stroke-width=".7"/>
-  </svg>
+<div class="slide s-contact" data-index="14">
+  <div class="ring r1" style="opacity:.5"></div>
   <div class="contact-wrap">
     <div class="contact-logo">EXP<sup>³</sup></div>
-    <div class="contact-tagline">Implementação organizacional de IA</div>
+    <div class="contact-tagline">Implementação Organizacional de IA</div>
     <div class="contact-divider"></div>
     <div class="contact-name">Thiago Padovan</div>
     <div class="contact-role">Founder</div>
     <div class="contact-info-grid">
       <div class="contact-info-row">
-        <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-          <polyline points="22,6 12,13 2,6"/>
-        </svg>
+        <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         <span class="contact-info-text">thiago@exp3.ai</span>
       </div>
       <div class="contact-info-row">
-        <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.99-.99a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
+        <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         <span class="contact-info-text">11 98338-9707</span>
       </div>
     </div>
@@ -999,137 +1293,51 @@ body{
 </div>
 
 
-<!-- ════════════════════════════════
-     BACKUP — ARQUITETURA TÉCNICA
-════════════════════════════════ -->
-<div class="slide" data-index="10">
-  <div class="slogo">EXP<sup>³</sup></div>
-  <div class="backup-badge">Referência técnica</div>
-  <div class="s5-w">
-    <p class="lab">Arquitetura</p>
-    <h2 class="hdl" style="margin-bottom:20px;font-size:clamp(18px,2.2vw,26px)">Como os motores funcionam juntos</h2>
-
-    <div class="pipe-full">
-      <div class="stg">
-        <div class="stg-n">01 · Entrada</div>
-        <svg class="stg-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
-          <ellipse cx="22" cy="10" rx="13" ry="4.5"/>
-          <path d="M9 10v8c0 2.5 5.8 4.5 13 4.5s13-2 13-4.5V10"/>
-          <path d="M9 18v8c0 2.5 5.8 4.5 13 4.5s13-2 13-4.5v-8"/>
-          <path d="M9 26v7c0 2.5 5.8 4.5 13 4.5s13-2 13-4.5v-7"/>
-        </svg>
-        <p class="stg-tt">Dados da Organização</p>
-        <p class="stg-d">Sistemas, documentos, contratos e conhecimento tácito dos especialistas.</p>
-        <ul class="stg-ul">
-          <li>Bases e sistemas existentes</li>
-          <li>Conhecimento implícito</li>
-          <li>Processos não formalizados</li>
-        </ul>
-      </div>
-
-      <div class="conn"></div>
-
-      <div class="stg hl">
-        <div class="stg-n">02 · Metodologia EXP³</div>
-        <svg class="stg-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
-          <circle cx="22" cy="12" r="5"/>
-          <circle cx="10" cy="32" r="4.5"/>
-          <circle cx="34" cy="32" r="4.5"/>
-          <circle cx="22" cy="36" r="3.5"/>
-          <line x1="18" y1="16" x2="12" y2="28"/>
-          <line x1="26" y1="16" x2="32" y2="28"/>
-          <line x1="14.5" y1="32" x2="18.5" y2="35"/>
-          <line x1="29.5" y1="32" x2="25.5" y2="35"/>
-        </svg>
-        <p class="stg-tt">Tecnologia Social + Taxonomia</p>
-        <p class="stg-d">Mapeamos fluxos de conhecimento e criamos vocabulário controlado operável por máquina.</p>
-        <ul class="stg-ul">
-          <li>Mapeamento de fluxos</li>
-          <li>Vocabulário controlado</li>
-          <li>Extração do implícito</li>
-          <li>Formalização de regras</li>
-        </ul>
-      </div>
-
-      <div class="conn"></div>
-
-      <div class="motors-wrap">
-        <div class="motors-label">03 · Processamento</div>
-        <div class="mcard">
-          <div class="mcard-label">Motor Determinístico</div>
-          <p class="mcard-tt">Calcula com exatidão absoluta</p>
-          <p class="mcard-d">Mesma entrada, sempre mesma saída. Auditável em cada etapa. Substitui o LLM onde precisão é obrigatória.</p>
-          <div class="mcard-tag">Sem variação por sessão</div>
-        </div>
-        <div class="mcard">
-          <div class="mcard-label">Motor Analítico-Simbólico</div>
-          <p class="mcard-tt">Raciocina com regras formais</p>
-          <p class="mcard-d">Inferência encadeada e documentada. O caminho inteiro do raciocínio fica visível, não só a conclusão.</p>
-          <div class="mcard-tag">Regras do negócio com precisão</div>
-        </div>
-      </div>
-
-      <div class="conn-b"></div>
-
-      <div class="result-card">
-        <svg class="result-ico" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 5h28a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H12l-8 5V7a2 2 0 0 1 2-2z"/>
-          <line x1="11" y1="14" x2="25" y2="14"/>
-          <line x1="11" y1="19" x2="20" y2="19"/>
-        </svg>
-        <p class="result-title">O LLM narra e interpreta o resultado</p>
-        <div class="result-tags">
-          <div class="result-tag"><span class="result-dot"></span>Consistente</div>
-          <div class="result-tag"><span class="result-dot"></span>Auditável</div>
-          <div class="result-tag"><span class="result-dot"></span>Previsível</div>
-          <div class="result-tag"><span class="result-dot"></span>Rastreável</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-</div><!-- /deck -->
-
-<div class="progress-bar" id="progress"></div>
-<nav class="nav-dots" id="navDots"></nav>
+<!-- CHROME -->
+<div class="progress-bar" id="pb"></div>
+<nav class="nav-dots" id="dots"></nav>
 <div class="nav-btns">
-  <button class="nav-btn" id="prevBtn" title="Anterior">&#8592;</button>
-  <button class="nav-btn" id="nextBtn" title="Próximo">&#8594;</button>
+  <button class="nav-btn" id="prevBtn">&#8592;</button>
+  <button class="nav-btn" id="nextBtn">&#8594;</button>
 </div>
 <div class="slide-counter" id="counter"></div>
+
+</div><!-- /deck -->
 
 <script>
 (function(){
   var slides=document.querySelectorAll('.slide');
-  var dotsNav=document.getElementById('navDots');
-  var progress=document.getElementById('progress');
+  var dotEls=[];var current=0;var busy=false;
+  // 15 slides total
+  var dotsEl=document.getElementById('dots');
+  var pb=document.getElementById('pb');
   var counter=document.getElementById('counter');
   var total=slides.length;
-  var current=0,busy=false,dotEls=[];
 
   slides.forEach(function(_,i){
-    var d=document.createElement('div');
+    var d=document.createElement('button');
     d.className='dot'+(i===0?' active':'');
+    d.setAttribute('aria-label','Slide '+(i+1));
     d.addEventListener('click',function(){goTo(i)});
-    dotsNav.appendChild(d);dotEls.push(d);
+    dotsEl.appendChild(d);
+    dotEls.push(d);
   });
 
   function goTo(n){
     if(busy||n===current||n<0||n>=total)return;
-    busy=true;var old=current;
+    busy=true;
+    var old=current;current=n;
     slides[old].classList.add('leaving');
     setTimeout(function(){slides[old].classList.remove('active','leaving')},500);
     slides[n].classList.add('active');
     dotEls[old].classList.remove('active');
     dotEls[n].classList.add('active');
-    current=n;update();
+    update();
     setTimeout(function(){busy=false},550);
   }
 
   function update(){
-    progress.style.width=((current+1)/total*100)+'%';
+    pb.style.width=((current/(total-1))*100)+'%';
     counter.textContent=(current+1)+' / '+total;
   }
 
@@ -1142,9 +1350,10 @@ body{
   var tx=0;
   document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
   document.addEventListener('touchend',function(e){
-    var dx=e.changedTouches[0].clientX-tx;
+    var dx=tx-e.changedTouches[0].clientX;
     if(dx<-40)goTo(current+1);if(dx>40)goTo(current-1);
-  },{passive:true});
+  });
+
   update();
 })();
 </script>
