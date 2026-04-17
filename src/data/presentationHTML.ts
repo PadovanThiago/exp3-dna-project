@@ -1207,9 +1207,9 @@ body{
       </div>
 
       <div class="exp-card">
-        <div class="exp-sector">Entretenimento · Criador Individual</div>
-        <div class="exp-title">Arquitetura de memória criativa para um criador de conteúdo</div>
-        <div class="exp-desc">A EXP³ está construindo um sistema em grafo que conecta fragmentos de ideias, referências e avaliações do criador em cinco etapas: captura em qualquer formato, enriquecimento e categorização, armazenamento estruturado, ideação assistida e feedback como dado. A premissa inegociável do projeto: a IA não escreve por ele. O sistema é alimentado exclusivamente pelo próprio repertório do criador — as variações geradas têm como matéria-prima o que só existe nele. É o oposto do que a maioria das ferramentas de IA para criadores faz.</div>
+        <div class="exp-sector">Conglomerado de Entretenimento</div>
+        <div class="exp-title">Arquitetura de memória criativa para desenvolvimento de conteúdo</div>
+        <div class="exp-desc">A EXP³ está construindo um sistema em grafo que conecta fragmentos de ideias, referências e avaliações em cinco etapas: captura em qualquer formato, enriquecimento e categorização, armazenamento estruturado, ideação assistida e feedback como dado. A premissa inegociável do projeto: a IA não escreve nada pelos autores. O sistema é alimentado exclusivamente pelos autores — as variações geradas têm como matéria-prima o que só existe nele. É o oposto do que a maioria das ferramentas de IA para criadores faz.</div>
       </div>
     </div>
 
