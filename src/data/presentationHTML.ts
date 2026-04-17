@@ -40,7 +40,7 @@ body{
   position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
   padding:52px 80px 64px;opacity:0;transform:translateX(44px);
   transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);
-  pointer-events:none;z-index:1;
+  pointer-events:none;z-index:1;overflow:hidden;
 }
 .slide.active{opacity:1;transform:translateX(0);pointer-events:all}
 .slide.leaving{opacity:0;transform:translateX(-44px)}
@@ -74,7 +74,6 @@ body{
 .dim-badge.tech{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.22);color:var(--cyan)}
 .dim-badge svg{width:13px;height:13px;flex-shrink:0}
 
-
 /* ══════════════════════════════════════════
    SLIDE 1 — HERO
 ══════════════════════════════════════════ */
@@ -97,7 +96,6 @@ body{
   white-space:nowrap;font-weight:400;font-style:italic;
 }
 .hero-meta::before,.hero-meta::after{content:'';width:30px;height:1px;background:rgba(255,255,255,.16)}
-
 
 /* ══════════════════════════════════════════
    SLIDE 2 — PESQUISA STANFORD
@@ -137,7 +135,6 @@ body{
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .research-source::before,.research-source::after{content:'';width:28px;height:1px;background:rgba(255,255,255,.1)}
-
 
 /* ══════════════════════════════════════════
    SLIDE 3 — COMPRESSÃO VS TRANSFORMAÇÃO
@@ -187,7 +184,6 @@ body{
 .compress-def-label.t{color:var(--emerald)}
 .compress-def-text{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55}
 
-
 /* ══════════════════════════════════════════
    SLIDE 4 — INDIVIDUAL VS ORGANIZACIONAL
 ══════════════════════════════════════════ */
@@ -229,7 +225,6 @@ body{
   display:flex;align-items:center;justify-content:center;gap:10px;
 }
 .dois-note::before,.dois-note::after{content:'';flex:1;max-width:80px;height:1px;background:rgba(0,217,255,.25)}
-
 
 /* ══════════════════════════════════════════
    SLIDE 5 — DUAS DIMENSÕES (BIFURCAÇÃO)
@@ -276,7 +271,6 @@ body{
   font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.6;font-style:italic;
 }
 .bifurc-note strong{color:var(--fg);font-weight:600;font-style:normal}
-
 
 /* ══════════════════════════════════════════
    SLIDES 6, 7, 8 — DIMENSÃO ORGANIZACIONAL
@@ -363,7 +357,6 @@ body{
 }
 .org-resp-note strong{color:var(--fg);font-weight:700}
 .org-resp-note em{color:var(--orange);font-style:normal;font-weight:600}
-
 
 /* ══════════════════════════════════════════
    SLIDES 9, 10, 11 — DIMENSÃO TECNOLÓGICA
@@ -465,7 +458,6 @@ body{
 }
 .tech-resp-note strong{color:var(--fg);font-weight:700}
 
-
 /* ══════════════════════════════════════════
    SLIDE 12 — EXPERIÊNCIA / CASES
 ══════════════════════════════════════════ */
@@ -499,7 +491,6 @@ body{
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .exp-note::before,.exp-note::after{content:'';flex:1;max-width:60px;height:1px;background:rgba(255,255,255,.08)}
-
 
 /* ══════════════════════════════════════════
    SLIDE 13 — TIME
@@ -542,7 +533,6 @@ body{
 }
 .team-note strong{color:var(--fg);font-weight:600}
 
-
 /* ══════════════════════════════════════════
    SLIDE 14 — ENCERRAMENTO
 ══════════════════════════════════════════ */
@@ -578,7 +568,6 @@ body{
 }
 .close-tag strong{color:var(--cyan);font-weight:700}
 
-
 /* ══════════════════════════════════════════
    SLIDE 15 — CONTATO
 ══════════════════════════════════════════ */
@@ -601,7 +590,6 @@ body{
 }
 .contact-info-icon{width:20px;height:20px;flex-shrink:0;color:var(--cyan);opacity:.8}
 .contact-info-text{font-size:clamp(14px,1.4vw,17px);color:var(--fg2);font-weight:500}
-
 
 /* ══════════════════════════════════════════
    BACKUP — ARQUITETURA TÉCNICA
@@ -701,16 +689,11 @@ body{
 .team-note-enhanced-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.75}
 .team-note-enhanced-body strong{color:var(--fg);font-weight:600}
 
-
 </style>
 </head>
 <body>
 <div class="deck" id="deck">
 
-
-<!-- ════════════════════════════════
-     SLIDE 1 — HERO
-════════════════════════════════ -->
 <div class="slide s1 active" data-index="0">
   <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
   <svg class="arc" style="top:-60px;right:-60px;width:500px" viewBox="0 0 400 400" fill="none">
@@ -731,10 +714,6 @@ body{
   <div class="hero-meta">Pinheiro Neto Advogados &nbsp;·&nbsp; 2026</div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 2 — PESQUISA STANFORD
-════════════════════════════════ -->
 <div class="slide" data-index="1">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="s-research-w">
@@ -772,10 +751,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 3 — COMPRESSÃO VS TRANSFORMAÇÃO
-════════════════════════════════ -->
 <div class="slide" data-index="2">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="s-compress-w">
@@ -842,10 +817,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 4 — INDIVIDUAL VS ORGANIZACIONAL
-════════════════════════════════ -->
 <div class="slide" data-index="3">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="s2-w">
@@ -886,10 +857,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 5 — DUAS DIMENSÕES (BIFURCAÇÃO)
-════════════════════════════════ -->
 <div class="slide" data-index="4">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="bifurc-w">
@@ -931,8 +898,6 @@ body{
   </div>
 </div>
 
-
-<\\!-- CAPA — DIMENSÃO ORGANIZACIONAL -->
 <div class="slide s-section-cover sec-org">
   <div class="ring r1" style="opacity:.28"></div>
   <div class="ring r2" style="opacity:.14"></div>
@@ -945,11 +910,6 @@ body{
   </div>
 </div>
 
-
-
-<!-- ════════════════════════════════
-     SLIDE 6 — ORG: O QUE É
-════════════════════════════════ -->
 <div class="slide" data-index="5">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="dim-w">
@@ -998,10 +958,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 7 — ORG: POR QUE É DIFÍCIL
-════════════════════════════════ -->
 <div class="slide" data-index="6">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="dim-w narrow">
@@ -1037,10 +993,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 8 — ORG: COMO RESPONDEMOS
-════════════════════════════════ -->
 <div class="slide" data-index="7">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="dim-w">
@@ -1080,8 +1032,6 @@ body{
   </div>
 </div>
 
-
-<\\!-- CAPA — DIMENSÃO TECNOLÓGICA -->
 <div class="slide s-section-cover sec-tech">
   <div class="ring r1" style="opacity:.28"></div>
   <div class="ring r2" style="opacity:.14"></div>
@@ -1094,11 +1044,6 @@ body{
   </div>
 </div>
 
-
-
-<!-- ════════════════════════════════
-     SLIDE 9 — TECH: O QUE É
-════════════════════════════════ -->
 <div class="slide" data-index="8">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="dim-w">
@@ -1147,10 +1092,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 10 — TECH: POR QUE É DIFÍCIL
-════════════════════════════════ -->
 <div class="slide" data-index="9">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="dim-w narrow">
@@ -1186,10 +1127,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 11 — TECH: COMO RESPONDEMOS
-════════════════════════════════ -->
 <div class="slide" data-index="10">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="dim-w">
@@ -1238,8 +1175,6 @@ body{
   </div>
 </div>
 
-
-<\\!-- CAPA — CASES EXP³ -->
 <div class="slide s-section-cover sec-cases">
   <div class="ring r1" style="opacity:.28"></div>
   <div class="ring r2" style="opacity:.14"></div>
@@ -1252,11 +1187,6 @@ body{
   </div>
 </div>
 
-
-
-<!-- ════════════════════════════════
-     SLIDE 12 — EXPERIÊNCIA / CASES
-════════════════════════════════ -->
 <div class="slide" data-index="11">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="s-exp-w">
@@ -1287,10 +1217,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 13 — TIME
-════════════════════════════════ -->
 <div class="slide" data-index="12">
   <div class="slogo">EXP<sup>³</sup></div>
   <div class="team-w">
@@ -1335,10 +1261,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 14 — ENCERRAMENTO
-════════════════════════════════ -->
 <div class="slide s-close" data-index="13">
   <div class="ring r1" style="opacity:.6"></div>
   <div class="close-wrap">
@@ -1357,10 +1279,6 @@ body{
   </div>
 </div>
 
-
-<!-- ════════════════════════════════
-     SLIDE 15 — CONTATO
-════════════════════════════════ -->
 <div class="slide s-contact" data-index="14">
   <div class="ring r1" style="opacity:.5"></div>
   <div class="contact-wrap">
@@ -1381,8 +1299,6 @@ body{
   </div>
 </div>
 
-
-<!-- CHROME -->
 <div class="progress-bar" id="pb"></div>
 <nav class="nav-dots" id="dots"></nav>
 <div class="nav-btns">
@@ -1391,7 +1307,7 @@ body{
 </div>
 <div class="slide-counter" id="counter"></div>
 
-</div><!-- /deck -->
+</div>
 
 <script>
 (function(){
