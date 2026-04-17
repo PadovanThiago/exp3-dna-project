@@ -660,6 +660,48 @@ body{
 .result-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;opacity:.75}
 .backup-badge{position:absolute;top:22px;right:40px;background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.2);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
 
+/* ════════════════════════════════════════════
+   CAPAS DE SEÇÃO
+════════════════════════════════════════════ */
+.s-section-cover{text-align:center}
+.s-section-cover.sec-org{background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(50,15,0,.55),var(--bg) 72%)}
+.s-section-cover.sec-tech{background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(0,30,65,.55),var(--bg) 72%)}
+.s-section-cover.sec-cases{background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(0,35,20,.45),var(--bg) 72%)}
+.sec-cover-wrap{max-width:640px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+.sec-cover-label{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.s-section-cover.sec-org .sec-cover-label{color:var(--orange)}
+.s-section-cover.sec-tech .sec-cover-label{color:var(--cyan)}
+.s-section-cover.sec-cases .sec-cover-label{color:var(--emerald)}
+.sec-cover-label::before,.sec-cover-label::after{content:'';display:inline-block;width:32px;height:1px}
+.s-section-cover.sec-org .sec-cover-label::before,.s-section-cover.sec-org .sec-cover-label::after{background:rgba(255,107,51,.35)}
+.s-section-cover.sec-tech .sec-cover-label::before,.s-section-cover.sec-tech .sec-cover-label::after{background:rgba(0,217,255,.35)}
+.s-section-cover.sec-cases .sec-cover-label::before,.s-section-cover.sec-cases .sec-cover-label::after{background:rgba(0,199,123,.35)}
+.sec-cover-title{font-size:clamp(40px,6vw,74px);font-weight:800;letter-spacing:-2.5px;line-height:1.05;margin-bottom:26px;color:var(--fg)}
+.s-section-cover.sec-org .sec-cover-title span{background:linear-gradient(135deg,var(--orange),#FF9A6C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s-section-cover.sec-tech .sec-cover-title span{background:linear-gradient(135deg,var(--cyan),#80EEFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s-section-cover.sec-cases .sec-cover-title span{background:linear-gradient(135deg,var(--emerald),#5FFFC0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-cover-div{width:48px;height:2px;border-radius:2px;margin:0 auto 26px}
+.s-section-cover.sec-org .sec-cover-div{background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.15))}
+.s-section-cover.sec-tech .sec-cover-div{background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.15))}
+.s-section-cover.sec-cases .sec-cover-div{background:linear-gradient(90deg,var(--emerald),rgba(0,199,123,.15))}
+.sec-cover-sub{font-size:clamp(15px,1.5vw,18px);color:var(--fg2);line-height:1.78;max-width:500px;text-align:center}
+
+/* Think Tank Card Enhanced */
+.team-note-enhanced{
+  padding:22px 28px;
+  background:linear-gradient(135deg,rgba(0,217,255,.07),rgba(255,255,255,.02));
+  border:1px solid rgba(0,217,255,.2);border-radius:var(--rad);
+}
+.team-note-enhanced-title{
+  font-size:clamp(12px,1.2vw,14px);font-weight:700;color:var(--cyan);
+  margin-bottom:12px;letter-spacing:.1em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.team-note-enhanced-title::before{content:'';display:inline-block;width:20px;height:1.5px;background:var(--cyan);border-radius:2px;flex-shrink:0}
+.team-note-enhanced-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.75}
+.team-note-enhanced-body strong{color:var(--fg);font-weight:600}
+
+
 </style>
 </head>
 <body>
@@ -890,6 +932,21 @@ body{
 </div>
 
 
+<\\!-- CAPA — DIMENSÃO ORGANIZACIONAL -->
+<div class="slide s-section-cover sec-org">
+  <div class="ring r1" style="opacity:.28"></div>
+  <div class="ring r2" style="opacity:.14"></div>
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="sec-cover-wrap">
+    <div class="sec-cover-label">01 de 02</div>
+    <h2 class="sec-cover-title">Dimensão<br><span>Organizacional</span></h2>
+    <div class="sec-cover-div"></div>
+    <p class="sec-cover-sub">Pessoas, conhecimento e processos — o que está implícito, por que é difícil, e como a EXP³ responde.</p>
+  </div>
+</div>
+
+
+
 <!-- ════════════════════════════════
      SLIDE 6 — ORG: O QUE É
 ════════════════════════════════ -->
@@ -1022,6 +1079,21 @@ body{
     </div>
   </div>
 </div>
+
+
+<\\!-- CAPA — DIMENSÃO TECNOLÓGICA -->
+<div class="slide s-section-cover sec-tech">
+  <div class="ring r1" style="opacity:.28"></div>
+  <div class="ring r2" style="opacity:.14"></div>
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="sec-cover-wrap">
+    <div class="sec-cover-label">02 de 02</div>
+    <h2 class="sec-cover-title">Dimensão<br><span>Tecnológica</span></h2>
+    <div class="sec-cover-div"></div>
+    <p class="sec-cover-sub">Sistemas, dados e arquitetura — como conectar, estruturar e tornar o raciocínio auditável em contextos de alta exigência.</p>
+  </div>
+</div>
+
 
 
 <!-- ════════════════════════════════
@@ -1167,6 +1239,21 @@ body{
 </div>
 
 
+<\\!-- CAPA — CASES EXP³ -->
+<div class="slide s-section-cover sec-cases">
+  <div class="ring r1" style="opacity:.28"></div>
+  <div class="ring r2" style="opacity:.14"></div>
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="sec-cover-wrap">
+    <div class="sec-cover-label">Projetos em desenvolvimento</div>
+    <h2 class="sec-cover-title">Cases<br><span>EXP³</span></h2>
+    <div class="sec-cover-div"></div>
+    <p class="sec-cover-sub">Três organizações em setores distintos. A mesma premissa: inteligência como infraestrutura, não como produto.</p>
+  </div>
+</div>
+
+
+
 <!-- ════════════════════════════════
      SLIDE 12 — EXPERIÊNCIA / CASES
 ════════════════════════════════ -->
@@ -1178,21 +1265,21 @@ body{
 
     <div class="exp-grid">
       <div class="exp-card">
-        <div class="exp-sector">Fintech · Pagamentos</div>
-        <div class="exp-title">Arquitetura de decisão para recuperação de vendas em escala</div>
-        <div class="exp-desc">Mapeamos os processos de decisão por trás de cada intervalo de recuperação — identificando onde o julgamento era implícito e inconsistente. Formalizamos esse conhecimento em taxonomia operável e construímos a arquitetura de IA que aplica essas regras com precisão a cada cliente. O resultado é um sistema que aprende com cada interação e opera com o nível de consistência que nenhuma equipe humana consegue sustentar em escala.</div>
+        <div class="exp-sector">Fintech · Recuperação de Vendas</div>
+        <div class="exp-title">Inteligência de dados e estruturação de Customer Success para uma plataforma de recuperação</div>
+        <div class="exp-desc">A EXP³ redesenhou o escopo do projeto: em vez de produzir relatórios, construiu a infraestrutura de inteligência que a plataforma e seus clientes precisam. Reports semanais têm análise interpretativa embutida — cruzando dados históricos, identificando gargalos de conversão por canal e apontando onde está a oportunidade real. Em paralelo, a EXP³ está estruturando a área de Customer Success já orientada por dados desde o início: processos e indicadores que nascem com inteligência como premissa — não como retrofit após o fato.</div>
       </div>
 
       <div class="exp-card">
         <div class="exp-sector">Marketing Digital · Agência</div>
-        <div class="exp-title">Gestão do conhecimento distribuído de uma das maiores agências do Brasil</div>
-        <div class="exp-desc">Conduzimos o mapeamento completo do conhecimento organizacional — campanhas, aprendizados de clientes, estratégias testadas em múltiplos setores. Construímos a estrutura de taxonomia controlada que torna esse acervo acessível e utilizável pela IA. Hoje, cada analista da agência tem acesso operacional a décadas de experiência que antes ficavam presas em pessoas e arquivos desconectados.</div>
+        <div class="exp-title">Mapeamento do conhecimento organizacional e arquitetura de inteligência para uma agência digital</div>
+        <div class="exp-desc">O projeto é conduzido em três camadas, em ordem deliberada: diagnóstico interno (onde está o conhecimento da organização, como circula, onde há perda de inteligência entre áreas), otimização de operações e fluxos, e construção de agentes conversacionais que os clientes finais poderão usar para navegar em dados de campanhas sem depender de analistas intermediários. A EXP³ está defendendo essa sequência — porque construir a terceira camada antes de consolidar as primeiras é o erro mais comum que organizações cometem ao implementar IA.</div>
       </div>
 
       <div class="exp-card">
-        <div class="exp-sector">Entretenimento · Conglomerado</div>
-        <div class="exp-title">Plataforma de identidade criativa para um conglomerado de entretenimento</div>
-        <div class="exp-desc">Desenvolvemos a metodologia de captura da identidade criativa de cada criador como conhecimento estruturado — estilo, vocabulário, padrões de conteúdo, posicionamento. A partir dessa base, construímos a arquitetura que permite ao conglomerado escalar operações, explorar novos formatos e gerar conteúdo de forma consistente com cada voz, sem depender da presença constante de cada criador em cada decisão.</div>
+        <div class="exp-sector">Entretenimento · Criador Individual</div>
+        <div class="exp-title">Arquitetura de memória criativa para um criador de conteúdo</div>
+        <div class="exp-desc">A EXP³ está construindo um sistema em grafo que conecta fragmentos de ideias, referências e avaliações do criador em cinco etapas: captura em qualquer formato, enriquecimento e categorização, armazenamento estruturado, ideação assistida e feedback como dado. A premissa inegociável do projeto: a IA não escreve por ele. O sistema é alimentado exclusivamente pelo próprio repertório do criador — as variações geradas têm como matéria-prima o que só existe nele. É o oposto do que a maioria das ferramentas de IA para criadores faz.</div>
       </div>
     </div>
 
@@ -1216,7 +1303,7 @@ body{
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
         <div class="team-name">Thiago Padovan</div>
-        <div class="team-role">Founder · Consultor Sênior</div>
+        <div class="team-role">Consultor Sênior</div>
         <div class="team-bio">Desde 2011 trabalha com projetos de inovação organizacional, com foco em processos de inovação, redes e complexidade em empresas de diferentes setores. Atua na interseção entre gestão do conhecimento, design organizacional e implementação de IA.</div>
       </div>
 
@@ -1239,8 +1326,11 @@ body{
       </div>
     </div>
 
-    <div class="team-note" style="font-size:clamp(13px,1.3vw,15px);line-height:1.75;padding:16px 24px">
-      A EXP³ opera em <strong>estrutura de think tank</strong> — um modelo de trabalho que vai além da consultoria tradicional. Além dos três, a EXP³ funciona em interação e colaboração contínua com especialistas que estão na fronteira das aplicações de IA em campos como <strong>deep tech, ética, organizações e IA responsável</strong>. Essa rede amplia as perspectivas disponíveis para cada projeto e mantém a EXP³ conectada ao que está sendo pensado e desenvolvido agora.
+    <div class="team-note-enhanced">
+      <div class="team-note-enhanced-title">Estrutura Think Tank · Rede de Especialistas</div>
+      <div class="team-note-enhanced-body">
+        A EXP³ opera em <strong>estrutura de think tank</strong> — um modelo que vai além da consultoria tradicional. Além dos três sócios, a EXP³ funciona em colaboração contínua com especialistas na fronteira das aplicações de IA em <strong>deep tech, ética, organizações e IA responsável</strong>. Essa rede amplia as perspectivas disponíveis para cada projeto e mantém a EXP³ conectada ao que está sendo pensado e desenvolvido agora — não ao que estava em pauta há dois anos.
+      </div>
     </div>
   </div>
 </div>
@@ -1278,7 +1368,6 @@ body{
     <div class="contact-tagline">Implementação Organizacional de IA</div>
     <div class="contact-divider"></div>
     <div class="contact-name">Thiago Padovan</div>
-    <div class="contact-role">Founder</div>
     <div class="contact-info-grid">
       <div class="contact-info-row">
         <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
