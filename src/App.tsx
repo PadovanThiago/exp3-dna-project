@@ -24,10 +24,11 @@ import NeoDashAdmin from "./pages/NeoDashAdmin";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import IbgcDemo from "./pages/ibgc/IbgcDemo";
 import DeckPinheiroNeto from "./pages/DeckPinheiroNeto";
+import DeckAnbima from "./pages/DeckAnbima";
 
 const queryClient = new QueryClient();
 
-const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin", "/demo/ibgc", "/deckpinheironeto"];
+const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin", "/demo/ibgc", "/deckpinheironeto", "/deckanbima"];
 
 const AppLayout = () => {
   const location = useLocation();
