@@ -57,6 +57,7 @@ const AppLayout = () => {
           <Route path="/admin/newsletter" element={<ProtectedAdminRoute><AdminNewsletter /></ProtectedAdminRoute>} />
           <Route path="/demo/ibgc" element={<IbgcDemo />} />
           <Route path="/deckpinheironeto" element={<DeckPinheiroNeto />} />
+          <Route path="/deckanbima" element={<DeckAnbima />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
