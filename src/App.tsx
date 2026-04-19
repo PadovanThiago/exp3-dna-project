@@ -24,10 +24,11 @@ import NeoDashAdmin from "./pages/NeoDashAdmin";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import IbgcDemo from "./pages/ibgc/IbgcDemo";
 import DeckPinheiroNeto from "./pages/DeckPinheiroNeto";
+import DeckAnbima from "./pages/DeckAnbima";
 
 const queryClient = new QueryClient();
 
-const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin", "/demo/ibgc", "/deckpinheironeto"];
+const FULLSCREEN_ROUTES = ["/neodash", "/neodash/admin", "/demo/ibgc", "/deckpinheironeto", "/deckanbima"];
 
 const AppLayout = () => {
   const location = useLocation();
@@ -56,6 +57,7 @@ const AppLayout = () => {
           <Route path="/admin/newsletter" element={<ProtectedAdminRoute><AdminNewsletter /></ProtectedAdminRoute>} />
           <Route path="/demo/ibgc" element={<IbgcDemo />} />
           <Route path="/deckpinheironeto" element={<DeckPinheiroNeto />} />
+          <Route path="/deckanbima" element={<DeckAnbima />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
