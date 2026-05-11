@@ -19,6 +19,7 @@ import AdminBlog from "./pages/AdminBlog";
 import AdminBlogEditor from "./pages/AdminBlogEditor";
 import NotFound from "./pages/NotFound";
 import DeckRedirect from "./pages/DeckRedirect";
+import DeckEnRedirect from "./pages/DeckEnRedirect";
 import NeoDash from "./pages/NeoDash";
 import NeoDashAdmin from "./pages/NeoDashAdmin";
 import AdminNewsletter from "./pages/AdminNewsletter";
