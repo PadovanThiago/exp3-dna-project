@@ -53,6 +53,7 @@ const AppLayout = () => {
           <Route path="/admin/blog/new" element={<ProtectedAdminRoute><AdminBlogEditor /></ProtectedAdminRoute>} />
           <Route path="/admin/blog/edit/:id" element={<ProtectedAdminRoute><AdminBlogEditor /></ProtectedAdminRoute>} />
           <Route path="/deck" element={<DeckRedirect />} />
+          <Route path="/deck-en" element={<DeckEnRedirect />} />
           <Route path="/neodash" element={<NeoDash />} />
           <Route path="/neodash/admin" element={<NeoDashAdmin />} />
           <Route path="/admin/newsletter" element={<ProtectedAdminRoute><AdminNewsletter /></ProtectedAdminRoute>} />
