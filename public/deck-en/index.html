@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXP³ — Organizational AI Implementation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root{
+  --bg:#0A0F1C;--bg2:#0D1628;--bg3:#111D33;--bg4:#162040;
+  --cyan:#00D9FF;--cyan-dim:rgba(0,217,255,.09);--cyan-mid:rgba(0,217,255,.20);
+  --orange:#FF6B33;--orange-dim:rgba(255,107,51,.08);
+  --emerald:#00C77B;
+  --fg:hsl(210,40%,96%);--fg2:hsl(215,22%,58%);--fg3:hsl(215,18%,42%);
+  --border:rgba(255,255,255,.06);--border-c:rgba(0,217,255,.18);
+  --sh-sm:0 2px 8px rgba(0,0,0,.18),0 8px 24px rgba(0,0,0,.16);
+  --sh-glow:0 0 32px rgba(0,217,255,.10);
+  --rad:14px;
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg);
+  height:100vh;overflow:hidden;user-select:none;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+
+/* ── DECK ── */
+.deck{position:relative;width:100vw;height:100vh}
+.deck::before{
+  content:'';position:fixed;inset:0;
+  background-image:radial-gradient(circle,rgba(0,217,255,.026) 1px,transparent 1px);
+  background-size:28px 28px;pointer-events:none;z-index:0;
+}
+
+/* ── SLIDES ── */
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:52px 80px 64px;opacity:0;transform:translateX(44px);
+  transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;z-index:1;overflow:hidden;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.leaving{opacity:0;transform:translateX(-44px)}
+
+/* ── CHROME ── */
+.progress-bar{position:fixed;bottom:0;left:0;height:2px;background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.3));transition:width .4s ease;z-index:200}
+.nav-dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:200}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.14);cursor:pointer;transition:background .3s,transform .3s}
+.dot.active{background:var(--cyan);transform:scale(1.6)}
+.nav-btns{position:fixed;bottom:24px;right:36px;display:flex;gap:10px;z-index:200}
+.nav-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--fg2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav-btn:hover{background:var(--cyan-dim);border-color:rgba(0,217,255,.3);color:var(--cyan)}
+.slide-counter{position:fixed;bottom:30px;left:40px;font-size:12px;font-weight:500;color:var(--fg3);letter-spacing:.08em;z-index:200}
+.slogo{position:absolute;top:26px;left:40px;font-size:16px;font-weight:800;letter-spacing:-.3px;color:rgba(255,255,255,.45);z-index:10}
+.slogo sup{color:var(--cyan);font-size:10px}
+
+/* ── TYPOGRAPHY ── */
+.lab{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.lab::before{content:'';display:inline-block;width:24px;height:1.5px;background:var(--cyan);border-radius:2px;flex-shrink:0}
+.lab.org{color:var(--orange)}
+.lab.org::before{background:var(--orange)}
+.hdl{font-size:clamp(22px,2.7vw,34px);font-weight:700;letter-spacing:-.5px;line-height:1.25;margin-bottom:28px}
+
+/* ── DIMENSION BADGE ── */
+.dim-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border-radius:8px;padding:6px 14px;margin-bottom:16px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+}
+.dim-badge.org{background:rgba(255,107,51,.1);border:1px solid rgba(255,107,51,.25);color:var(--orange)}
+.dim-badge.tech{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.22);color:var(--cyan)}
+.dim-badge svg{width:13px;height:13px;flex-shrink:0}
+
+/* ══════════════════════════════════════════
+   SLIDE 1 — HERO
+══════════════════════════════════════════ */
+.s1{background:radial-gradient(ellipse 72% 62% at 50% 48%,rgba(0,35,70,.55),var(--bg) 74%);text-align:center}
+.ring{position:absolute;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.ring.r1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,217,255,.055),transparent 68%)}
+.ring.r2{width:390px;height:390px;border:1px solid rgba(0,217,255,.07)}
+.ring.r3{width:555px;height:555px;border:1px solid rgba(0,217,255,.038)}
+.arc{position:absolute;pointer-events:none;opacity:.045}
+.hero-logo{font-size:clamp(72px,9.5vw,108px);font-weight:800;letter-spacing:-3px;line-height:1;color:#fff;margin-bottom:24px;position:relative;z-index:2;text-shadow:0 0 100px rgba(0,217,255,.22)}
+.hero-logo sup{font-size:clamp(46px,6vw,70px);background:linear-gradient(135deg,#00D9FF,#80EEFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-div{width:52px;height:2px;background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.15));margin:0 auto 28px;border-radius:2px;position:relative;z-index:2}
+.hero-div::after{content:'';position:absolute;width:6px;height:6px;border-radius:50%;background:var(--cyan);top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--cyan)}
+.hero-tag{font-size:clamp(16px,1.65vw,21px);font-weight:400;color:var(--fg2);max-width:640px;line-height:1.75;position:relative;z-index:2;margin:0 auto}
+.hero-tag strong{color:var(--fg);font-weight:600}
+.hero-meta{
+  position:absolute;bottom:44px;left:50%;transform:translateX(-50%);
+  font-size:13px;letter-spacing:.06em;color:var(--fg2);
+  display:flex;align-items:center;gap:12px;z-index:2;
+  white-space:nowrap;font-weight:400;font-style:italic;
+}
+.hero-meta::before,.hero-meta::after{content:'';width:30px;height:1px;background:rgba(255,255,255,.16)}
+
+/* ══════════════════════════════════════════
+   SLIDE 2 — PESQUISA STANFORD
+══════════════════════════════════════════ */
+.s-research-w{width:100%;max-width:960px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat-box{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);
+  padding:28px 24px 24px;text-align:center;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.stat-box::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+  border-radius:2px 2px 0 0;
+}
+.stat-box.s1-box::after{background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.25))}
+.stat-box.s2-box::after{background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.25))}
+.stat-box.s3-box::after{background:linear-gradient(90deg,var(--emerald),rgba(0,199,123,.25))}
+.stat-num{
+  font-size:clamp(44px,5.5vw,66px);font-weight:800;letter-spacing:-2px;line-height:1;
+  margin-bottom:12px;
+}
+.stat-box.s1-box .stat-num{color:var(--orange)}
+.stat-box.s2-box .stat-num{color:var(--cyan)}
+.stat-box.s3-box .stat-num{color:var(--emerald)}
+.stat-label{font-size:clamp(13px,1.3vw,16px);font-weight:600;color:var(--fg);line-height:1.4;margin-bottom:8px}
+.stat-sub{font-size:clamp(11px,1.1vw,13px);color:var(--fg3);line-height:1.5}
+
+.research-quote{
+  background:rgba(0,217,255,.04);border:1px solid rgba(0,217,255,.14);border-radius:10px;
+  padding:16px 22px;margin-bottom:14px;text-align:center;
+  font-size:clamp(14px,1.4vw,17px);color:var(--fg2);line-height:1.65;font-style:italic;
+}
+.research-quote strong{color:var(--fg);font-weight:600;font-style:normal}
+.research-source{
+  text-align:center;font-size:12px;color:var(--fg3);letter-spacing:.04em;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.research-source::before,.research-source::after{content:'';width:28px;height:1px;background:rgba(255,255,255,.1)}
+
+/* ══════════════════════════════════════════
+   SLIDE 3 — COMPRESSÃO VS TRANSFORMAÇÃO
+══════════════════════════════════════════ */
+.s-compress-w{width:100%;max-width:960px}
+.compress-grid{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin-bottom:18px}
+.compress-col{display:flex;flex-direction:column;gap:8px;padding:0 4px}
+.compress-head{
+  font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  padding:0 0 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid;
+}
+.compress-col.problem .compress-head{color:var(--orange);border-color:rgba(255,107,51,.2)}
+.compress-col.insight .compress-head{color:var(--emerald);border-color:rgba(0,199,123,.2)}
+.compress-item{
+  border-radius:10px;padding:13px 16px;border:1px solid;
+}
+.compress-col.problem .compress-item{background:rgba(255,107,51,.04);border-color:rgba(255,107,51,.14)}
+.compress-col.insight .compress-item{background:rgba(0,199,123,.05);border-color:rgba(0,199,123,.18)}
+.compress-item-title{font-size:clamp(13px,1.3vw,15px);font-weight:700;margin-bottom:5px}
+.compress-col.problem .compress-item-title{color:var(--fg)}
+.compress-col.insight .compress-item-title{color:var(--fg)}
+.compress-item-text{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.6}
+.compress-mid{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  padding-top:38px;
+}
+.compress-mid-line{width:1.5px;flex:1;max-height:80px;border-radius:2px;background:rgba(255,255,255,.06)}
+.compress-mid-ico{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--fg3);
+}
+.compress-distinction{
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:14px 20px;
+  display:grid;grid-template-columns:1fr 1px 1fr;gap:0;
+}
+.compress-def{padding:6px 18px;text-align:center}
+.compress-def:first-child{padding-left:6px}
+.compress-def:last-child{padding-right:6px}
+.compress-divider{background:rgba(255,255,255,.07);width:1px}
+.compress-def-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.compress-col.problem+.compress-mid~.compress-col.insight .compress-def-label{color:var(--emerald)}
+.compress-def-label.p{color:var(--orange)}
+.compress-def-label.t{color:var(--emerald)}
+.compress-def-text{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55}
+
+/* ══════════════════════════════════════════
+   SLIDE 4 — INDIVIDUAL VS ORGANIZACIONAL
+══════════════════════════════════════════ */
+.s2-w{width:100%;max-width:900px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative}
+.vs{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:34px;height:34px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--border-c);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--fg3);z-index:10;
+}
+.ccard{
+  background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.04);
+  border-radius:var(--rad);padding:28px 26px 24px;
+  box-shadow:var(--sh-sm);opacity:.55;
+}
+.ccard.gl{
+  opacity:1;border-color:rgba(0,217,255,.22);
+  background:linear-gradient(150deg,rgba(0,217,255,.09),var(--bg3) 55%);
+  box-shadow:var(--sh-glow),var(--sh-sm),inset 0 1px 0 rgba(0,217,255,.1);
+}
+.ccard .tp{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--fg3);margin-bottom:12px}
+.ccard.gl .tp{color:var(--cyan);opacity:.85}
+.ccard .ico-wrap{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.ccard.gl .ico-wrap{background:rgba(0,217,255,.08);border-color:rgba(0,217,255,.2)}
+.ccard .ico-wrap svg{width:20px;height:20px;color:var(--fg3)}
+.ccard.gl .ico-wrap svg{color:var(--cyan)}
+.ccard .tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;margin-bottom:14px;line-height:1.3;color:var(--fg2)}
+.ccard.gl .tt{color:var(--cyan)}
+.ccard ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.ccard li{font-size:clamp(14px,1.35vw,16px);color:var(--fg3);line-height:1.55;padding-left:18px;position:relative}
+.ccard.gl li{color:var(--fg2)}
+.ccard li::before{content:'';position:absolute;left:0;top:10px;width:7px;height:1px;background:var(--fg3)}
+.ccard.gl li::before{background:var(--cyan);opacity:.6}
+.dois-note{
+  margin-top:18px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);font-weight:600;color:var(--cyan);letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.dois-note::before,.dois-note::after{content:'';flex:1;max-width:80px;height:1px;background:rgba(0,217,255,.25)}
+
+/* ══════════════════════════════════════════
+   SLIDE 5 — DUAS DIMENSÕES (BIFURCAÇÃO)
+══════════════════════════════════════════ */
+.bifurc-w{width:100%;max-width:900px}
+.bifurc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.bifurc-card{
+  border-radius:var(--rad);padding:26px 24px 22px;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.bifurc-card.org{
+  background:linear-gradient(150deg,rgba(255,107,51,.1),var(--bg3) 60%);
+  border:1px solid rgba(255,107,51,.22);
+}
+.bifurc-card.tech{
+  background:linear-gradient(150deg,rgba(0,217,255,.09),var(--bg3) 60%);
+  border:1px solid rgba(0,217,255,.22);
+}
+.bifurc-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+  border-radius:2px 2px 0 0;
+}
+.bifurc-card.org::after{background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.2))}
+.bifurc-card.tech::after{background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.2))}
+.bifurc-ico{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.bifurc-card.org .bifurc-ico{background:rgba(255,107,51,.1);border:1px solid rgba(255,107,51,.22)}
+.bifurc-card.tech .bifurc-ico{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2)}
+.bifurc-card.org .bifurc-ico svg{color:var(--orange)}
+.bifurc-card.tech .bifurc-ico svg{color:var(--cyan)}
+.bifurc-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px}
+.bifurc-card.org .bifurc-label{color:var(--orange)}
+.bifurc-card.tech .bifurc-label{color:var(--cyan)}
+.bifurc-tt{font-size:clamp(16px,1.6vw,20px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
+.bifurc-ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.bifurc-ul li{font-size:clamp(13px,1.3vw,15px);line-height:1.6;padding-left:16px;position:relative;color:var(--fg2)}
+.bifurc-card.org .bifurc-ul li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--orange);opacity:.7}
+.bifurc-card.tech .bifurc-ul li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--cyan);opacity:.7}
+.bifurc-note{
+  text-align:center;padding:12px 20px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.6;font-style:italic;
+}
+.bifurc-note strong{color:var(--fg);font-weight:600;font-style:normal}
+
+/* ══════════════════════════════════════════
+   SLIDES 6, 7, 8 — DIMENSÃO ORGANIZACIONAL
+══════════════════════════════════════════ */
+.dim-w{width:100%;max-width:980px}
+.dim-w.narrow{max-width:900px}
+
+/* Manifestações organizacionais — 3 cards */
+.manifest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.manifest-card{
+  background:var(--bg3);border:1px solid rgba(255,107,51,.14);border-radius:var(--rad);
+  padding:22px 18px 18px;display:flex;flex-direction:column;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.manifest-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,rgba(255,107,51,.6),rgba(255,107,51,.1));
+  border-radius:2px 2px 0 0;
+}
+.manifest-n{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);opacity:.7;margin-bottom:10px}
+.manifest-ico{
+  width:34px;height:34px;border-radius:9px;
+  background:rgba(255,107,51,.09);border:1px solid rgba(255,107,51,.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.manifest-ico svg{width:17px;height:17px;color:var(--orange)}
+.manifest-tt{font-size:clamp(14px,1.4vw,17px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:9px}
+.manifest-d{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.65;flex:1;margin-bottom:12px}
+.manifest-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,107,51,.07);border:1px solid rgba(255,107,51,.18);
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--orange);align-self:flex-start;
+}
+
+/* Por que é difícil — dois momentos */
+.reveal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.reveal-card{
+  border-radius:var(--rad);padding:22px 20px 18px;
+  box-shadow:var(--sh-sm);
+}
+.reveal-card.what{
+  background:rgba(255,107,51,.04);border:1px solid rgba(255,107,51,.14);
+}
+.reveal-card.why{
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+}
+.reveal-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.reveal-card.what .reveal-label{color:var(--orange)}
+.reveal-card.why .reveal-label{color:var(--fg3)}
+.reveal-tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
+.reveal-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.7}
+.reveal-body strong{color:var(--fg);font-weight:600}
+
+.dim-quote{
+  background:rgba(255,107,51,.04);border:1px solid rgba(255,107,51,.16);
+  border-radius:10px;padding:13px 20px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;font-style:italic;
+  margin-bottom:14px;
+}
+.dim-quote strong{color:var(--fg);font-weight:600;font-style:normal}
+
+/* Resposta organizacional */
+.org-resp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.org-resp-step{
+  background:var(--bg3);border:1px solid rgba(255,107,51,.14);border-radius:12px;
+  padding:18px 16px 14px;display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.org-resp-step::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,rgba(255,107,51,.5),transparent);
+}
+.org-step-n{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);opacity:.65;margin-bottom:10px}
+.org-step-tt{font-size:clamp(13px,1.3vw,15px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:8px}
+.org-step-d{font-size:clamp(12px,1.2vw,14px);color:var(--fg2);line-height:1.6;flex:1}
+
+.org-resp-note{
+  padding:12px 18px;
+  background:linear-gradient(90deg,rgba(255,107,51,.06),rgba(0,217,255,.04));
+  border:1px solid rgba(255,255,255,.07);border-radius:10px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55;
+}
+.org-resp-note strong{color:var(--fg);font-weight:700}
+.org-resp-note em{color:var(--orange);font-style:normal;font-weight:600}
+
+/* ══════════════════════════════════════════
+   SLIDES 9, 10, 11 — DIMENSÃO TECNOLÓGICA
+══════════════════════════════════════════ */
+/* Desafios tecnológicos — 3 cards com cyan */
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.tech-card{
+  background:var(--bg3);border:1px solid rgba(0,217,255,.14);border-radius:var(--rad);
+  padding:22px 18px 18px;display:flex;flex-direction:column;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.tech-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,rgba(0,217,255,.6),rgba(0,217,255,.1));
+  border-radius:2px 2px 0 0;
+}
+.tech-n{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);opacity:.7;margin-bottom:10px}
+.tech-ico{
+  width:34px;height:34px;border-radius:9px;
+  background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.tech-ico svg{width:17px;height:17px;color:var(--cyan)}
+.tech-tt{font-size:clamp(14px,1.4vw,17px);font-weight:700;color:var(--fg);line-height:1.3;margin-bottom:9px}
+.tech-d{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.65;flex:1;margin-bottom:12px}
+.tech-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,217,255,.07);border:1px solid rgba(0,217,255,.2);
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cyan);align-self:flex-start;
+}
+
+/* Por que é difícil — tech */
+.tech-reveal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.tech-reveal-card{
+  border-radius:var(--rad);padding:22px 20px 18px;
+  box-shadow:var(--sh-sm);
+}
+.tech-reveal-card.what{background:rgba(0,217,255,.04);border:1px solid rgba(0,217,255,.16)}
+.tech-reveal-card.why{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)}
+.tech-reveal-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.tech-reveal-card.what .tech-reveal-label{color:var(--cyan)}
+.tech-reveal-card.why .tech-reveal-label{color:var(--fg3)}
+.tech-reveal-tt{font-size:clamp(15px,1.5vw,18px);font-weight:700;color:var(--fg);margin-bottom:12px;line-height:1.3}
+.tech-reveal-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.7}
+.tech-reveal-body strong{color:var(--fg);font-weight:600}
+
+.tech-quote{
+  background:rgba(0,217,255,.04);border:1px solid rgba(0,217,255,.14);
+  border-radius:10px;padding:13px 20px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;font-style:italic;
+  margin-bottom:14px;
+}
+.tech-quote strong{color:var(--fg);font-weight:600;font-style:normal}
+
+/* Arquitetura de resposta — 3 motores */
+.motors-arch{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.motor-card{
+  border-radius:var(--rad);padding:22px 18px 18px;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.motor-card.llm{background:linear-gradient(150deg,rgba(0,217,255,.09),var(--bg3) 60%);border:1px solid rgba(0,217,255,.22)}
+.motor-card.det{background:linear-gradient(150deg,rgba(0,199,123,.08),var(--bg3) 60%);border:1px solid rgba(0,199,123,.2)}
+.motor-card.sym{background:linear-gradient(150deg,rgba(255,107,51,.07),var(--bg3) 60%);border:1px solid rgba(255,107,51,.2)}
+.motor-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.motor-card.llm .motor-label{color:var(--cyan)}
+.motor-card.det .motor-label{color:var(--emerald)}
+.motor-card.sym .motor-label{color:var(--orange)}
+.motor-ico{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.motor-card.llm .motor-ico{background:rgba(0,217,255,.1);border:1px solid rgba(0,217,255,.22)}
+.motor-card.det .motor-ico{background:rgba(0,199,123,.1);border:1px solid rgba(0,199,123,.22)}
+.motor-card.sym .motor-ico{background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.2)}
+.motor-ico svg{width:18px;height:18px}
+.motor-card.llm .motor-ico svg{color:var(--cyan)}
+.motor-card.det .motor-ico svg{color:var(--emerald)}
+.motor-card.sym .motor-ico svg{color:var(--orange)}
+.motor-tt{font-size:clamp(14px,1.4vw,17px);font-weight:700;color:var(--fg);margin-bottom:9px;line-height:1.3}
+.motor-d{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;flex:1;margin-bottom:10px}
+.motor-card{display:flex;flex-direction:column}
+.motor-prop{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  align-self:flex-start;
+}
+.motor-card.llm .motor-prop{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2);color:var(--cyan)}
+.motor-card.det .motor-prop{background:rgba(0,199,123,.08);border:1px solid rgba(0,199,123,.2);color:var(--emerald)}
+.motor-card.sym .motor-prop{background:rgba(255,107,51,.07);border:1px solid rgba(255,107,51,.18);color:var(--orange)}
+
+.tech-resp-note{
+  padding:12px 18px;
+  background:rgba(0,217,255,.04);
+  border:1px solid rgba(0,217,255,.14);border-radius:10px;text-align:center;
+  font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.55;
+}
+.tech-resp-note strong{color:var(--fg);font-weight:700}
+
+/* ══════════════════════════════════════════
+   SLIDE 12 — EXPERIÊNCIA / CASES
+══════════════════════════════════════════ */
+.s-exp-w{width:100%;max-width:980px}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.exp-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);
+  padding:26px 22px 22px;display:flex;flex-direction:column;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.exp-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+  border-radius:2px 2px 0 0;
+}
+.exp-card:nth-child(1)::after{background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.2))}
+.exp-card:nth-child(2)::after{background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.2))}
+.exp-card:nth-child(3)::after{background:linear-gradient(90deg,var(--emerald),rgba(0,199,123,.2))}
+.exp-sector{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:6px;padding:5px 10px;margin-bottom:16px;align-self:flex-start;
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+}
+.exp-card:nth-child(1) .exp-sector{background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.2);color:var(--cyan)}
+.exp-card:nth-child(2) .exp-sector{background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.2);color:var(--orange)}
+.exp-card:nth-child(3) .exp-sector{background:rgba(0,199,123,.08);border:1px solid rgba(0,199,123,.2);color:var(--emerald)}
+.exp-title{font-size:clamp(14px,1.45vw,17px);font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:12px}
+.exp-desc{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.75;flex:1}
+.exp-note{
+  margin-top:20px;text-align:center;
+  font-size:clamp(12px,1.2vw,14px);color:var(--fg3);font-style:italic;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.exp-note::before,.exp-note::after{content:'';flex:1;max-width:60px;height:1px;background:rgba(255,255,255,.08)}
+
+/* ══════════════════════════════════════════
+   SLIDE 13 — TIME
+══════════════════════════════════════════ */
+.team-w{width:100%;max-width:980px}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+.team-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);
+  padding:28px 22px 24px;display:flex;flex-direction:column;align-items:flex-start;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+}
+.team-card:first-child{
+  border-color:rgba(0,217,255,.2);
+  background:linear-gradient(150deg,rgba(0,217,255,.06),var(--bg3) 55%);
+}
+.team-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  border-radius:2px 2px 0 0;
+  background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.15));
+}
+.team-avatar{
+  width:48px;height:48px;border-radius:14px;
+  background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.18);
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+}
+.team-card:nth-child(2) .team-avatar{background:rgba(255,107,51,.07);border-color:rgba(255,107,51,.18)}
+.team-card:nth-child(3) .team-avatar{background:rgba(0,199,123,.07);border-color:rgba(0,199,123,.18)}
+.team-avatar svg{width:22px;height:22px;color:var(--cyan)}
+.team-card:nth-child(2) .team-avatar svg{color:var(--orange)}
+.team-card:nth-child(3) .team-avatar svg{color:var(--emerald)}
+.team-name{font-size:clamp(16px,1.6vw,19px);font-weight:700;color:var(--fg);margin-bottom:4px;line-height:1.2}
+.team-role{font-size:clamp(12px,1.2vw,14px);font-weight:500;color:var(--cyan);letter-spacing:.04em;margin-bottom:16px}
+.team-card:nth-child(2) .team-role{color:var(--orange)}
+.team-card:nth-child(3) .team-role{color:var(--emerald)}
+.team-bio{font-size:clamp(13px,1.25vw,15px);color:var(--fg2);line-height:1.7;flex:1}
+.team-note{
+  padding:13px 20px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  text-align:center;font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.65;
+}
+.team-note strong{color:var(--fg);font-weight:600}
+
+/* ══════════════════════════════════════════
+   SLIDE 14 — ENCERRAMENTO
+══════════════════════════════════════════ */
+.s-close{
+  background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(0,35,70,.5),var(--bg) 72%);
+  text-align:center;
+}
+.close-wrap{max-width:620px;position:relative;z-index:2}
+.close-icon{
+  width:54px;height:54px;border-radius:50%;
+  background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.22);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 26px;
+}
+.close-icon svg{width:24px;height:24px;color:var(--cyan)}
+.close-hdl{
+  font-size:clamp(24px,3vw,38px);font-weight:700;letter-spacing:-.5px;
+  line-height:1.2;margin-bottom:22px;color:var(--fg);
+}
+.close-hdl span{
+  background:linear-gradient(135deg,var(--cyan),#80EEFF);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.close-body{
+  font-size:clamp(15px,1.5vw,18px);color:var(--fg2);line-height:1.78;margin-bottom:32px;
+}
+.close-body strong{color:var(--fg);font-weight:600}
+.close-line{width:1px;height:38px;background:linear-gradient(180deg,rgba(0,217,255,.5),transparent);margin:0 auto 22px}
+.close-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(0,217,255,.07);border:1px solid rgba(0,217,255,.2);
+  border-radius:10px;padding:12px 22px;
+  font-size:clamp(13px,1.3vw,15px);font-weight:500;color:var(--fg2);line-height:1.55;
+}
+.close-tag strong{color:var(--cyan);font-weight:700}
+
+/* ══════════════════════════════════════════
+   SLIDE 15 — CONTATO
+══════════════════════════════════════════ */
+.s-contact{
+  background:radial-gradient(ellipse 60% 55% at 50% 48%,rgba(0,25,55,.5),var(--bg) 72%);
+  text-align:center;
+}
+.contact-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0}
+.contact-logo{font-size:clamp(36px,4.5vw,52px);font-weight:800;letter-spacing:-2px;line-height:1;color:#fff;margin-bottom:6px;text-shadow:0 0 60px rgba(0,217,255,.2)}
+.contact-logo sup{font-size:clamp(22px,2.8vw,32px);background:linear-gradient(135deg,#00D9FF,#80EEFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.contact-tagline{font-size:clamp(12px,1.2vw,14px);color:var(--fg3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:40px}
+.contact-divider{width:40px;height:1.5px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);margin-bottom:32px}
+.contact-name{font-size:clamp(22px,2.6vw,32px);font-weight:700;color:var(--fg);letter-spacing:-.3px;margin-bottom:6px}
+.contact-role{font-size:clamp(14px,1.4vw,17px);color:var(--fg3);font-weight:400;margin-bottom:30px;letter-spacing:.02em}
+.contact-info-grid{display:flex;flex-direction:column;gap:12px;align-items:center}
+.contact-info-row{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:11px 22px;min-width:280px;
+}
+.contact-info-icon{width:20px;height:20px;flex-shrink:0;color:var(--cyan);opacity:.8}
+.contact-info-text{font-size:clamp(14px,1.4vw,17px);color:var(--fg2);font-weight:500}
+
+/* ══════════════════════════════════════════
+   BACKUP — ARQUITETURA TÉCNICA
+══════════════════════════════════════════ */
+.s5-w{width:100%;max-width:1060px}
+.pipe-full{display:flex;align-items:stretch;gap:0;width:100%}
+.stg{
+  flex:1;display:flex;flex-direction:column;
+  background:var(--bg3);border:1px solid var(--border);border-radius:14px;
+  padding:20px 17px 17px;min-width:0;position:relative;z-index:1;box-shadow:var(--sh-sm);
+}
+.stg.hl{
+  background:linear-gradient(155deg,rgba(0,217,255,.1),var(--bg3) 60%);
+  border-color:rgba(0,217,255,.26);box-shadow:var(--sh-glow),var(--sh-sm);
+}
+.stg-n{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin-bottom:10px}
+.stg.hl .stg-n{color:var(--cyan)}
+.stg-ico{width:36px;height:36px;margin-bottom:10px;color:var(--cyan);opacity:.5;flex-shrink:0}
+.stg.hl .stg-ico{opacity:.9}
+.stg-tt{font-size:13px;font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:7px}
+.stg-d{font-size:12px;color:var(--fg2);line-height:1.6;flex:1;margin-bottom:9px}
+.stg-ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.stg-ul li{font-size:12px;color:var(--fg3);line-height:1.5;padding-left:13px;position:relative}
+.stg-ul li::before{content:'›';position:absolute;left:0;color:var(--cyan);opacity:.5}
+.stg.hl .stg-ul li{color:var(--fg2)}
+.stg.hl .stg-ul li::before{opacity:.9}
+.conn{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:26px;position:relative;z-index:2}
+.conn::before{content:'';position:absolute;top:50%;left:2px;right:7px;height:1px;background:linear-gradient(90deg,rgba(0,217,255,.15),rgba(0,217,255,.45))}
+.conn::after{content:'';position:absolute;right:2px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:6px solid rgba(0,217,255,.5);border-top:4px solid transparent;border-bottom:4px solid transparent}
+.motors-wrap{
+  flex:1.3;display:flex;gap:9px;position:relative;z-index:1;
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:17px;box-shadow:var(--sh-sm);
+}
+.motors-label{position:absolute;top:-11px;left:17px;background:var(--bg2);padding:2px 9px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);border:1px solid var(--border);border-radius:5px}
+.mcard{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 14px;display:flex;flex-direction:column;box-shadow:var(--sh-sm)}
+.mcard-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);opacity:.8;margin-bottom:9px}
+.mcard-tt{font-size:13px;font-weight:700;color:var(--fg);margin-bottom:7px;line-height:1.3}
+.mcard-d{font-size:12px;color:var(--fg2);line-height:1.6;flex:1}
+.mcard-tag{margin-top:9px;font-size:11px;font-weight:600;color:var(--cyan);opacity:.65;display:flex;align-items:center;gap:5px}
+.mcard-tag::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);opacity:.6;flex-shrink:0}
+.conn-b{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;position:relative;z-index:2}
+.conn-b::before{content:'';position:absolute;top:50%;left:2px;right:11px;height:2px;background:linear-gradient(90deg,rgba(0,217,255,.25),rgba(0,217,255,.6));border-radius:2px}
+.conn-b::after{content:'';position:absolute;right:2px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:8px solid rgba(0,217,255,.6);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.result-card{
+  flex:.65;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;position:relative;z-index:1;
+  background:var(--bg2);background-image:linear-gradient(155deg,rgba(0,217,255,.15),rgba(0,217,255,.04));
+  border:1px solid rgba(0,217,255,.32);border-radius:14px;padding:22px 17px;
+  box-shadow:0 0 44px rgba(0,217,255,.12),var(--sh-sm);
+}
+.result-ico{width:32px;height:32px;color:var(--cyan);opacity:.9;margin-bottom:12px}
+.result-title{font-size:15px;font-weight:700;color:var(--fg);margin-bottom:14px;line-height:1.35}
+.result-tags{display:flex;flex-direction:column;gap:6px;width:100%}
+.result-tag{display:flex;align-items:center;gap:8px;background:rgba(0,217,255,.07);border:1px solid rgba(0,217,255,.2);border-radius:7px;padding:7px 11px;font-size:12px;font-weight:600;color:var(--cyan)}
+.result-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;opacity:.75}
+.backup-badge{position:absolute;top:22px;right:40px;background:rgba(255,107,51,.08);border:1px solid rgba(255,107,51,.2);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+
+/* ════════════════════════════════════════════
+   CAPAS DE SEÇÃO
+════════════════════════════════════════════ */
+.s-section-cover{text-align:center}
+.s-section-cover.sec-org{background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(50,15,0,.55),var(--bg) 72%)}
+.s-section-cover.sec-tech{background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(0,30,65,.55),var(--bg) 72%)}
+.s-section-cover.sec-cases{background:radial-gradient(ellipse 65% 58% at 50% 48%,rgba(0,35,20,.45),var(--bg) 72%)}
+.sec-cover-wrap{max-width:640px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+.sec-cover-label{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.s-section-cover.sec-org .sec-cover-label{color:var(--orange)}
+.s-section-cover.sec-tech .sec-cover-label{color:var(--cyan)}
+.s-section-cover.sec-cases .sec-cover-label{color:var(--emerald)}
+.sec-cover-label::before,.sec-cover-label::after{content:'';display:inline-block;width:32px;height:1px}
+.s-section-cover.sec-org .sec-cover-label::before,.s-section-cover.sec-org .sec-cover-label::after{background:rgba(255,107,51,.35)}
+.s-section-cover.sec-tech .sec-cover-label::before,.s-section-cover.sec-tech .sec-cover-label::after{background:rgba(0,217,255,.35)}
+.s-section-cover.sec-cases .sec-cover-label::before,.s-section-cover.sec-cases .sec-cover-label::after{background:rgba(0,199,123,.35)}
+.sec-cover-title{font-size:clamp(40px,6vw,74px);font-weight:800;letter-spacing:-2.5px;line-height:1.05;margin-bottom:26px;color:var(--fg)}
+.s-section-cover.sec-org .sec-cover-title span{background:linear-gradient(135deg,var(--orange),#FF9A6C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s-section-cover.sec-tech .sec-cover-title span{background:linear-gradient(135deg,var(--cyan),#80EEFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s-section-cover.sec-cases .sec-cover-title span{background:linear-gradient(135deg,var(--emerald),#5FFFC0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-cover-div{width:48px;height:2px;border-radius:2px;margin:0 auto 26px}
+.s-section-cover.sec-org .sec-cover-div{background:linear-gradient(90deg,var(--orange),rgba(255,107,51,.15))}
+.s-section-cover.sec-tech .sec-cover-div{background:linear-gradient(90deg,var(--cyan),rgba(0,217,255,.15))}
+.s-section-cover.sec-cases .sec-cover-div{background:linear-gradient(90deg,var(--emerald),rgba(0,199,123,.15))}
+.sec-cover-sub{font-size:clamp(15px,1.5vw,18px);color:var(--fg2);line-height:1.78;max-width:500px;text-align:center}
+
+/* Think Tank Card Enhanced */
+.team-note-enhanced{
+  padding:22px 28px;
+  background:linear-gradient(135deg,rgba(0,217,255,.07),rgba(255,255,255,.02));
+  border:1px solid rgba(0,217,255,.2);border-radius:var(--rad);
+}
+.team-note-enhanced-title{
+  font-size:clamp(12px,1.2vw,14px);font-weight:700;color:var(--cyan);
+  margin-bottom:12px;letter-spacing:.1em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.team-note-enhanced-title::before{content:'';display:inline-block;width:20px;height:1.5px;background:var(--cyan);border-radius:2px;flex-shrink:0}
+.team-note-enhanced-body{font-size:clamp(13px,1.3vw,15px);color:var(--fg2);line-height:1.75}
+.team-note-enhanced-body strong{color:var(--fg);font-weight:600}
+
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<div class="slide s1 active" data-index="0">
+  <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+  <svg class="arc" style="top:-60px;right:-60px;width:500px" viewBox="0 0 400 400" fill="none">
+    <circle cx="200" cy="200" r="178" stroke="var(--cyan)" stroke-width="1.1"/>
+    <circle cx="200" cy="200" r="130" stroke="var(--cyan)" stroke-width=".7"/>
+    <circle cx="200" cy="200" r="82"  stroke="var(--cyan)" stroke-width=".4"/>
+  </svg>
+  <svg class="arc" style="bottom:-90px;left:-90px;width:390px" viewBox="0 0 400 400" fill="none">
+    <circle cx="200" cy="200" r="165" stroke="var(--cyan)" stroke-width=".9"/>
+    <circle cx="200" cy="200" r="105" stroke="var(--cyan)" stroke-width=".5"/>
+  </svg>
+  <div class="hero-logo">EXP<sup>³</sup></div>
+  <div class="hero-div"></div>
+  <p class="hero-tag">
+    Organizational implementation of <strong>artificial intelligence</strong>.<br>
+    We work in the layer between raw data and reliable output, formalizing organizational knowledge into structures that machines operate with <strong>precision and auditable reasoning</strong>.
+  </p>
+  <div class="hero-meta">2026</div>
+</div>
+
+<div class="slide" data-index="1">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="s-research-w">
+    <p class="lab">What the latest research shows</p>
+    <h2 class="hdl">51 real implementations analyzed.<br>The patterns are consistent.</h2>
+
+    <p style="font-size:clamp(14px,1.35vw,16px);color:var(--fg2);line-height:1.7;margin-bottom:20px;max-width:860px">Research conducted by the Stanford Digital Economy Lab analyzing 51 real AI implementations across 41 organizations in 7 countries and 9 different sectors. Unlike studies based on intention or expectation, this work tracked projects that moved from pilot to full operation — mapping what worked, what failed, and why. The data below reflects the consistent patterns found in this sample.</p>
+
+    <div class="stat-grid">
+      <div class="stat-box s1-box">
+        <div class="stat-num">95%</div>
+        <div class="stat-label">of generative AI pilot projects produce no measurable financial impact</div>
+        <div class="stat-sub">MIT / NANDA Initiative, 2025</div>
+      </div>
+      <div class="stat-box s2-box">
+        <div class="stat-num">77%</div>
+        <div class="stat-label">of the hardest challenges are invisible: organizational change, data, and processes</div>
+        <div class="stat-sub">Stanford Digital Economy Lab, 2026</div>
+      </div>
+      <div class="stat-box s3-box">
+        <div class="stat-num">61%</div>
+        <div class="stat-label">of projects that succeeded had at least one prior attempt that failed</div>
+        <div class="stat-sub">Stanford Digital Economy Lab, 2026</div>
+      </div>
+    </div>
+
+    <div class="research-quote">
+      <strong>"Technology was consistently described as the easiest part."</strong><br>
+      For every $1 invested in technology, successful organizations invested up to $10 in intangibles: process redesign, training, and organizational transformation.
+    </div>
+
+    <div class="research-source">
+      Stanford Digital Economy Lab &nbsp;·&nbsp; "The Enterprise AI Playbook" &nbsp;·&nbsp; Brynjolfsson, Pereira &amp; Graylin &nbsp;·&nbsp; April 2026
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-index="2">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="s-compress-w">
+    <p class="lab">Why most fail</p>
+    <h2 class="hdl">AI amplifies what it finds.<br>If the process is broken, it breaks faster.</h2>
+
+    <div class="compress-grid">
+      <div class="compress-col problem">
+        <div class="compress-head">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="3" y1="3" x2="10" y2="10"/><line x1="10" y1="3" x2="3" y2="10"/></svg>
+          What most organizations do
+        </div>
+        <div class="compress-item">
+          <div class="compress-item-title">Choose an AI tool</div>
+          <div class="compress-item-text">The decision starts with the technology, not the problem. The question is "which AI to use?" instead of "what do we want to change?"</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-item-title">Apply to the existing process</div>
+          <div class="compress-item-text">The process already existed, with its inconsistencies and implicit judgments. AI is plugged in without questioning the underlying logic.</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-item-title">Wait for results</div>
+          <div class="compress-item-text">Output arrives faster. But what was imprecise became more imprecise. What was inconsistent became more inconsistent.</div>
+        </div>
+      </div>
+
+      <div class="compress-mid">
+        <div class="compress-mid-line"></div>
+        <div class="compress-mid-ico">⟷</div>
+        <div class="compress-mid-line"></div>
+      </div>
+
+      <div class="compress-col insight">
+        <div class="compress-head">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="2,7 5,10 11,3"/></svg>
+          What the research identifies as the difference
+        </div>
+        <div class="compress-item">
+          <div class="compress-item-title">The right question isn't "how to automate"</div>
+          <div class="compress-item-text">It's "what becomes possible when intelligence gets cheap?" That question changes the starting point — and the outcome.</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-item-title">The process needs to be redesigned first</div>
+          <div class="compress-item-text">Successful organizations mapped what was actually happening, formalized implicit judgments, and only then connected the technology.</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-item-title">The distinction that defines the outcome</div>
+          <div class="compress-item-text">Compression is doing the same thing faster. Transformation is creating capabilities that didn't previously exist economically. No amount of AI converts the first into the second.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="compress-distinction">
+      <div class="compress-def">
+        <div class="compress-def-label p">Compression</div>
+        <div class="compress-def-text">Same process, faster. The business model doesn't change. The value proposition doesn't change. Only friction decreased.</div>
+      </div>
+      <div class="compress-divider"></div>
+      <div class="compress-def">
+        <div class="compress-def-label t">Transformation</div>
+        <div class="compress-def-text">New capabilities that didn't previously exist economically. It changes what's possible — not just the cost of what was already possible.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-index="3">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="s2-w">
+    <p class="lab">Where we operate</p>
+    <h2 class="hdl">Two contexts with fundamentally different challenges.</h2>
+
+    <div class="two-col">
+      <div class="ccard">
+        <div class="tp">Individual Use</div>
+        <div class="ico-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="tt">AI as a personal tool</div>
+        <ul>
+          <li>One person, one task</li>
+          <li>Single, known context</li>
+          <li>Immediate and individual result</li>
+          <li>Simple adoption, limited scale</li>
+        </ul>
+      </div>
+      <div class="vs">vs</div>
+      <div class="ccard gl">
+        <div class="tp">Organizational Implementation</div>
+        <div class="ico-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <div class="tt">AI with the organization's knowledge</div>
+        <ul>
+          <li>Multiple teams, multiple contexts</li>
+          <li>Distributed and implicit knowledge</li>
+          <li>Consistency and traceability over time</li>
+          <li>Requires process redesign and data structure</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dois-note">EXP³ operates in organizational implementation.</div>
+  </div>
+</div>
+
+<div class="slide" data-index="4">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="bifurc-w">
+    <p class="lab">The complexity of implementation</p>
+    <h2 class="hdl">Organizational implementation has two sides.<br>Failing in either one is enough to compromise the project.</h2>
+
+    <div class="bifurc-grid">
+      <div class="bifurc-card org">
+        <div class="bifurc-label">Organizational Dimension</div>
+        <div class="bifurc-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="bifurc-tt">People, knowledge, and processes</div>
+        <ul class="bifurc-ul">
+          <li>How knowledge flows through the organization</li>
+          <li>Who decides what, and by what criteria</li>
+          <li>What is documented vs. what actually happens</li>
+          <li>How people adopt and trust new systems</li>
+        </ul>
+      </div>
+      <div class="bifurc-card tech">
+        <div class="bifurc-label">Technological Dimension</div>
+        <div class="bifurc-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="bifurc-tt">Systems, data, and architecture</div>
+        <ul class="bifurc-ul">
+          <li>Where data exists and how it is connected</li>
+          <li>How the model processes and generates responses</li>
+          <li>How reasoning is documented and auditable</li>
+          <li>How precision is ensured in critical contexts</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bifurc-note">
+      Next, we explore each dimension in depth — what it is, why it's hard, and how EXP³ responds.
+    </div>
+  </div>
+</div>
+
+<div class="slide s-section-cover sec-org">
+  <div class="ring r1" style="opacity:.28"></div>
+  <div class="ring r2" style="opacity:.14"></div>
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="sec-cover-wrap">
+    <div class="sec-cover-label">01 of 02</div>
+    <h2 class="sec-cover-title">Organizational<br><span>Dimension</span></h2>
+    <div class="sec-cover-div"></div>
+    <p class="sec-cover-sub">People, knowledge, and processes — what is implicit, why it's hard, and how EXP³ responds.</p>
+  </div>
+</div>
+
+<div class="slide" data-index="5">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge org">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Organizational Dimension
+    </div>
+    <p class="lab org">The real challenge</p>
+    <h2 class="hdl">The knowledge that never needed to be explained<br>is the first obstacle to implementation.</h2>
+
+    <div class="manifest-grid">
+      <div class="manifest-card">
+        <div class="manifest-n">01</div>
+        <div class="manifest-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="manifest-tt">Official process vs. real process</div>
+        <div class="manifest-d">Most organizations have two processes: the documented one and what people actually do. AI executes the documented one. The result often seems wrong — because the real process was never recorded.</div>
+        <div class="manifest-tag">Implicit knowledge, unstructured</div>
+      </div>
+
+      <div class="manifest-card">
+        <div class="manifest-n">02</div>
+        <div class="manifest-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <div class="manifest-tt">Implicit judgment without an owner</div>
+        <div class="manifest-d">Decisions that seemed simple have unwritten human logic behind them. When AI tries to execute, the absent judgment becomes visible — and often reveals it explicitly belonged to no one. Everyone understood it differently.</div>
+        <div class="manifest-tag">Unclaimed responsibility</div>
+      </div>
+
+      <div class="manifest-card">
+        <div class="manifest-n">03</div>
+        <div class="manifest-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><line x1="18" y1="14" x2="22" y2="14"/><line x1="20" y1="12" x2="20" y2="16"/></svg>
+        </div>
+        <div class="manifest-tt">Knowledge that lived in people</div>
+        <div class="manifest-d">Part of what worked was personal, local, and reversible — tied to someone who could adapt in real time. Automating that knowledge without first formalizing it produces inconsistency at scale.</div>
+        <div class="manifest-tag">Data exists, access doesn't</div>
+      </div>
+    </div>
+
+    <div class="dim-quote">
+      AI doesn't create these problems. It reveals them. Like turning on fluorescent lights in an office that seemed clean — everything that was always there becomes visible at once.
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-index="6">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w narrow">
+    <div class="dim-badge org">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Organizational Dimension
+    </div>
+    <p class="lab org">Why it's hard</p>
+    <h2 class="hdl">Revealing the problems is the most uncomfortable part.<br>But it's also where change begins.</h2>
+
+    <div class="reveal-grid">
+      <div class="reveal-card what">
+        <div class="reveal-label">What happens when AI arrives</div>
+        <div class="reveal-tt">The organization sees itself in the mirror</div>
+        <div class="reveal-body">
+          Initiatives that "were working fine" reveal documented processes that contradict real practices. Policies that contradict incentives. Responsibilities that everyone thought belonged to someone else.<br><br>
+          AI doesn't invent this scenario. It simply executes what it finds, without the human filter that had been absorbing inconsistencies for years.
+        </div>
+      </div>
+      <div class="reveal-card why">
+        <div class="reveal-label">Why organizations stall</div>
+        <div class="reveal-tt">The momentum that isn't momentum</div>
+        <div class="reveal-body">
+          AI projects tend to accumulate internal advocates before they've been truly proven. Stopping feels like failure. Continuing feels like prudence. The organization gets stuck in the middle — with a system good enough to have political support, but not good enough to deserve operational trust.<br><br>
+          <strong>What looks like momentum is often drift</strong>: commitments no one explicitly chose, but that become increasingly harder to reverse.
+        </div>
+      </div>
+    </div>
+
+    <div class="dim-quote" style="margin-bottom:0">
+      "AI doesn't remove judgment. It exposes whether it was ever clearly assigned." When the answer is no, implementation encounters resistance that isn't resistance to technology — it's the organization confronting its own ambiguity.
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-index="7">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge org">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Organizational Dimension
+    </div>
+    <p class="lab org">How we respond</p>
+    <h2 class="hdl">Our response begins before any technology:<br>we formalize what is implicit.</h2>
+
+    <div class="org-resp-grid">
+      <div class="org-resp-step">
+        <div class="org-step-n">Step 01</div>
+        <div class="org-step-tt">We map the real process</div>
+        <div class="org-step-d">We talk to those who do the work, not just those who document it. The resulting map shows where the documented process and the real process diverge — and where AI will fail if connected without this diagnosis.</div>
+      </div>
+      <div class="org-resp-step">
+        <div class="org-step-n">Step 02</div>
+        <div class="org-step-tt">We make judgments explicit</div>
+        <div class="org-step-d">For every decision point in the process, we identify who decides, by what criteria, and what happens in each variation. What was implicit becomes structured instruction. What belonged to no one gets an owner.</div>
+      </div>
+      <div class="org-resp-step">
+        <div class="org-step-n">Step 03</div>
+        <div class="org-step-tt">We build controlled taxonomy</div>
+        <div class="org-step-d">We create a controlled vocabulary — terms with precise, shared meaning across the organization. Without this, different teams describe the same thing with different words, and AI cannot connect the dots.</div>
+      </div>
+      <div class="org-resp-step">
+        <div class="org-step-n">Step 04</div>
+        <div class="org-step-tt">Only then do we connect the technology</div>
+        <div class="org-step-d">With the process mapped, judgment explicit, and vocabulary structured, the technical implementation has a solid foundation. The system executes with precision because what it executes was thought through with precision.</div>
+      </div>
+    </div>
+
+    <div class="org-resp-note">
+      We call this <em>Social Technology</em> with <em>Controlled Taxonomy</em>. <strong>It is the organizational infrastructure that makes AI reliable.</strong>
+    </div>
+  </div>
+</div>
+
+<div class="slide s-section-cover sec-tech">
+  <div class="ring r1" style="opacity:.28"></div>
+  <div class="ring r2" style="opacity:.14"></div>
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="sec-cover-wrap">
+    <div class="sec-cover-label">02 of 02</div>
+    <h2 class="sec-cover-title">Technological<br><span>Dimension</span></h2>
+    <div class="sec-cover-div"></div>
+    <p class="sec-cover-sub">Systems, data, and architecture — how to connect, structure, and make reasoning auditable in high-demand contexts.</p>
+  </div>
+</div>
+
+<div class="slide" data-index="8">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge tech">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Technological Dimension
+    </div>
+    <p class="lab">The real challenge</p>
+    <h2 class="hdl">Having the data is not enough.<br>Connecting, structuring, and tracing the reasoning is the work.</h2>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-n">01</div>
+        <div class="tech-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <div class="tech-tt">Data exists, access doesn't</div>
+        <div class="tech-d">Organizations accumulate decades of knowledge in documents, processes, reports, and strategic decisions. That knowledge is distributed across multiple systems that rarely talk to each other. AI cannot use what it cannot reach.</div>
+        <div class="tech-tag">Distributed data, not connected</div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-n">02</div>
+        <div class="tech-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="tech-tt">Models produce convincing responses even when they're wrong</div>
+        <div class="tech-d">Language models generate fluent, apparently well-founded text. In casual contexts, this behavior is useful. In contexts of high technical demand or accountability, a wrong answer delivered with confidence is more dangerous than an obvious error.</div>
+        <div class="tech-tag">Precision not guaranteed</div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-n">03</div>
+        <div class="tech-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="tech-tt">The answer must be defensible</div>
+        <div class="tech-d">Managers, auditors, and clients expect reasoning, not just conclusions. "The AI reached this answer" is not an acceptable justification. Every conclusion must show the path taken, step by step, in a way that can be questioned and defended.</div>
+        <div class="tech-tag">Untraceable inference</div>
+      </div>
+    </div>
+
+    <div class="tech-quote" style="margin-bottom:0">
+      In 59% of implementations analyzed by Stanford, data was spread across multiple systems from different teams. Organizations with decades of documents have a vast repository — but rarely connected in a way that an AI system can use.
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-index="9">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w narrow">
+    <div class="dim-badge tech">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Technological Dimension
+    </div>
+    <p class="lab">Why it's hard</p>
+    <h2 class="hdl">The problem is not that language models are bad.<br>It's that they were not designed for high-demand contexts.</h2>
+
+    <div class="tech-reveal-grid">
+      <div class="tech-reveal-card what">
+        <div class="tech-reveal-label">What language models do well</div>
+        <div class="tech-reveal-tt">Narrate, synthesize, interpret</div>
+        <div class="tech-reveal-body">
+          Language models are designed to complete patterns. This makes them extraordinary at narration, document synthesis, and contextual analysis. They are powerful tools for understanding what is being asked and building natural language responses.<br><br>
+          The problem appears when the context demands more than language. When it requires <strong>exact mathematical calculation</strong>, <strong>formal rule application</strong>, or <strong>step-by-step documented reasoning</strong> — areas they were not designed for.
+        </div>
+      </div>
+      <div class="tech-reveal-card why">
+        <div class="tech-reveal-label">Why the risk is higher in critical contexts</div>
+        <div class="tech-reveal-tt">Consistency and auditability are not optional</div>
+        <div class="tech-reveal-body">
+          In contexts of high technical demand and accountability, an answer that changes depending on how the question was asked is unacceptable. The reasoning must always be the same — same input, same output, no variation by session or user.<br><br>
+          Moreover, AI systems have an organizational ceiling: they stop scaling not when the technology fails, but when the organization lacks the governance structure to sustain the consequences of the decisions the system makes. <strong>The ceiling is both organizational and technological.</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-quote" style="margin-bottom:0">
+      Stanford research identified that the biggest obstacles to AI adoption are not technological — they are organizational: the absence of precision and traceability guarantees that critical contexts require.
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-index="10">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="dim-w">
+    <div class="dim-badge tech">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Technological Dimension
+    </div>
+    <p class="lab">How we respond</p>
+    <h2 class="hdl">Our architecture separates what each type<br>of reasoning does — and ensures precision in each one.</h2>
+
+    <div class="motors-arch">
+      <div class="motor-card llm">
+        <div class="motor-label">Language Engine</div>
+        <div class="motor-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="motor-tt">Narrates, interprets, and synthesizes</div>
+        <div class="motor-d">The language model does what it was designed to do: understands context, reads documents, interprets questions, and builds natural language responses. It is not replaced — it is specialized within its correct scope.</div>
+        <div class="motor-prop">Language and context</div>
+      </div>
+
+      <div class="motor-card det">
+        <div class="motor-label">Deterministic Engine</div>
+        <div class="motor-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6"/><path d="M9 12h6"/><path d="M9 15h4"/></svg>
+        </div>
+        <div class="motor-tt">Calculates with absolute precision</div>
+        <div class="motor-d">Same input, always same output, no variation by session or user. Replaces the language model at every point where calculation or rule application must be exact. Auditable by design: every operation is recorded.</div>
+        <div class="motor-prop">No variation by session</div>
+      </div>
+
+      <div class="motor-card sym">
+        <div class="motor-label">Analytical-Symbolic Engine</div>
+        <div class="motor-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="motor-tt">Chains formal rules with visible reasoning</div>
+        <div class="motor-d">Applies business, procedural, or operational rules in a documented logical sequence. Each reasoning step is visible — the conclusion doesn't emerge from a black box, but from a chain of steps that can be questioned and defended.</div>
+        <div class="motor-prop">Traceable reasoning</div>
+      </div>
+    </div>
+
+    <div class="tech-resp-note">
+      The three engines operate together. The result is a system <strong>intelligent in language, precise in calculation, and auditable in reasoning</strong> — simultaneously.
+    </div>
+  </div>
+</div>
+
+<div class="slide s-section-cover sec-cases">
+  <div class="ring r1" style="opacity:.28"></div>
+  <div class="ring r2" style="opacity:.14"></div>
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="sec-cover-wrap">
+    <div class="sec-cover-label">Projects in development</div>
+    <h2 class="sec-cover-title">Cases<br><span>EXP³</span></h2>
+    <div class="sec-cover-div"></div>
+    <p class="sec-cover-sub">Three organizations in distinct sectors. The same premise: intelligence as infrastructure, not as product.</p>
+  </div>
+</div>
+
+<div class="slide" data-index="11">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="s-exp-w">
+    <p class="lab">Projects in development</p>
+    <h2 class="hdl">Three organizations building<br>intelligence as infrastructure.</h2>
+
+    <div class="exp-grid">
+      <div class="exp-card">
+        <div class="exp-sector">Fintech · Sales Recovery</div>
+        <div class="exp-title">Data intelligence and Customer Success structuring for a recovery platform</div>
+        <div class="exp-desc">EXP³ redesigned the project scope: instead of producing reports, it built the intelligence infrastructure the platform and its clients need. Weekly reports carry embedded interpretive analysis — crossing historical data, identifying conversion bottlenecks by channel, and pointing to where the real opportunity lies. In parallel, EXP³ is structuring the Customer Success area data-first from day one: processes and indicators born with intelligence as a premise — not as an afterthought.</div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-sector">Digital Marketing · Agency</div>
+        <div class="exp-title">Organizational knowledge mapping and intelligence architecture for a digital agency</div>
+        <div class="exp-desc">The project is conducted in three layers, in a deliberate order: internal diagnosis (where the organization's knowledge lives, how it flows, where intelligence is lost between teams), optimization of operations and workflows, and construction of conversational agents that end clients can use to navigate campaign data without depending on intermediary analysts. EXP³ is defending this sequence — because building the third layer before consolidating the first two is the most common mistake organizations make when implementing AI.</div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-sector">Entertainment Conglomerate</div>
+        <div class="exp-title">Creative memory architecture for content development</div>
+        <div class="exp-desc">EXP³ is building a graph-based system that connects fragments of ideas, references, and evaluations in five steps: capture in any format, enrichment and categorization, structured storage, assisted ideation, and feedback as data. The project's non-negotiable premise: AI writes nothing for the authors. The system is fed exclusively by the authors — the generated variations are made from what exists only in them. It is the opposite of what most AI tools for creators do.</div>
+      </div>
+    </div>
+
+    <div class="exp-note">Ongoing projects, identities preserved in confidence</div>
+  </div>
+</div>
+
+<div class="slide" data-index="12">
+  <div class="slogo">EXP<sup>³</sup></div>
+  <div class="team-w">
+    <p class="lab">Who we are</p>
+    <h2 class="hdl">Senior consultants with complementary backgrounds,<br>operating in a think tank structure.</h2>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="team-name">Thiago Padovan</div>
+        <div class="team-role">Senior Consultant</div>
+        <div class="team-bio">Has been working since 2011 on organizational innovation projects, focusing on innovation processes, networks, and complexity across different sectors. Works at the intersection of knowledge management, organizational design, and AI implementation.</div>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="team-name">Nilton Lessa</div>
+        <div class="team-role">Senior Consultant</div>
+        <div class="team-bio">Software engineer and innovation consultant with over 20 years in complex technology projects. Specialized in systems architecture and implementation in high-demand contexts, where precision and reliability are not optional. His technical expertise anchors the construction layer of EXP³'s projects.</div>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="team-name">Luis Eugênio Pacheco</div>
+        <div class="team-role">Senior Consultant</div>
+        <div class="team-bio">Engineer and consultant with over 20 years in innovation and technology applied across organizations of different sizes and sectors. Brings practical experience in taking complex projects from conception to results, navigating both the technical and organizational dimensions of each implementation.</div>
+      </div>
+    </div>
+
+    <div class="team-note-enhanced">
+      <div class="team-note-enhanced-title">Think Tank Structure · Expert Network</div>
+      <div class="team-note-enhanced-body">
+        EXP³ operates in a <strong>think tank structure</strong> — a model that goes beyond traditional consulting. Beyond the three partners, EXP³ works in continuous collaboration with specialists at the frontier of AI applications in <strong>deep tech, ethics, organizations, and responsible AI</strong>. This network broadens the perspectives available for each project and keeps EXP³ connected to what is being thought and developed now — not to what was on the agenda two years ago.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide s-close" data-index="13">
+  <div class="ring r1" style="opacity:.6"></div>
+  <div class="close-wrap">
+    <div class="close-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="close-hdl">We like working in<br><span>uncharted territory</span></div>
+    <div class="close-body">
+      This world of AI in organizations is still being built. There are no ready-made recipes, and most of the implementations we see are still trying to figure out what actually works.<br><br>
+      EXP³ prefers challenges that <strong>don't have ready answers</strong>. The more specific the problem, the more interesting it gets for us.
+    </div>
+    <div class="close-line"></div>
+    <div class="close-tag">
+      <strong>What is your organization's challenge</strong> when it comes to AI implementation at the organizational level?
+    </div>
+  </div>
+</div>
+
+<div class="slide s-contact" data-index="14">
+  <div class="ring r1" style="opacity:.5"></div>
+  <div class="contact-wrap">
+    <div class="contact-logo">EXP<sup>³</sup></div>
+    <div class="contact-tagline">Organizational AI Implementation</div>
+    <div class="contact-divider"></div>
+    <div class="contact-name">Thiago Padovan</div>
+    <div class="contact-info-grid">
+      <div class="contact-info-row">
+        <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="contact-info-text">thiago@exp3.ai</span>
+      </div>
+      <div class="contact-info-row">
+        <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span class="contact-info-text">11 98338-9707</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar" id="pb"></div>
+<nav class="nav-dots" id="dots"></nav>
+<div class="nav-btns">
+  <button class="nav-btn" id="prevBtn">&#8592;</button>
+  <button class="nav-btn" id="nextBtn">&#8594;</button>
+</div>
+<div class="slide-counter" id="counter"></div>
+
+</div>
+
+<script>
+(function(){
+  var slides=document.querySelectorAll('.slide');
+  var dotEls=[];var current=0;var busy=false;
+  // 15 slides total
+  var dotsEl=document.getElementById('dots');
+  var pb=document.getElementById('pb');
+  var counter=document.getElementById('counter');
+  var total=slides.length;
+
+  slides.forEach(function(_,i){
+    var d=document.createElement('button');
+    d.className='dot'+(i===0?' active':'');
+    d.setAttribute('aria-label','Slide '+(i+1));
+    d.addEventListener('click',function(){goTo(i)});
+    dotsEl.appendChild(d);
+    dotEls.push(d);
+  });
+
+  function goTo(n){
+    if(busy||n===current||n<0||n>=total)return;
+    busy=true;
+    var old=current;current=n;
+    slides[old].classList.add('leaving');
+    setTimeout(function(){slides[old].classList.remove('active','leaving')},500);
+    slides[n].classList.add('active');
+    dotEls[old].classList.remove('active');
+    dotEls[n].classList.add('active');
+    update();
+    setTimeout(function(){busy=false},550);
+  }
+
+  function update(){
+    pb.style.width=((current/(total-1))*100)+'%';
+    counter.textContent=(current+1)+' / '+total;
+  }
+
+  document.getElementById('nextBtn').addEventListener('click',function(){goTo(current+1)});
+  document.getElementById('prevBtn').addEventListener('click',function(){goTo(current-1)});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);
+  });
+  var tx=0;
+  document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
+  document.addEventListener('touchend',function(e){
+    var dx=tx-e.changedTouches[0].clientX;
+    if(dx<-40)goTo(current+1);if(dx>40)goTo(current-1);
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
