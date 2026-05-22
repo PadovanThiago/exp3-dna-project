@@ -5,32 +5,34 @@
   <title>EXP³ — Implementação Organizacional de IA</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #faf9f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
-    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #faf9f5; z-index: 9999; }
-    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
-    #__bundler_placeholder { color: #999; font-size: 14px; }
+    html, body { background: #0A0F1C; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; color: #F0F4FA; }
+    #__bundler_splash { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0A0F1C; z-index: 9999; gap: 28px; transition: opacity .35s ease; }
+    #__bundler_splash.done { opacity: 0; pointer-events: none; }
+    #__bundler_splash .logo { width: 140px; height: 140px; opacity: 0; animation: expFade .6s ease forwards; }
+    #__bundler_splash .bar { width: 200px; height: 2px; background: rgba(0,217,255,0.12); border-radius: 2px; overflow: hidden; }
+    #__bundler_splash .bar > i { display: block; height: 100%; width: 35%; background: linear-gradient(90deg, transparent, #00D9FF, transparent); animation: expSlide 1.3s ease-in-out infinite; }
+    #__bundler_loading { font: 11px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #7A8AA0; letter-spacing: 2px; text-transform: uppercase; }
+    @keyframes expFade { to { opacity: 1; } }
+    @keyframes expSlide { 0% { transform: translateX(-100%);} 100% { transform: translateX(380%);} }
   </style>
   <noscript>
-    <style>#__bundler_loading { display: none; }</style>
-    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+    <style>#__bundler_splash { display: none; }</style>
+    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#F0F4FA;background:rgba(10,15,28,0.9);padding:6px 12px;border-radius:6px;z-index:10000;">
       This page requires JavaScript to display.
     </div>
   </noscript>
 </head>
 <body>
-  <div id="__bundler_thumbnail">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="width:100%;height:100%">
-    <rect width="400" height="400" fill="#0A0F1C"></rect>
-    <circle cx="200" cy="200" r="120" fill="none" stroke="#00D9FF" stroke-width="1" opacity="0.35"></circle>
-    <circle cx="200" cy="200" r="80" fill="none" stroke="#00D9FF" stroke-width="1.2" opacity="0.55"></circle>
-    <circle cx="200" cy="200" r="50" fill="none" stroke="#00D9FF" stroke-width="1.5" opacity="0.8"></circle>
-    <text x="200" y="208" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="48" font-weight="800" fill="#F0F4FA" letter-spacing="-1">EXP<tspan font-size="22" baseline-shift="super" fill="#00D9FF">3</tspan></text>
-    <rect x="170" y="245" width="60" height="2" fill="#00D9FF" opacity="0.7"></rect>
-    <text x="200" y="280" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="500" fill="#7A8AA0" letter-spacing="2">IMPLEMENTAÇÃO DE IA</text>
-  </svg>
-</div>
-  <div id="__bundler_loading">Unpacking...</div>
+  <div id="__bundler_splash">
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+      <circle cx="200" cy="200" r="120" fill="none" stroke="#00D9FF" stroke-width="1" opacity="0.35"></circle>
+      <circle cx="200" cy="200" r="80" fill="none" stroke="#00D9FF" stroke-width="1.2" opacity="0.55"></circle>
+      <circle cx="200" cy="200" r="50" fill="none" stroke="#00D9FF" stroke-width="1.5" opacity="0.8"></circle>
+      <text x="200" y="220" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="64" font-weight="800" fill="#F0F4FA" letter-spacing="-2">EXP<tspan font-size="30" baseline-shift="super" fill="#00D9FF">3</tspan></text>
+    </svg>
+    <div class="bar"><i></i></div>
+    <div id="__bundler_loading">Carregando</div>
+  </div>
 
   <script>
     
