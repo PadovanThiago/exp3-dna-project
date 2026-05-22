@@ -141,6 +141,17 @@ document.addEventListener('DOMContentLoaded', async function() {
     // preserve ordering (React before ReactDOM before Babel before text/babel).
     const doc = new DOMParser().parseFromString(template, 'text/html');
     document.documentElement.replaceWith(doc.documentElement);
+    // Re-inject favicon (bundled inner HTML doesn't include one).
+    try {
+      var head = document.head || document.getElementsByTagName('head')[0];
+      if (head && !head.querySelector('link[rel="icon"]')) {
+        var fav = document.createElement('link');
+        fav.rel = 'icon';
+        fav.type = 'image/png';
+        fav.href = '/favicon.png';
+        head.appendChild(fav);
+      }
+    } catch (e) {}
     const dead = Array.from(document.scripts);
     for (const old of dead) {
       const s = document.createElement('script');
