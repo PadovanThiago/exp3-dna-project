@@ -1,15 +1,63 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const Header: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const switchLanguage = async (lang: 'pt' | 'en') => {
+    if (lang === language) return;
+    const path = location.pathname;
+
+    // Blog list pages
+    if (path === '/blog' || path === '/en/blog') {
+      setLanguage(lang);
+      navigate(lang === 'en' ? '/en/blog' : '/blog');
+      return;
+    }
+
+    // Blog post pages
+    const match = path.match(/^\/(?:en\/)?blog\/(.+)$/);
+    if (match) {
+      const currentSlug = match[1];
+      // Look up current post, then sibling in target language
+      const { data: current } = await supabase
+        .from('posts')
+        .select('translation_group_id')
+        .eq('slug', currentSlug)
+        .eq('status', 'published')
+        .maybeSingle();
+
+      if (current) {
+        const { data: sibling } = await supabase
+          .from('posts')
+          .select('slug')
+          .eq('translation_group_id', current.translation_group_id)
+          .eq('language', lang)
+          .eq('status', 'published')
+          .maybeSingle();
+
+        setLanguage(lang);
+        if (sibling) {
+          navigate(lang === 'en' ? `/en/blog/${sibling.slug}` : `/blog/${sibling.slug}`);
+        } else {
+          navigate(lang === 'en' ? '/en/blog' : '/blog');
+        }
+        return;
+      }
+    }
+
+    setLanguage(lang);
+  };
+
 
   useEffect(() => {
     const handleScroll = () => {
