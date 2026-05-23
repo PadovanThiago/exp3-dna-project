@@ -16,10 +16,19 @@ const categoryLabels: Record<string, Record<PostCategory, string>> = {
 
 const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [siblingPost, setSiblingPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Sync language from URL prefix on direct entry / navigation
+  useEffect(() => {
+    const urlLang: 'en' | 'pt' = location.pathname.startsWith('/en/') ? 'en' : 'pt';
+    if (urlLang !== language) setLanguage(urlLang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   useEffect(() => {
     if (slug) fetchPost();
