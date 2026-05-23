@@ -34,6 +34,15 @@ const BlogPost: React.FC = () => {
     if (slug) fetchPost();
   }, [slug, language]);
 
+  // Normalize URL to match resolved post language + slug
+  useEffect(() => {
+    if (!post) return;
+    const expected = post.language === 'en' ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
+    if (location.pathname !== expected) {
+      navigate(expected, { replace: true });
+    }
+  }, [post, location.pathname, navigate]);
+
   const fetchPost = async () => {
     setLoading(true);
     setSiblingPost(null);
