@@ -14,15 +14,18 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     if (typeof window !== 'undefined') {
+      // URL prefix takes precedence so that direct links (e.g. pasted in a new tab)
+      // always open in the correct language, regardless of a previously saved choice.
+      const path = window.location.pathname;
+      if (path.startsWith('/en/') || path === '/en') return 'en';
+      if (path.startsWith('/pt/') || path === '/pt') return 'pt';
+
+      // For non-prefixed URLs (default PT routes like '/blog/...'), respect saved choice
+      // only if the path is the root or clearly language-agnostic.
       const saved = localStorage.getItem('exp3-language');
       if (saved === 'pt' || saved === 'en') return saved;
-      
-      // Check URL for language
-      const path = window.location.pathname;
-      if (path.startsWith('/en')) return 'en';
-      if (path.startsWith('/pt')) return 'pt';
-      
-      // Check browser language
+
+      // Browser language fallback
       const browserLang = navigator.language.toLowerCase();
       if (browserLang.startsWith('pt')) return 'pt';
     }
