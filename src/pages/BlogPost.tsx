@@ -81,7 +81,7 @@ const BlogPost: React.FC = () => {
         .from('posts')
         .select('*')
         .eq('translation_group_id', source.translation_group_id)
-        .eq('language', language)
+        .eq('language', urlLanguage)
         .eq('status', 'published')
         .maybeSingle();
 
