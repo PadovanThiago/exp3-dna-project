@@ -120,7 +120,7 @@ export const Header: React.FC = () => {
             {/* Language Toggle */}
             <div className="flex items-center bg-secondary/50 rounded-full p-1">
               <button
-                onClick={() => setLanguage('pt')}
+                onClick={() => switchLanguage('pt')}
                 className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
                   language === 'pt'
                     ? 'bg-primary text-primary-foreground'
@@ -130,7 +130,7 @@ export const Header: React.FC = () => {
                 PT
               </button>
               <button
-                onClick={() => setLanguage('en')}
+                onClick={() => switchLanguage('en')}
                 className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
                   language === 'en'
                     ? 'bg-primary text-primary-foreground'
@@ -187,7 +187,7 @@ export const Header: React.FC = () => {
               <div className="flex items-center gap-2 px-4 py-3">
                 <span className="text-sm text-muted-foreground mr-2">Language:</span>
                 <button
-                  onClick={() => setLanguage('pt')}
+                  onClick={() => switchLanguage('pt')}
                   className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
                     language === 'pt'
                       ? 'bg-primary text-primary-foreground'
@@ -197,7 +197,7 @@ export const Header: React.FC = () => {
                   PT
                 </button>
                 <button
-                  onClick={() => setLanguage('en')}
+                  onClick={() => switchLanguage('en')}
                   className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
                     language === 'en'
                       ? 'bg-primary text-primary-foreground'
