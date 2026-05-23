@@ -189,7 +189,7 @@ const Blog: React.FC = () => {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
                   <Link
-                    to={language === 'en' ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
+                    to={post.language === 'en' ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
                     className="glass-card overflow-hidden hover-lift group block h-full"
                   >
                     {/* Cover image */}
