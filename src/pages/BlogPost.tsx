@@ -34,14 +34,11 @@ const BlogPost: React.FC = () => {
     if (slug) fetchPost();
   }, [slug, language]);
 
-  // Normalize URL to match resolved post language + slug
-  useEffect(() => {
-    if (!post) return;
-    const expected = post.language === 'en' ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
-    if (location.pathname !== expected) {
-      navigate(expected, { replace: true });
-    }
-  }, [post, location.pathname, navigate]);
+  // Note: URL normalization based on resolved post is intentionally NOT done here.
+  // It races with the URL→language sync effect and Header's switchLanguage navigation,
+  // causing an infinite loop. Header.switchLanguage already navigates to the correct
+  // language-prefixed slug URL when the user toggles language.
+
 
   const fetchPost = async () => {
     setLoading(true);
