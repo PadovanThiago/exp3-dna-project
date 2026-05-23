@@ -23,16 +23,20 @@ const BlogPost: React.FC = () => {
   const [siblingPost, setSiblingPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Sync language from URL prefix on direct entry / navigation
+  // Derive desired language directly from URL — source of truth for this page.
+  // Avoids race with LanguageContext state when user pastes a direct link in a new tab.
+  const urlLanguage: 'en' | 'pt' = location.pathname.startsWith('/en/') ? 'en' : 'pt';
+
+  // Sync language context from URL prefix on direct entry / navigation
   useEffect(() => {
-    const urlLang: 'en' | 'pt' = location.pathname.startsWith('/en/') ? 'en' : 'pt';
-    if (urlLang !== language) setLanguage(urlLang);
+    if (urlLanguage !== language) setLanguage(urlLanguage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+  }, [urlLanguage]);
 
   useEffect(() => {
     if (slug) fetchPost();
-  }, [slug, language]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, urlLanguage]);
 
   // Note: URL normalization based on resolved post is intentionally NOT done here.
   // It races with the URL→language sync effect and Header's switchLanguage navigation,
@@ -44,13 +48,13 @@ const BlogPost: React.FC = () => {
     setLoading(true);
     setSiblingPost(null);
 
-    // 1. Try to find the post by slug in the current language
+    // 1. Try to find the post by slug in the URL's language
     const { data: directMatch } = await supabase
       .from('posts')
       .select('*')
       .eq('slug', slug)
       .eq('status', 'published')
-      .eq('language', language)
+      .eq('language', urlLanguage)
       .maybeSingle();
 
     if (directMatch) {
@@ -77,7 +81,7 @@ const BlogPost: React.FC = () => {
         .from('posts')
         .select('*')
         .eq('translation_group_id', source.translation_group_id)
-        .eq('language', language)
+        .eq('language', urlLanguage)
         .eq('status', 'published')
         .maybeSingle();
 
