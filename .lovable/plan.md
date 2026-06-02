@@ -1,60 +1,53 @@
+## Problema
 
+O site é uma SPA (React + Vite). WhatsApp, LinkedIn, Slack, Facebook **não executam JavaScript** — eles leem apenas o HTML inicial servido pelo servidor. Hoje, qualquer URL (`/`, `/about`, `/services`, `/blog`, `/deck`, etc.) entrega o mesmo `index.html`, então o preview mostra sempre o mesmo título, descrição e imagem.
 
-## Página /deck com Open Graph otimizado
+Já existe uma solução parcial: o `vite-plugin-og-pages.ts` gera HTML estático para posts do blog em build time. Vamos **estender o mesmo padrão** para as demais páginas — é a abordagem mais simples, mantém tudo num lugar só e não exige worker/edge function nova.
 
-### O problema com links compartilhados em SPAs
+## O que será feito
 
-LinkedIn, WhatsApp e outros crawlers **não executam JavaScript**. Eles leem apenas o HTML inicial. Como o site é uma SPA (React), as meta tags OG definidas via JavaScript (como o `BlogSEO.tsx` faz) **não funcionam para crawlers** — eles veem apenas as tags genéricas do `index.html`.
+### 1. Corrigir o `index.html` (fallback global)
+- Trocar o `og:image` que hoje aponta para `https://lovable.dev/opengraph-image-p98pqg.png` pelo banner próprio `https://exp3.ai/exp3-og-banner.jpg` (já usado pelas edge functions).
+- Adicionar `og:image:width=1200` e `og:image:height=630` para LinkedIn renderizar o card grande.
 
-### Abordagem recomendada
+### 2. Estender `vite-plugin-og-pages.ts` para rotas institucionais
+Gerar `dist/<rota>/index.html` para cada rota pública em PT e EN, com OG tags próprias:
 
-Criar um **arquivo HTML estático** em `public/deck/index.html`. Isso garante que:
+| Rota | Título | Descrição |
+|---|---|---|
+| `/` | EXP³ \| Strategic Intelligence That Operates | (atual do index.html) |
+| `/about` | About EXP³ \| (…) | (extraída de About.tsx) |
+| `/services` | Services \| EXP³ | (…) |
+| `/contact` | Contact \| EXP³ | (…) |
+| `/blog` | Blog \| EXP³ — Insights on AI | (…) |
+| `/en`, `/en/about`, `/en/services`, `/en/contact`, `/en/blog` | versões EN equivalentes | (…) |
 
-1. Os crawlers do LinkedIn/WhatsApp leiam as meta tags OG diretamente do HTML
-2. A página funcione independentemente do React (carregamento instantâneo)
-3. Não apareça no menu de navegação (não é uma rota React)
-4. Funcione no domínio `exp3.ai/deck` sem configuração extra
+Cada HTML estático contém:
+- `<title>`, `<meta name="description">`
+- `og:title`, `og:description`, `og:image` (1200×630), `og:url`, `og:type=website`
+- `twitter:card=summary_large_image` e equivalentes
+- `<link rel="canonical">` e `<link rel="alternate" hreflang>` PT↔EN
+- `<meta http-equiv="refresh" content="0;url=…">` para que humanos que abram o HTML estático sejam redirecionados pro SPA (o crawler ignora o refresh, mas lê as meta tags primeiro)
 
-### Estrutura
+Os textos PT/EN ficam definidos num dicionário no próprio plugin (uma única fonte de verdade), espelhando o que está em `src/locales/translations.ts`.
 
-```text
-public/
-  deck/
-    index.html    ← HTML com OG tags + conteúdo do deck
-    deck-og.jpg   ← Imagem de preview para compartilhamento (1200x630px)
-```
+### 3. Adicionar OG tags nos decks estáticos
+- `public/deck/index.html`, `public/deck-en/index.html`, `public/deck-fr/index.html` hoje **não têm** meta tags OG. Adicionar bloco OG no `<head>` de cada um, apontando para a imagem `deck-og.jpg` (já existe em `public/deck/`) ou para `exp3-og-banner.jpg` como fallback.
 
-### O que será feito
+### 4. Validar
+- Build local: confirmar que `dist/about/index.html`, `dist/blog/index.html`, `dist/en/about/index.html`, etc., são gerados com as meta tags certas.
+- Testar 1–2 URLs publicadas no [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) e no [Meta Sharing Debugger](https://developers.facebook.com/tools/debug/) depois do deploy.
 
-1. **`public/deck/index.html`** — Página HTML completa com:
-   - Meta tags Open Graph completas (`og:title`, `og:description`, `og:image`, `og:url`)
-   - Meta tags Twitter Card (`twitter:card`, `twitter:title`, `twitter:image`)
-   - Tag `<link rel="canonical">` apontando para `https://exp3.ai/deck`
-   - O conteúdo HTML do deck integrado diretamente
-   - Estilos inline ou link para o CSS do site para manter consistência visual
-   - Favicon e branding EXP³
+## Limitações honestas
 
-2. **Imagem OG** — Você precisará fornecer uma imagem de 1200x630px para o preview nos links. Posso usar a `exp3-og-banner.jpg` existente como fallback.
+- Páginas dinâmicas (posts do blog) já funcionam via o plugin existente — nada muda lá.
+- Rotas privadas (`/admin/*`, `/neodash`) **não** receberão HTML estático (são internas).
+- O usuário humano que abrir um link continua vendo o SPA normalmente (graças ao `meta refresh` ou ao fallback do servidor que entrega o `index.html` para rotas não-existentes — vamos confirmar o comportamento do hosting da Lovable; se necessário, ajustamos).
 
-3. **Rota React** — Opcionalmente, adicionar uma rota `/deck` no React que redireciona para o HTML estático, caso alguém navegue internamente. Mas como a página é acessada apenas via link externo, o HTML em `public/deck/` já será servido diretamente pelo servidor.
+## Arquivos a alterar
 
-### Detalhes técnicos das meta tags
+- `index.html` — corrigir `og:image`
+- `vite-plugin-og-pages.ts` — adicionar geração das rotas institucionais
+- `public/deck/index.html`, `public/deck-en/index.html`, `public/deck-fr/index.html` — adicionar OG tags
 
-```html
-<meta property="og:title" content="EXP³ — [Título do Deck]" />
-<meta property="og:description" content="[Descrição curta e impactante]" />
-<meta property="og:image" content="https://exp3.ai/deck/deck-og.jpg" />
-<meta property="og:url" content="https://exp3.ai/deck" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
-```
-
-### Próximo passo
-
-Preciso que você me envie:
-1. **O arquivo HTML** com o conteúdo do deck
-2. **Uma imagem** para o preview do link (ideal: 1200x630px) — ou posso usar o banner OG existente
-3. **Título e descrição** que deseja que apareçam quando o link for compartilhado
-
-Com esses materiais, crio a página completa.
-
+Nenhum código de UI/React será tocado. A solução é puramente build-time e estática.
