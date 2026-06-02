@@ -1,20 +1,30 @@
 /**
- * Cloudflare Worker — OG Proxy for Blog Crawlers
+ * Cloudflare Worker — OG Proxy for social-media crawlers
  *
- * Deploy this worker on Cloudflare with a route pattern:
- *   exp3.ai/blog/*
- *   exp3.ai/en/blog/*
+ * Deploy this worker on Cloudflare with a route pattern covering the
+ * whole site so it can intercept any path:
  *
- * It intercepts crawler requests and proxies them to the
- * Supabase edge function that returns static HTML with OG tags.
- * Normal users pass through to the SPA unchanged.
+ *   exp3.ai/*
+ *   www.exp3.ai/*
+ *
+ * Behavior:
+ *   - Real users (any non-crawler UA) pass straight through to the SPA.
+ *   - Social-media crawlers (LinkedIn, WhatsApp, Slack, Facebook, etc.)
+ *     are silently proxied to the unified Supabase Edge Function
+ *     `og`, which returns crawler-friendly HTML with the correct
+ *     per-route Open Graph + Twitter tags.
+ *
+ * Result: links shared on WhatsApp / LinkedIn / Slack show the right
+ * title, description and image for every public page (home, about,
+ * services, contact, blog index, blog posts in PT and EN, decks).
  */
 
-const EDGE_FUNCTION_BASE =
-  "https://hnveejswefpgbeiwmfys.supabase.co/functions/v1/og-blog";
+const EDGE_FUNCTION_URL =
+  "https://hnveejswefpgbeiwmfys.supabase.co/functions/v1/og";
 
 const CRAWLER_PATTERNS = [
   "facebookexternalhit",
+  "facebot",
   "twitterbot",
   "linkedinbot",
   "whatsapp",
@@ -25,6 +35,26 @@ const CRAWLER_PATTERNS = [
   "quora link preview",
   "pinterest",
   "vkshare",
+  "redditbot",
+  "applebot",
+  "skypeuripreview",
+  "outbrain",
+  "w3c_validator",
+];
+
+// Paths we never want to intercept (internal app, admin, assets).
+const SKIP_PREFIXES = [
+  "/assets/",
+  "/static/",
+  "/admin",
+  "/neodash",
+  "/demo/",
+  "/api/",
+  "/functions/",
+  "/favicon",
+  "/robots.txt",
+  "/sitemap",
+  "/llms.txt",
 ];
 
 function isCrawler(ua) {
@@ -33,31 +63,23 @@ function isCrawler(ua) {
   return CRAWLER_PATTERNS.some((p) => lower.includes(p));
 }
 
-function extractSlug(pathname) {
-  // Matches /blog/:slug or /en/blog/:slug
-  const match = pathname.match(/^(?:\/en)?\/blog\/([^/?#]+)/);
-  return match ? match[1] : null;
+function shouldSkip(pathname) {
+  if (/\.[a-z0-9]{2,5}$/i.test(pathname)) return true; // static assets
+  return SKIP_PREFIXES.some((p) => pathname.startsWith(p));
 }
 
 export default {
   async fetch(request) {
     const ua = request.headers.get("user-agent") || "";
     const url = new URL(request.url);
-    const slug = extractSlug(url.pathname);
 
-    // Only proxy if it's a crawler AND we have a slug
-    if (!slug || !isCrawler(ua)) {
+    if (!isCrawler(ua) || shouldSkip(url.pathname)) {
       return fetch(request);
     }
 
-    // Build edge function URL preserving any query params
-    const edgeUrl = new URL(EDGE_FUNCTION_BASE);
-    edgeUrl.searchParams.set("slug", slug);
-    for (const [key, value] of url.searchParams) {
-      if (key !== "slug") edgeUrl.searchParams.set(key, value);
-    }
+    const edgeUrl = new URL(EDGE_FUNCTION_URL);
+    edgeUrl.searchParams.set("path", url.pathname);
 
-    // Proxy (internal rewrite, not redirect)
     const response = await fetch(edgeUrl.toString(), {
       headers: {
         "User-Agent": ua,
@@ -65,7 +87,6 @@ export default {
       },
     });
 
-    // Return with original status and headers, add cache
     return new Response(response.body, {
       status: response.status,
       headers: {
