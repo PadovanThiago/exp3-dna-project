@@ -103,6 +103,156 @@ function buildFallbackHtml(): string {
 </html>`;
 }
 
+interface StaticRoute {
+  /** Path relative to outDir, e.g. "" for home, "about", "en", "en/about" */
+  outPath: string;
+  /** Public URL path, e.g. "/", "/about", "/en", "/en/about" */
+  urlPath: string;
+  language: "pt" | "en";
+  title: string;
+  description: string;
+  /** Optional sibling path in the other language, for hreflang alternates */
+  altPath?: string;
+}
+
+const STATIC_ROUTES: StaticRoute[] = [
+  // Portuguese (default)
+  {
+    outPath: "",
+    urlPath: "/",
+    language: "pt",
+    title: "EXP³ | Inteligência estratégica que opera",
+    description:
+      "Transformamos o potencial da IA em capacidade operacional através da simbiose cognitiva: onde a criatividade humana e o poder da máquina se elevam mutuamente.",
+    altPath: "/en",
+  },
+  {
+    outPath: "about",
+    urlPath: "/about",
+    language: "pt",
+    title: "Quem somos | EXP³",
+    description:
+      "Think tank estratégico que desenha e opera o futuro dos negócios com IA. Conheça a metodologia EXP³ — Explore, Exploit, Explain.",
+    altPath: "/en/about",
+  },
+  {
+    outPath: "services",
+    urlPath: "/services",
+    language: "pt",
+    title: "Serviços | EXP³",
+    description:
+      "Consultoria estratégica de IA: validação de valor, escala e eficiência, governança e confiança. Engenharia e resultados para empresas.",
+    altPath: "/en/services",
+  },
+  {
+    outPath: "contact",
+    urlPath: "/contact",
+    language: "pt",
+    title: "Contato | EXP³",
+    description:
+      "Vamos conversar sobre como transformar o potencial da IA em capacidade operacional na sua organização. Resposta em até 24h.",
+    altPath: "/en/contact",
+  },
+  {
+    outPath: "blog",
+    urlPath: "/blog",
+    language: "pt",
+    title: "Blog | EXP³ — Insights sobre IA e transformação digital",
+    description:
+      "Artigos, cases de sucesso e insights sobre inteligência artificial, transformação digital e inovação estratégica.",
+    altPath: "/en/blog",
+  },
+  // English
+  {
+    outPath: "en",
+    urlPath: "/en",
+    language: "en",
+    title: "EXP³ | Strategic Intelligence That Operates",
+    description:
+      "Transform AI potential into operational capacity through cognitive symbiosis: where human creativity and machine power elevate each other.",
+    altPath: "/",
+  },
+  {
+    outPath: "en/about",
+    urlPath: "/en/about",
+    language: "en",
+    title: "About | EXP³",
+    description:
+      "Strategic think tank that designs and operates the future of business with AI. Meet the EXP³ methodology — Explore, Exploit, Explain.",
+    altPath: "/about",
+  },
+  {
+    outPath: "en/services",
+    urlPath: "/en/services",
+    language: "en",
+    title: "Services | EXP³",
+    description:
+      "Strategic AI consulting: value validation, scale and efficiency, governance and trust. Engineering and results for enterprises.",
+    altPath: "/services",
+  },
+  {
+    outPath: "en/contact",
+    urlPath: "/en/contact",
+    language: "en",
+    title: "Contact | EXP³",
+    description:
+      "Let's talk about turning AI potential into operational capacity in your organization. Response within 24h.",
+    altPath: "/contact",
+  },
+  {
+    outPath: "en/blog",
+    urlPath: "/en/blog",
+    language: "en",
+    title: "Blog | EXP³ — Insights on AI and digital transformation",
+    description:
+      "Articles, case studies and insights on artificial intelligence, digital transformation and strategic innovation.",
+    altPath: "/blog",
+  },
+];
+
+function buildStaticRouteHtml(route: StaticRoute): string {
+  const url = `${SITE_URL}${route.urlPath === "/" ? "" : route.urlPath}`;
+  const lang = route.language === "pt" ? "pt-BR" : "en";
+  const altLang = route.language === "pt" ? "en" : "pt-BR";
+  const altUrl = route.altPath
+    ? `${SITE_URL}${route.altPath === "/" ? "" : route.altPath}`
+    : "";
+
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${escapeHtml(route.title)}</title>
+  <meta name="description" content="${escapeAttr(route.description)}"/>
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="${escapeAttr(route.title)}"/>
+  <meta property="og:description" content="${escapeAttr(route.description)}"/>
+  <meta property="og:image" content="${DEFAULT_OG_IMAGE}"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:url" content="${escapeAttr(url)}"/>
+  <meta property="og:site_name" content="EXP³"/>
+  <meta property="og:locale" content="${lang === "pt-BR" ? "pt_BR" : "en_US"}"/>
+
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="${escapeAttr(route.title)}"/>
+  <meta name="twitter:description" content="${escapeAttr(route.description)}"/>
+  <meta name="twitter:image" content="${DEFAULT_OG_IMAGE}"/>
+
+  <link rel="canonical" href="${escapeAttr(url)}"/>
+  ${altUrl ? `<link rel="alternate" hreflang="${altLang}" href="${escapeAttr(altUrl)}"/>` : ""}
+  ${altUrl ? `<link rel="alternate" hreflang="${lang}" href="${escapeAttr(url)}"/>` : ""}
+  <meta http-equiv="refresh" content="0;url=${escapeAttr(url)}"/>
+</head>
+<body>
+  <h1>${escapeHtml(route.title)}</h1>
+  <p>${escapeHtml(route.description)}</p>
+</body>
+</html>`;
+}
+
 export default function ogPagesPlugin(): Plugin {
   let outDir = "dist";
 
